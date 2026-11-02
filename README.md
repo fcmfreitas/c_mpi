@@ -1,62 +1,109 @@
-# Conjunto de Julia em C com MPI
+# Conjunto de Julia em C com MPI (mestre/escravo)
 
 Trabalho 2: o fractal do T1 (`c_openmp`), agora o conjunto de Julia,
-paralelizado com MPI. Cada pixel `z0` itera `z = z^2 + c` com `c` constante.
+paralelizado com MPI no modelo mestre/escravo. Cada pixel `z0` itera
+`z = z^2 + c` com `c` constante.
+
+## Arquivos
+
+| Arquivo | Conteudo |
+|---|---|
+| `julia_common.c/.h` | opcoes, calculo de uma linha (`render_row`), checksum e relatorio; usado pelas duas versoes |
+| `julia_seq.c` | versao sequencial de referencia (T1), **sem MPI** |
+| `julia_mpi.c` | versao mestre/escravo, ping-pong e janela X11 |
 
 ## Constante c
 
 Padrao `-0.123 + 0.745i` ("coelho de Douady"), que fica **dentro** do conjunto
 de Mandelbrot: a imagem tem interior, cujos pixels custam `max_iter` cada, e o
-tempo cresce com `max_iter` (x3,95 de iteracoes para x4 de `max_iter`). Isso
-permite calibrar a entrada e fazer escalabilidade fraca por `max_iter`, como no
-T1. Com `c` fora do conjunto (ex.: `-0.8 + 0.156i`) nao ha interior e o custo
-para de crescer com `max_iter`.
+tempo cresce com `max_iter`, o que serve para calibrar a entrada. Com `c` fora
+do conjunto (ex.: `-0.8 + 0.156i`) nao ha interior e o custo para de crescer
+com `max_iter`.
 
-## Esquema MPI
+## Modelo mestre/escravo
 
-Mestre/trabalhador com distribuicao dinamica de linhas (o equivalente ao
-`schedule(dynamic)` escolhido no T1):
-
-- o rank 0 nao calcula: envia `{primeira linha, linhas}` (`TAG_WORK`) e entrega
-  o proximo bloco a quem acabou de devolver o anterior;
-- o trabalhador responde com uma mensagem `{primeira linha, pixels...}`
-  (`TAG_PIXELS`); o mestre recebe com folga de `--chunk` linhas e descobre o
-  tamanho real com `MPI_Get_count`, porque o ultimo bloco pode ser menor;
-- `TAG_DONE` encerra o quadro do trabalhador; a soma de iteracoes vem por
-  `MPI_Reduce`;
-- um `MPI_Bcast` no inicio de cada quadro informa `c` ou manda encerrar.
-
-Com P processos ha P-1 trabalhadores, por isso o modo `mpi` exige P >= 2.
-`--mode seq` calcula tudo no rank 0 e serve de referencia T1.
+- **Tarefa:** um bloco de `--chunk` linhas consecutivas. O saco e o indice da
+  proxima linha livre no mestre; ha `ceil(height / chunk)` tarefas e a ultima
+  pode ser menor.
+- **Tags:** `TAG_REQUEST` (escravo pede o primeiro trabalho), `TAG_PIXELS`
+  (resultado `{primeira linha, pixels...}`, que vale como novo pedido),
+  `TAG_WORK` (tarefa `{primeira linha, linhas}`) e `TAG_DONE` (saco vazio).
+- O escravo toma a iniciativa: comeca com `TAG_REQUEST`.
+- O mestre recebe com `MPI_ANY_SOURCE`/`MPI_ANY_TAG`, copia o bloco para a
+  linha `block[0]` (ordem original) e responde ao mesmo escravo com a proxima
+  tarefa ou com `TAG_DONE`. O mestre nao calcula, por isso e preciso P >= 2.
+- Um `MPI_Bcast` no inicio de cada quadro informa `c` ou manda encerrar.
 
 ## Medicao de tempo
 
-`t1` e `t2` sao lidos no rank 0 com `MPI_Wtime`, depois de um `MPI_Barrier`.
-A regiao medida inclui distribuicao, calculo, recepcao dos pixels, a reducao
-das iteracoes e o checksum; exclui janela X11, pausa e CSV.
+- MPI: `MPI_Wtime` no mestre, depois de um `MPI_Barrier`, do inicio da
+  distribuicao ate a chegada do ultimo resultado.
+- Sequencial: `clock_gettime(CLOCK_MONOTONIC)` em volta do calculo das linhas.
+- Nas duas, ficam de fora a alocacao, o checksum, as estatisticas e a saida.
 
-## Compilacao e execucao
+## Compilacao
 
 ```sh
-make                              # com janela X11
-make X11=0                        # sem X11 (cluster)
-make run NP=4                     # janela: c gira em torno da origem
-
-mpirun -n 1 ./julia --mode seq --no-window --max-iter 4000
-mpirun -n 8 ./julia --no-window --max-iter 4000 --rank-stats
-srun -N 2 -n 8 ./julia --no-window --max-iter 4000 --csv data/mpi_8.csv
+make                  # julia_mpi (com X11) e julia_seq
+make X11=0            # sem X11 (cluster)
+make run NP=4         # janela: c gira em torno da origem
 ```
 
-Acima de 8 processos nesta maquina (8 nucleos fisicos), use
-`mpirun --use-hwthread-cpus -n 16 ...`.
+A sequencial usa `gcc` com as mesmas flags da paralela (`-O3 -march=native`).
+No cluster, confira se `mpicc --version` e `gcc --version` mostram o mesmo
+compilador; se nao, use `make SEQ_CC=<compilador do mpicc>`.
 
-O CSV traz `frame,c_re,c_im,mode,procs,width,height,max_iter,chunk,seconds,iterations,checksum`.
+## Execucao e experimentos
+
+Cada execucao imprime uma linha `frame=... time=... iterations=... checksum=...`.
+`--frames N` repete o calculo N vezes no mesmo processo, e `--csv ARQ` grava
+os tempos brutos.
+
+```sh
+# T1 sequencial (calibrar --max-iter para 30-60 s no cluster)
+./julia_seq --max-iter 4000
+
+# Escalabilidade forte
+mpirun -n 8 ./julia_mpi --max-iter 4000 --chunk 4
+
+# Escalabilidade fraca: height = 720 * P, mesma largura e max_iter
+mpirun -n 8 ./julia_mpi --max-iter 4000 --chunk 4 --height 5760
+./julia_seq --max-iter 4000 --height 5760     # confere iterations/checksum
+
+# Granularidade e balanceamento (por escravo: host, tarefas, iteracoes,
+# tempo ocupado, tempo medio por tarefa e instante em que foi liberado)
+mpirun -n 32 ./julia_mpi --max-iter 4000 --chunk 4 --rank-stats
+
+# Ida e volta das mensagens de uma tarefa, sem calculo, com cada escravo
+mpirun -n 32 ./julia_mpi --chunk 4 --pingpong 1000
+```
+
+### Regra de crescimento da escalabilidade fraca
+
+A regiao visivel do plano e fixa (`[-2, 2] x [-1.125, 1.125]`). Aumentar
+`--height` so torna a amostragem vertical mais densa, entao o numero de
+tarefas cresce na proporcao de `height` e o custo medio de uma linha fica o
+mesmo. Medido com `--max-iter 1000`:
+
+| height | iteracoes | razao |
+|---|---|---|
+| 720 | 136180205 | 1,00 |
+| 1440 | 272233905 | 2,00 |
+| 2880 | 544621529 | 4,00 |
+| 5760 | 1089182411 | 8,00 |
+
+### Granularidade
+
+O custo de uma tarefa e `per_task` (de `--rank-stats`). O custo da comunicacao
+e `round_trip` (de `--pingpong`, com o mesmo `--chunk`). Os escravos no mesmo
+no do mestre medem a comunicacao intra-no; os do outro no, a inter-no.
 
 ## Validacao
 
-`checksum` e `iterations` devem coincidir entre `seq` e `mpi` para qualquer P e
-`--chunk`. Com `--max-iter 4000` e o `c` padrao: `iterations=537691205`,
-`checksum=f8b746cef3e07759`.
+`iterations` e `checksum` devem coincidir entre `julia_seq` e `julia_mpi` para
+qualquer P, `--chunk` e `--height`. Exemplos:
 
-O `max_iter` da entrada de referencia (30-60 s no sequencial) ainda precisa
-ser calibrado para o Julia.
+- `--max-iter 500`: `iterations=69261705`, `checksum=982001c4f55f08af`.
+- `--max-iter 4000`: `iterations=537691205`, `checksum=f8b746cef3e07759`.
+
+O CSV traz `frame,c_re,c_im,mode,procs,width,height,max_iter,chunk,seconds,iterations,checksum`.
