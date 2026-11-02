@@ -1,20 +1,14 @@
 #define _POSIX_C_SOURCE 200809L
 
-#include <math.h>
 #include <mpi.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-
-#ifndef NO_X11
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#endif
 
 #include "julia_common.h"
+#include "julia_viewer.h"
 
 /*
  * Tags do protocolo mestre/escravo (todas em MPI_COMM_WORLD):
@@ -41,8 +35,7 @@ static void usage(const char *program) {
             "%s"
             "  --chunk N              Linhas por tarefa (granularidade, padrao: 1)\n"
             "  --rank-stats           Mostra host, tarefas, iteracoes e tempo ocupado de cada escravo\n"
-            "  --pingpong N           Nao calcula: mede N idas e voltas de mensagens de uma tarefa com cada escravo\n"
-            "  --window               Abre janela X11; c gira em torno da origem a cada quadro\n",
+            "  --pingpong N           Nao calcula: mede N idas e voltas de mensagens de uma tarefa com cada escravo\n",
             program, COMMON_OPTIONS_HELP);
 }
 
@@ -145,51 +138,6 @@ static void pingpong_worker(uint32_t *block, const Options *o) {
     }
 }
 
-#ifndef NO_X11
-typedef struct { Display *display; Window window; XImage *image; } Viewer;
-
-static bool viewer_open(Viewer *v, uint32_t *pixels, const Options *o) {
-    v->display = XOpenDisplay(NULL);
-    if (v->display == NULL) return false;
-    int screen = DefaultScreen(v->display);
-    v->window = XCreateSimpleWindow(v->display, RootWindow(v->display, screen), 0, 0, o->width, o->height, 1,
-                                    BlackPixel(v->display, screen), WhitePixel(v->display, screen));
-    XStoreName(v->display, v->window, "Julia C + MPI (tecla para sair)");
-    XSelectInput(v->display, v->window, ExposureMask | KeyPressMask);
-    XMapWindow(v->display, v->window);
-    v->image = XCreateImage(v->display, DefaultVisual(v->display, screen), DefaultDepth(v->display, screen), ZPixmap,
-                            0, (char *)pixels, o->width, o->height, 32, 0);
-    return true;
-}
-
-/* Desenha o quadro e devolve false se alguma tecla foi pressionada. */
-static bool viewer_show(Viewer *v) {
-    XPutImage(v->display, v->window, DefaultGC(v->display, DefaultScreen(v->display)), v->image, 0, 0, 0, 0,
-              v->image->width, v->image->height);
-    XFlush(v->display);
-    nanosleep(&(struct timespec){.tv_nsec = 33000000}, NULL);
-    bool running = true;
-    while (XPending(v->display) > 0) {
-        XEvent event;
-        XNextEvent(v->display, &event);
-        if (event.type == KeyPress) running = false;
-    }
-    return running;
-}
-
-static void viewer_close(Viewer *v) {
-    v->image->data = NULL; /* os pixels sao do programa, nao do XImage */
-    XDestroyImage(v->image);
-    XDestroyWindow(v->display, v->window);
-    XCloseDisplay(v->display);
-}
-#else
-typedef int Viewer;
-static bool viewer_open(Viewer *v, uint32_t *pixels, const Options *o) { (void)v; (void)pixels; (void)o; return false; }
-static bool viewer_show(Viewer *v) { (void)v; return false; }
-static void viewer_close(Viewer *v) { (void)v; }
-#endif
-
 int main(int argc, char **argv) {
     MPI_Init(&argc, &argv);
     int rank, procs;
@@ -230,15 +178,14 @@ int main(int argc, char **argv) {
         o.window = false;
     }
 
-    Viewer viewer = {0};
-    if (rank == 0 && o.window && !viewer_open(&viewer, pixels, &o)) {
+    Viewer *viewer = rank == 0 && o.window ? viewer_open(pixels, &o, "Julia MPI (tecla para sair)") : NULL;
+    if (rank == 0 && o.window && viewer == NULL) {
         fprintf(stderr, "Nao foi possivel abrir o display X11 (ou compilado com X11=0).\n");
         MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
     }
 
     /* Na janela, c gira em torno da origem mantendo |c|; sem janela fica fixo. */
     double c_re = o.c_re, c_im = o.c_im;
-    double angle = atan2(c_im, c_re), radius = hypot(c_re, c_im);
     bool running = true;
     for (int frame = 0;; ++frame) {
         /* O mestre decide se ha mais um quadro e com qual c; os escravos recebem. */
@@ -282,14 +229,12 @@ int main(int argc, char **argv) {
         }
 
         if (o.window) {
-            running = viewer_show(&viewer);
-            angle += 0.005;
-            c_re = radius * cos(angle);
-            c_im = radius * sin(angle);
+            running = viewer_show(viewer);
+            viewer_next_c(&c_re, &c_im);
         }
     }
 
-    if (rank == 0 && o.window) viewer_close(&viewer);
+    viewer_close(viewer);
     if (csv != NULL) fclose(csv);
     free(hosts);
     free(done_at);

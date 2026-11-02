@@ -11,6 +11,7 @@
 #include <time.h>
 
 #include "julia_common.h"
+#include "julia_viewer.h"
 
 static void usage(const char *program) {
     fprintf(stderr, "Uso: %s [opcoes]\n%s", program, COMMON_OPTIONS_HELP);
@@ -25,7 +26,7 @@ static double now_seconds(void) {
 int main(int argc, char **argv) {
     Options o;
     /* --chunk e aceito para os scripts poderem passar os mesmos argumentos, mas nao tem efeito aqui. */
-    if (!parse_options(argc, argv, &o) || o.window || o.rank_stats || o.pingpong > 0) {
+    if (!parse_options(argc, argv, &o) || o.rank_stats || o.pingpong > 0) {
         usage(argv[0]);
         return EXIT_FAILURE;
     }
@@ -37,16 +38,30 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    for (int frame = 0; frame < o.frames; ++frame) {
-        /* Mesma regiao medida do mestre MPI: so o calculo; checksum e saida ficam de fora. */
-        double start = now_seconds();
-        uint64_t total = 0;
-        for (int y = 0; y < o.height; ++y) total += render_row(pixels + (size_t)y * o.width, y, &o, o.c_re, o.c_im);
-        double seconds = now_seconds() - start;
-
-        report_frame(csv, &o, frame, o.c_re, o.c_im, "seq", 1, 0, seconds, total, image_checksum(pixels, &o));
+    Viewer *viewer = o.window ? viewer_open(pixels, &o, "Julia sequencial (tecla para sair)") : NULL;
+    if (o.window && viewer == NULL) {
+        fprintf(stderr, "Nao foi possivel abrir o display X11 (ou compilado com X11=0).\n");
+        return EXIT_FAILURE;
     }
 
+    /* Na janela, c gira em torno da origem mantendo |c|; sem janela fica fixo. */
+    double cx = o.c_re, cy = o.c_im;
+    bool running = true;
+    for (int frame = 0; running && frame < o.frames; ++frame) {
+        /* Mesma regiao medida do mestre MPI: so o calculo; checksum, saida e janela ficam de fora. */
+        double start = now_seconds();
+        uint64_t total = 0;
+        for (int y = 0; y < o.height; ++y) total += render_row(pixels + (size_t)y * o.width, y, &o, cx, cy);
+        double seconds = now_seconds() - start;
+
+        report_frame(csv, &o, frame, cx, cy, "seq", 1, 0, seconds, total, image_checksum(pixels, &o));
+        if (o.window) {
+            running = viewer_show(viewer);
+            viewer_next_c(&cx, &cy);
+        }
+    }
+
+    viewer_close(viewer);
     if (csv != NULL) fclose(csv);
     free(pixels);
     return EXIT_SUCCESS;

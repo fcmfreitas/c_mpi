@@ -10,7 +10,8 @@ paralelizado com MPI no modelo mestre/escravo. Cada pixel `z0` itera
 |---|---|
 | `julia_common.c/.h` | opcoes, calculo de uma linha (`render_row`), checksum e relatorio; usado pelas duas versoes |
 | `julia_seq.c` | versao sequencial de referencia (T1), **sem MPI** |
-| `julia_mpi.c` | versao mestre/escravo, ping-pong e janela X11 |
+| `julia_mpi.c` | versao mestre/escravo e ping-pong |
+| `julia_viewer.c/.h` | janela X11 opcional (`--window`), fora da regiao medida |
 
 ## Constante c
 
@@ -46,7 +47,8 @@ com `max_iter`.
 ```sh
 make                  # julia_mpi (com X11) e julia_seq
 make X11=0            # sem X11 (cluster)
-make run NP=4         # janela: c gira em torno da origem
+make run NP=4         # MPI com janela: c gira em torno da origem
+make run-seq          # sequencial com janela
 ```
 
 A sequencial usa `gcc` com as mesmas flags da paralela (`-O3 -march=native`).

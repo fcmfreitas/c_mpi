@@ -9,7 +9,8 @@ const char COMMON_OPTIONS_HELP[] =
     "  --width N --height N   Resolucao (padrao: 1280x720); --height define o numero de linhas\n"
     "  --max-iter N           Limite de iteracoes por pixel (padrao: 500)\n"
     "  --frames N             Quadros calculados em sequencia (padrao: 1)\n"
-    "  --csv ARQUIVO          Salva os tempos brutos de cada quadro\n";
+    "  --csv ARQUIVO          Salva os tempos brutos de cada quadro\n"
+    "  --window               Abre janela X11; c gira em torno da origem a cada quadro (fora da medicao)\n";
 
 static bool parse_int(const char *text, int *out) {
     char *end;
@@ -118,4 +119,6 @@ void report_frame(FILE *csv, const Options *o, int frame, double cx, double cy, 
                 o->height, o->max_iter, chunk, seconds, (unsigned long long)iterations,
                 (unsigned long long)checksum);
     }
+    /* Sem buffer acumulado: a saida do Slurm fica completa mesmo se o job for interrompido. */
+    fflush(stdout);
 }
