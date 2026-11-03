@@ -1,0 +1,1480 @@
+===== job 41996 (t2_fraca) iniciado em Mon Nov  2 23:11:12 -03 2026 =====
+nodelist=atlantica[07-08] submit_dir=/home/cp33015/c_mpi git=3e01310
+----- lscpu de cada no -----
+[atlantica07]
+CPU(s):                          16
+Thread(s) per core:              2
+Core(s) per socket:              4
+Socket(s):                       2
+NUMA node(s):                    2
+Model name:                      Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz
+CPU MHz:                         1932.602
+  rede eno1: 1000 Mb/s
+  rede eno2: 1000 Mb/s
+  rede eno3: 1000 Mb/s
+  rede eno4: 1000 Mb/s
+  rede lo:  Mb/s
+[atlantica08]
+CPU(s):                          16
+Thread(s) per core:              2
+Core(s) per socket:              4
+Socket(s):                       2
+NUMA node(s):                    2
+Model name:                      Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz
+CPU MHz:                         1985.391
+  rede eno1: 1000 Mb/s
+  rede eno2: 1000 Mb/s
+  rede eno3: 1000 Mb/s
+  rede eno4: 1000 Mb/s
+  rede lo:  Mb/s
+----- compilador -----
+gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+mpicc chama: gcc
+gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+----- parametros -----
+FIRST_NODE=atlantica07 WIDTH=3840 HEIGHT=2160 MAX_ITER=6000 CHUNK=4 REPS=10 PROCS="2 4 8 16 32 64" CHUNKS="1 2 4 8 16 32 64 128 256 512"
+----- compilacao em atlantica07 -----
+mpicc -std=c17 -O3 -march=native -Wall -Wextra -Wpedantic -DNO_X11 julia_mpi.c julia_common.c julia_viewer.c -o julia_mpi -lm
+gcc -std=c17 -O3 -march=native -Wall -Wextra -Wpedantic -DNO_X11 julia_seq.c julia_common.c julia_viewer.c -o julia_seq -lm
+----- escalabilidade fraca: chunk=4, height=2160*P, 10 repeticoes por P -----
+### exp=fraca P=2 chunk=4 height=4320 rep=1
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.691220 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.620424 s per_task=0.074648541 s done_at=80.691216 s
+### exp=fraca P=2 chunk=4 height=4320 rep=2
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.665281 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.594690 s per_task=0.074624713 s done_at=80.665275 s
+### exp=fraca P=2 chunk=4 height=4320 rep=3
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.657038 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.587060 s per_task=0.074617649 s done_at=80.657033 s
+### exp=fraca P=2 chunk=4 height=4320 rep=4
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.658276 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.587742 s per_task=0.074618280 s done_at=80.658273 s
+### exp=fraca P=2 chunk=4 height=4320 rep=5
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.692396 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.621941 s per_task=0.074649945 s done_at=80.692392 s
+### exp=fraca P=2 chunk=4 height=4320 rep=6
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.674324 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.603869 s per_task=0.074633212 s done_at=80.674318 s
+### exp=fraca P=2 chunk=4 height=4320 rep=7
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.697311 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.625994 s per_task=0.074653698 s done_at=80.697305 s
+### exp=fraca P=2 chunk=4 height=4320 rep=8
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.695511 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.625205 s per_task=0.074652968 s done_at=80.695506 s
+### exp=fraca P=2 chunk=4 height=4320 rep=9
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.732076 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.661979 s per_task=0.074687018 s done_at=80.732071 s
+### exp=fraca P=2 chunk=4 height=4320 rep=10
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 2 --ntasks-per-node=2 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 4320 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=2 width=3840 height=4320 max_iter=6000 chunk=4 time=80.654659 s iterations=14493044937 checksum=d22ed37fc9357d13
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=1080 iterations=14493044937 busy=80.584417 s per_task=0.074615201 s done_at=80.654652 s
+### exp=fraca P=4 chunk=4 height=8640 rep=1
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=54.267437 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=719 iterations=9635945643 busy=54.220891 s per_task=0.075411532 s done_at=54.267240 s
+  rank=2 host=atlantica07 tasks=717 iterations=9626739401 busy=54.229159 s per_task=0.075633416 s done_at=54.267294 s
+  rank=3 host=atlantica07 tasks=724 iterations=9721684713 busy=54.220629 s per_task=0.074890371 s done_at=54.267437 s
+### exp=fraca P=4 chunk=4 height=8640 rep=2
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.793222 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=720 iterations=9662785843 busy=53.746649 s per_task=0.074648123 s done_at=53.793114 s
+  rank=2 host=atlantica07 tasks=720 iterations=9660208234 busy=53.754689 s per_task=0.074659290 s done_at=53.793222 s
+  rank=3 host=atlantica07 tasks=720 iterations=9661375680 busy=53.746734 s per_task=0.074648242 s done_at=53.793049 s
+### exp=fraca P=4 chunk=4 height=8640 rep=3
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.794475 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=720 iterations=9662141972 busy=53.747391 s per_task=0.074649154 s done_at=53.794415 s
+  rank=2 host=atlantica07 tasks=720 iterations=9660790919 busy=53.755355 s per_task=0.074660215 s done_at=53.794475 s
+  rank=3 host=atlantica07 tasks=720 iterations=9661436866 busy=53.747607 s per_task=0.074649455 s done_at=53.794350 s
+### exp=fraca P=4 chunk=4 height=8640 rep=4
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.797576 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=722 iterations=9661948060 busy=53.750464 s per_task=0.074446626 s done_at=53.797576 s
+  rank=2 host=atlantica07 tasks=718 iterations=9660684430 busy=53.758177 s per_task=0.074872113 s done_at=53.797201 s
+  rank=3 host=atlantica07 tasks=720 iterations=9661737267 busy=53.750529 s per_task=0.074653512 s done_at=53.797381 s
+### exp=fraca P=4 chunk=4 height=8640 rep=5
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.782568 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=720 iterations=9659399559 busy=53.736952 s per_task=0.074634656 s done_at=53.782518 s
+  rank=2 host=atlantica07 tasks=722 iterations=9662073789 busy=53.744769 s per_task=0.074438738 s done_at=53.782567 s
+  rank=3 host=atlantica07 tasks=718 iterations=9662896409 busy=53.737157 s per_task=0.074842837 s done_at=53.782344 s
+### exp=fraca P=4 chunk=4 height=8640 rep=6
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.789777 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=719 iterations=9662787565 busy=53.743257 s per_task=0.074747229 s done_at=53.789558 s
+  rank=2 host=atlantica07 tasks=722 iterations=9660915977 busy=53.751362 s per_task=0.074447870 s done_at=53.789777 s
+  rank=3 host=atlantica07 tasks=719 iterations=9660666215 busy=53.743187 s per_task=0.074747131 s done_at=53.789728 s
+### exp=fraca P=4 chunk=4 height=8640 rep=7
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.821110 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=719 iterations=9668548626 busy=53.774889 s per_task=0.074791222 s done_at=53.820932 s
+  rank=2 host=atlantica07 tasks=722 iterations=9650183682 busy=53.783746 s per_task=0.074492722 s done_at=53.821110 s
+  rank=3 host=atlantica07 tasks=719 iterations=9665637449 busy=53.775460 s per_task=0.074792017 s done_at=53.821061 s
+### exp=fraca P=4 chunk=4 height=8640 rep=8
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.785737 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=719 iterations=9662999779 busy=53.738897 s per_task=0.074741164 s done_at=53.785614 s
+  rank=2 host=atlantica07 tasks=721 iterations=9660249416 busy=53.747154 s per_task=0.074545289 s done_at=53.785737 s
+  rank=3 host=atlantica07 tasks=720 iterations=9661120562 busy=53.739456 s per_task=0.074638134 s done_at=53.785689 s
+### exp=fraca P=4 chunk=4 height=8640 rep=9
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.783201 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=721 iterations=9659077794 busy=53.737128 s per_task=0.074531384 s done_at=53.783032 s
+  rank=2 host=atlantica07 tasks=720 iterations=9662195725 busy=53.745413 s per_task=0.074646408 s done_at=53.783201 s
+  rank=3 host=atlantica07 tasks=719 iterations=9663096238 busy=53.737439 s per_task=0.074739137 s done_at=53.783097 s
+### exp=fraca P=4 chunk=4 height=8640 rep=10
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 4 --ntasks-per-node=4 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 8640 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=4 width=3840 height=8640 max_iter=6000 chunk=4 time=53.783442 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=720 iterations=9662644949 busy=53.737382 s per_task=0.074635253 s done_at=53.783442 s
+  rank=2 host=atlantica07 tasks=720 iterations=9661428190 busy=53.744397 s per_task=0.074644996 s done_at=53.783085 s
+  rank=3 host=atlantica07 tasks=720 iterations=9660296618 busy=53.736734 s per_task=0.074634353 s done_at=53.783151 s
+### exp=fraca P=8 chunk=4 height=17280 rep=1
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.650320 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=618 iterations=8281416840 busy=48.609922 s per_task=0.078656831 s done_at=48.649977 s
+  rank=2 host=atlantica07 tasks=617 iterations=8279364625 busy=48.616771 s per_task=0.078795414 s done_at=48.650031 s
+  rank=3 host=atlantica07 tasks=617 iterations=8281194449 busy=48.610073 s per_task=0.078784559 s done_at=48.650269 s
+  rank=4 host=atlantica07 tasks=617 iterations=8283313875 busy=48.617280 s per_task=0.078796239 s done_at=48.650207 s
+  rank=5 host=atlantica07 tasks=617 iterations=8281422080 busy=48.609905 s per_task=0.078784287 s done_at=48.650093 s
+  rank=6 host=atlantica07 tasks=617 iterations=8281041757 busy=48.616025 s per_task=0.078794206 s done_at=48.650320 s
+  rank=7 host=atlantica07 tasks=617 iterations=8281179677 busy=48.609244 s per_task=0.078783215 s done_at=48.650155 s
+### exp=fraca P=8 chunk=4 height=17280 rep=2
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.647613 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=616 iterations=8281071597 busy=48.606311 s per_task=0.078906350 s done_at=48.647384 s
+  rank=2 host=atlantica07 tasks=618 iterations=8282314398 busy=48.613432 s per_task=0.078662511 s done_at=48.647433 s
+  rank=3 host=atlantica07 tasks=616 iterations=8278921197 busy=48.604508 s per_task=0.078903422 s done_at=48.647239 s
+  rank=4 host=atlantica07 tasks=618 iterations=8282603629 busy=48.613238 s per_task=0.078662197 s done_at=48.647483 s
+  rank=5 host=atlantica07 tasks=617 iterations=8281091323 busy=48.605833 s per_task=0.078777688 s done_at=48.647612 s
+  rank=6 host=atlantica07 tasks=618 iterations=8282296572 busy=48.612473 s per_task=0.078660960 s done_at=48.647298 s
+  rank=7 host=atlantica07 tasks=617 iterations=8280634587 busy=48.604386 s per_task=0.078775342 s done_at=48.647543 s
+### exp=fraca P=8 chunk=4 height=17280 rep=3
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.649903 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=617 iterations=8281279712 busy=48.607943 s per_task=0.078781106 s done_at=48.649564 s
+  rank=2 host=atlantica07 tasks=618 iterations=8279650809 busy=48.615793 s per_task=0.078666332 s done_at=48.649665 s
+  rank=3 host=atlantica07 tasks=617 iterations=8281315415 busy=48.608611 s per_task=0.078782190 s done_at=48.649837 s
+  rank=4 host=atlantica07 tasks=618 iterations=8282934326 busy=48.615362 s per_task=0.078665634 s done_at=48.649614 s
+  rank=5 host=atlantica07 tasks=617 iterations=8279600108 busy=48.609064 s per_task=0.078782924 s done_at=48.649903 s
+  rank=6 host=atlantica07 tasks=616 iterations=8282821757 busy=48.615577 s per_task=0.078921391 s done_at=48.649493 s
+  rank=7 host=atlantica07 tasks=617 iterations=8281331176 busy=48.608849 s per_task=0.078782575 s done_at=48.649753 s
+### exp=fraca P=8 chunk=4 height=17280 rep=4
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.647569 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=617 iterations=8281139503 busy=48.606652 s per_task=0.078779014 s done_at=48.647359 s
+  rank=2 host=atlantica07 tasks=618 iterations=8282021925 busy=48.612650 s per_task=0.078661246 s done_at=48.647232 s
+  rank=3 host=atlantica07 tasks=617 iterations=8281004620 busy=48.605555 s per_task=0.078777237 s done_at=48.647423 s
+  rank=4 host=atlantica07 tasks=618 iterations=8282362070 busy=48.612700 s per_task=0.078661328 s done_at=48.647475 s
+  rank=5 host=atlantica07 tasks=617 iterations=8279166671 busy=48.606037 s per_task=0.078778017 s done_at=48.647569 s
+  rank=6 host=atlantica07 tasks=617 iterations=8282416484 busy=48.613050 s per_task=0.078789384 s done_at=48.647177 s
+  rank=7 host=atlantica07 tasks=616 iterations=8280822030 busy=48.605636 s per_task=0.078905254 s done_at=48.647295 s
+### exp=fraca P=8 chunk=4 height=17280 rep=5
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.647242 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=617 iterations=8280982105 busy=48.606540 s per_task=0.078778832 s done_at=48.647192 s
+  rank=2 host=atlantica07 tasks=618 iterations=8282134638 busy=48.612481 s per_task=0.078660973 s done_at=48.647241 s
+  rank=3 host=atlantica07 tasks=616 iterations=8281054761 busy=48.605937 s per_task=0.078905742 s done_at=48.646969 s
+  rank=4 host=atlantica07 tasks=618 iterations=8282606714 busy=48.612830 s per_task=0.078661538 s done_at=48.646908 s
+  rank=5 host=atlantica07 tasks=617 iterations=8281044805 busy=48.605946 s per_task=0.078777871 s done_at=48.647059 s
+  rank=6 host=atlantica07 tasks=617 iterations=8282106174 busy=48.611974 s per_task=0.078787640 s done_at=48.646848 s
+  rank=7 host=atlantica07 tasks=617 iterations=8279004106 busy=48.605140 s per_task=0.078776564 s done_at=48.647128 s
+### exp=fraca P=8 chunk=4 height=17280 rep=6
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.647833 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=618 iterations=8280368162 busy=48.606399 s per_task=0.078651132 s done_at=48.647783 s
+  rank=2 host=atlantica07 tasks=617 iterations=8282340827 busy=48.613619 s per_task=0.078790307 s done_at=48.647505 s
+  rank=3 host=atlantica07 tasks=617 iterations=8281063215 busy=48.606323 s per_task=0.078778481 s done_at=48.647569 s
+  rank=4 host=atlantica07 tasks=618 iterations=8282399182 busy=48.613687 s per_task=0.078662923 s done_at=48.647832 s
+  rank=5 host=atlantica07 tasks=617 iterations=8281371520 busy=48.606901 s per_task=0.078779418 s done_at=48.647634 s
+  rank=6 host=atlantica07 tasks=617 iterations=8282284906 busy=48.613114 s per_task=0.078789488 s done_at=48.647685 s
+  rank=7 host=atlantica07 tasks=616 iterations=8279105491 busy=48.605546 s per_task=0.078905107 s done_at=48.647450 s
+### exp=fraca P=8 chunk=4 height=17280 rep=7
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.647357 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=618 iterations=8280773414 busy=48.605577 s per_task=0.078649801 s done_at=48.647306 s
+  rank=2 host=atlantica07 tasks=618 iterations=8282048320 busy=48.612323 s per_task=0.078660717 s done_at=48.647101 s
+  rank=3 host=atlantica07 tasks=617 iterations=8280983812 busy=48.606067 s per_task=0.078778066 s done_at=48.647176 s
+  rank=4 host=atlantica07 tasks=617 iterations=8282559447 busy=48.612665 s per_task=0.078788760 s done_at=48.646968 s
+  rank=5 host=atlantica07 tasks=617 iterations=8279128687 busy=48.605988 s per_task=0.078777939 s done_at=48.647240 s
+  rank=6 host=atlantica07 tasks=617 iterations=8282473083 busy=48.613037 s per_task=0.078789363 s done_at=48.647357 s
+  rank=7 host=atlantica07 tasks=616 iterations=8280966540 busy=48.606007 s per_task=0.078905856 s done_at=48.647050 s
+### exp=fraca P=8 chunk=4 height=17280 rep=8
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.649270 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=616 iterations=8280237632 busy=48.608180 s per_task=0.078909384 s done_at=48.648897 s
+  rank=2 host=atlantica07 tasks=618 iterations=8282320531 busy=48.615014 s per_task=0.078665071 s done_at=48.649270 s
+  rank=3 host=atlantica07 tasks=617 iterations=8281221695 busy=48.608617 s per_task=0.078782199 s done_at=48.649218 s
+  rank=4 host=atlantica07 tasks=618 iterations=8282266232 busy=48.614700 s per_task=0.078664563 s done_at=48.649155 s
+  rank=5 host=atlantica07 tasks=617 iterations=8281125713 busy=48.608854 s per_task=0.078782583 s done_at=48.649104 s
+  rank=6 host=atlantica07 tasks=618 iterations=8280672835 busy=48.614959 s per_task=0.078664982 s done_at=48.649017 s
+  rank=7 host=atlantica07 tasks=616 iterations=8281088665 busy=48.608033 s per_task=0.078909144 s done_at=48.648965 s
+### exp=fraca P=8 chunk=4 height=17280 rep=9
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.651616 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=617 iterations=8278154481 busy=48.611055 s per_task=0.078786151 s done_at=48.651244 s
+  rank=2 host=atlantica07 tasks=618 iterations=8282082496 busy=48.617515 s per_task=0.078669118 s done_at=48.651418 s
+  rank=3 host=atlantica07 tasks=617 iterations=8281996809 busy=48.611567 s per_task=0.078786980 s done_at=48.651616 s
+  rank=4 host=atlantica07 tasks=617 iterations=8281881189 busy=48.617608 s per_task=0.078796772 s done_at=48.651469 s
+  rank=5 host=atlantica07 tasks=617 iterations=8280768967 busy=48.611351 s per_task=0.078786631 s done_at=48.651533 s
+  rank=6 host=atlantica07 tasks=617 iterations=8282295703 busy=48.617399 s per_task=0.078796433 s done_at=48.651303 s
+  rank=7 host=atlantica07 tasks=617 iterations=8281753658 busy=48.610731 s per_task=0.078785626 s done_at=48.651367 s
+### exp=fraca P=8 chunk=4 height=17280 rep=10
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 1 -w atlantica07 -n 8 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 17280 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=8 width=3840 height=17280 max_iter=6000 chunk=4 time=48.647472 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=617 iterations=8281067918 busy=48.606325 s per_task=0.078778485 s done_at=48.647201 s
+  rank=2 host=atlantica07 tasks=617 iterations=8282409637 busy=48.612850 s per_task=0.078789060 s done_at=48.647085 s
+  rank=3 host=atlantica07 tasks=617 iterations=8279081220 busy=48.606461 s per_task=0.078778704 s done_at=48.647290 s
+  rank=4 host=atlantica07 tasks=617 iterations=8282213309 busy=48.612890 s per_task=0.078789125 s done_at=48.647141 s
+  rank=5 host=atlantica07 tasks=617 iterations=8281106925 busy=48.606434 s per_task=0.078778661 s done_at=48.647409 s
+  rank=6 host=atlantica07 tasks=618 iterations=8282137362 busy=48.612829 s per_task=0.078661535 s done_at=48.647342 s
+  rank=7 host=atlantica07 tasks=617 iterations=8280916932 busy=48.605783 s per_task=0.078777605 s done_at=48.647472 s
+### exp=fraca P=16 chunk=4 height=34560 rep=1
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.643948 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=595 iterations=7762900831 busy=45.573165 s per_task=0.076593555 s done_at=45.642262 s
+  rank=2 host=atlantica07 tasks=592 iterations=7754723266 busy=45.582367 s per_task=0.076997242 s done_at=45.642843 s
+  rank=3 host=atlantica07 tasks=593 iterations=7758044380 busy=45.573339 s per_task=0.076852174 s done_at=45.642386 s
+  rank=4 host=atlantica07 tasks=593 iterations=7761292716 busy=45.582012 s per_task=0.076866800 s done_at=45.642689 s
+  rank=5 host=atlantica07 tasks=594 iterations=7762424268 busy=45.573665 s per_task=0.076723341 s done_at=45.642911 s
+  rank=6 host=atlantica07 tasks=592 iterations=7758970254 busy=45.581748 s per_task=0.076996196 s done_at=45.642435 s
+  rank=7 host=atlantica07 tasks=592 iterations=7763308057 busy=45.573441 s per_task=0.076982165 s done_at=45.642504 s
+  rank=8 host=atlantica08 tasks=570 iterations=7703457063 busy=45.231795 s per_task=0.079354027 s done_at=45.642742 s
+  rank=9 host=atlantica08 tasks=561 iterations=7704532877 busy=45.223743 s per_task=0.080612732 s done_at=45.642098 s
+  rank=10 host=atlantica08 tasks=559 iterations=7698002034 busy=45.220041 s per_task=0.080894529 s done_at=45.643948 s
+  rank=11 host=atlantica08 tasks=559 iterations=7702697120 busy=45.216685 s per_task=0.080888524 s done_at=45.643053 s
+  rank=12 host=atlantica08 tasks=561 iterations=7701271173 busy=45.217741 s per_task=0.080602034 s done_at=45.643549 s
+  rank=13 host=atlantica08 tasks=560 iterations=7702687699 busy=45.224612 s per_task=0.080758235 s done_at=45.643104 s
+  rank=14 host=atlantica08 tasks=561 iterations=7702841253 busy=45.221079 s per_task=0.080607985 s done_at=45.642792 s
+  rank=15 host=atlantica08 tasks=558 iterations=7701397900 busy=45.225001 s per_task=0.081048388 s done_at=45.642317 s
+### exp=fraca P=16 chunk=4 height=34560 rep=2
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.645118 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=593 iterations=7754628382 busy=45.577030 s per_task=0.076858398 s done_at=45.644166 s
+  rank=2 host=atlantica07 tasks=594 iterations=7763211985 busy=45.582592 s per_task=0.076738371 s done_at=45.643928 s
+  rank=3 host=atlantica07 tasks=593 iterations=7762018032 busy=45.575574 s per_task=0.076855943 s done_at=45.643990 s
+  rank=4 host=atlantica07 tasks=595 iterations=7760795622 busy=45.584576 s per_task=0.076612732 s done_at=45.643771 s
+  rank=5 host=atlantica07 tasks=590 iterations=7756492036 busy=45.575336 s per_task=0.077246332 s done_at=45.644229 s
+  rank=6 host=atlantica07 tasks=594 iterations=7764357477 busy=45.583969 s per_task=0.076740688 s done_at=45.644278 s
+  rank=7 host=atlantica07 tasks=589 iterations=7758121188 busy=45.575339 s per_task=0.077377486 s done_at=45.643587 s
+  rank=8 host=atlantica08 tasks=571 iterations=7700757950 busy=45.236582 s per_task=0.079223437 s done_at=45.643828 s
+  rank=9 host=atlantica08 tasks=560 iterations=7700592660 busy=45.220954 s per_task=0.080751704 s done_at=45.644537 s
+  rank=10 host=atlantica08 tasks=560 iterations=7703353585 busy=45.225306 s per_task=0.080759474 s done_at=45.644330 s
+  rank=11 host=atlantica08 tasks=559 iterations=7702958718 busy=45.225076 s per_task=0.080903535 s done_at=45.645118 s
+  rank=12 host=atlantica08 tasks=562 iterations=7702478566 busy=45.226126 s per_task=0.080473533 s done_at=45.644993 s
+  rank=13 host=atlantica08 tasks=560 iterations=7705987348 busy=45.227754 s per_task=0.080763846 s done_at=45.643877 s
+  rank=14 host=atlantica08 tasks=561 iterations=7701111412 busy=45.218928 s per_task=0.080604150 s done_at=45.644379 s
+  rank=15 host=atlantica08 tasks=559 iterations=7701685930 busy=45.224518 s per_task=0.080902536 s done_at=45.644632 s
+### exp=fraca P=16 chunk=4 height=34560 rep=3
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.645918 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=594 iterations=7756002107 busy=45.576797 s per_task=0.076728614 s done_at=45.644880 s
+  rank=2 host=atlantica07 tasks=595 iterations=7761486171 busy=45.583859 s per_task=0.076611527 s done_at=45.644938 s
+  rank=3 host=atlantica07 tasks=593 iterations=7759381312 busy=45.577553 s per_task=0.076859280 s done_at=45.645000 s
+  rank=4 host=atlantica07 tasks=594 iterations=7764542280 busy=45.583699 s per_task=0.076740235 s done_at=45.645048 s
+  rank=5 host=atlantica07 tasks=591 iterations=7756201890 busy=45.575179 s per_task=0.077115362 s done_at=45.644543 s
+  rank=6 host=atlantica07 tasks=593 iterations=7764654235 busy=45.583205 s per_task=0.076868812 s done_at=45.644306 s
+  rank=7 host=atlantica07 tasks=592 iterations=7760783549 busy=45.574955 s per_task=0.076984721 s done_at=45.644612 s
+  rank=8 host=atlantica08 tasks=571 iterations=7700143337 busy=45.222919 s per_task=0.079199507 s done_at=45.645098 s
+  rank=9 host=atlantica08 tasks=559 iterations=7696652744 busy=45.225399 s per_task=0.080904112 s done_at=45.645918 s
+  rank=10 host=atlantica08 tasks=560 iterations=7701585032 busy=45.224430 s per_task=0.080757910 s done_at=45.644666 s
+  rank=11 host=atlantica08 tasks=559 iterations=7702852583 busy=45.216143 s per_task=0.080887554 s done_at=45.645447 s
+  rank=12 host=atlantica08 tasks=562 iterations=7703541146 busy=45.226604 s per_task=0.080474384 s done_at=45.645843 s
+  rank=13 host=atlantica08 tasks=558 iterations=7701581702 busy=45.214850 s per_task=0.081030198 s done_at=45.645391 s
+  rank=14 host=atlantica08 tasks=560 iterations=7704951033 busy=45.222538 s per_task=0.080754533 s done_at=45.645147 s
+  rank=15 host=atlantica08 tasks=559 iterations=7704191770 busy=45.224609 s per_task=0.080902699 s done_at=45.644717 s
+### exp=fraca P=16 chunk=4 height=34560 rep=4
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.644389 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=593 iterations=7759708984 busy=45.572696 s per_task=0.076851089 s done_at=45.643138 s
+  rank=2 host=atlantica07 tasks=593 iterations=7760884128 busy=45.580738 s per_task=0.076864650 s done_at=45.642603 s
+  rank=3 host=atlantica07 tasks=591 iterations=7759634974 busy=45.573183 s per_task=0.077111986 s done_at=45.642927 s
+  rank=4 host=atlantica07 tasks=592 iterations=7761568132 busy=45.580843 s per_task=0.076994667 s done_at=45.643201 s
+  rank=5 host=atlantica07 tasks=593 iterations=7760700387 busy=45.572967 s per_task=0.076851547 s done_at=45.642670 s
+  rank=6 host=atlantica07 tasks=594 iterations=7763151466 busy=45.580532 s per_task=0.076734903 s done_at=45.643254 s
+  rank=7 host=atlantica07 tasks=591 iterations=7757009055 busy=45.572023 s per_task=0.077110022 s done_at=45.642756 s
+  rank=8 host=atlantica08 tasks=571 iterations=7700586593 busy=45.223651 s per_task=0.079200791 s done_at=45.643306 s
+  rank=9 host=atlantica08 tasks=561 iterations=7702150416 busy=45.227968 s per_task=0.080620263 s done_at=45.643854 s
+  rank=10 host=atlantica08 tasks=559 iterations=7703673804 busy=45.226135 s per_task=0.080905429 s done_at=45.642808 s
+  rank=11 host=atlantica08 tasks=560 iterations=7702299427 busy=45.223087 s per_task=0.080755512 s done_at=45.643370 s
+  rank=12 host=atlantica08 tasks=563 iterations=7702418151 busy=45.215690 s per_task=0.080312060 s done_at=45.644389 s
+  rank=13 host=atlantica08 tasks=560 iterations=7703064463 busy=45.221438 s per_task=0.080752568 s done_at=45.642860 s
+  rank=14 host=atlantica08 tasks=562 iterations=7703008440 busy=45.215979 s per_task=0.080455478 s done_at=45.643635 s
+  rank=15 host=atlantica08 tasks=557 iterations=7698692471 busy=45.211618 s per_task=0.081169870 s done_at=45.643516 s
+### exp=fraca P=16 chunk=4 height=34560 rep=5
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.650252 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=593 iterations=7753725217 busy=45.577603 s per_task=0.076859364 s done_at=45.649514 s
+  rank=2 host=atlantica07 tasks=597 iterations=7760719463 busy=45.587730 s per_task=0.076361357 s done_at=45.649403 s
+  rank=3 host=atlantica07 tasks=593 iterations=7760384643 busy=45.579046 s per_task=0.076861797 s done_at=45.649576 s
+  rank=4 host=atlantica07 tasks=595 iterations=7761248827 busy=45.584321 s per_task=0.076612305 s done_at=45.649095 s
+  rank=5 host=atlantica07 tasks=592 iterations=7761199519 busy=45.576895 s per_task=0.076987999 s done_at=45.648792 s
+  rank=6 host=atlantica07 tasks=594 iterations=7764377371 busy=45.581006 s per_task=0.076735701 s done_at=45.649145 s
+  rank=7 host=atlantica07 tasks=590 iterations=7759220106 busy=45.576024 s per_task=0.077247498 s done_at=45.648855 s
+  rank=8 host=atlantica08 tasks=570 iterations=7698649121 busy=45.217277 s per_task=0.079328555 s done_at=45.650112 s
+  rank=9 host=atlantica08 tasks=561 iterations=7703315326 busy=45.226677 s per_task=0.080617963 s done_at=45.649195 s
+  rank=10 host=atlantica08 tasks=558 iterations=7701221940 busy=45.213179 s per_task=0.081027202 s done_at=45.649246 s
+  rank=11 host=atlantica08 tasks=559 iterations=7703503510 busy=45.226359 s per_task=0.080905830 s done_at=45.650252 s
+  rank=12 host=atlantica08 tasks=562 iterations=7702737281 busy=45.226825 s per_task=0.080474778 s done_at=45.649701 s
+  rank=13 host=atlantica08 tasks=559 iterations=7701124515 busy=45.223500 s per_task=0.080900716 s done_at=45.649451 s
+  rank=14 host=atlantica08 tasks=560 iterations=7705908906 busy=45.228645 s per_task=0.080765438 s done_at=45.648906 s
+  rank=15 host=atlantica08 tasks=557 iterations=7701215146 busy=45.215674 s per_task=0.081177152 s done_at=45.649798 s
+### exp=fraca P=16 chunk=4 height=34560 rep=6
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.644627 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=594 iterations=7760561113 busy=45.575721 s per_task=0.076726803 s done_at=45.643068 s
+  rank=2 host=atlantica07 tasks=594 iterations=7761210193 busy=45.582391 s per_task=0.076738033 s done_at=45.643359 s
+  rank=3 host=atlantica07 tasks=592 iterations=7753608963 busy=45.575467 s per_task=0.076985586 s done_at=45.643428 s
+  rank=4 host=atlantica07 tasks=594 iterations=7759074685 busy=45.582326 s per_task=0.076737923 s done_at=45.643476 s
+  rank=5 host=atlantica07 tasks=592 iterations=7760046153 busy=45.574936 s per_task=0.076984688 s done_at=45.643766 s
+  rank=6 host=atlantica07 tasks=592 iterations=7762379412 busy=45.582124 s per_task=0.076996831 s done_at=45.642880 s
+  rank=7 host=atlantica07 tasks=592 iterations=7761809268 busy=45.574470 s per_task=0.076983903 s done_at=45.643132 s
+  rank=8 host=atlantica08 tasks=572 iterations=7700206983 busy=45.228717 s per_task=0.079071184 s done_at=45.643526 s
+  rank=9 host=atlantica08 tasks=560 iterations=7704428506 busy=45.221559 s per_task=0.080752783 s done_at=45.644627 s
+  rank=10 host=atlantica08 tasks=559 iterations=7700765194 busy=45.224778 s per_task=0.080903002 s done_at=45.643923 s
+  rank=11 host=atlantica08 tasks=558 iterations=7702379219 busy=45.226324 s per_task=0.081050759 s done_at=45.644126 s
+  rank=12 host=atlantica08 tasks=561 iterations=7703052595 busy=45.222175 s per_task=0.080609937 s done_at=45.644284 s
+  rank=13 host=atlantica08 tasks=559 iterations=7702678861 busy=45.220717 s per_task=0.080895737 s done_at=45.643576 s
+  rank=14 host=atlantica08 tasks=561 iterations=7704727473 busy=45.225726 s per_task=0.080616267 s done_at=45.643184 s
+  rank=15 host=atlantica08 tasks=560 iterations=7701622273 busy=45.219215 s per_task=0.080748599 s done_at=45.643816 s
+### exp=fraca P=16 chunk=4 height=34560 rep=7
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.647379 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=593 iterations=7759938612 busy=45.577105 s per_task=0.076858524 s done_at=45.645636 s
+  rank=2 host=atlantica07 tasks=591 iterations=7757660760 busy=45.585260 s per_task=0.077132420 s done_at=45.645697 s
+  rank=3 host=atlantica07 tasks=590 iterations=7753991171 busy=45.579171 s per_task=0.077252833 s done_at=45.645754 s
+  rank=4 host=atlantica07 tasks=596 iterations=7762342332 busy=45.585782 s per_task=0.076486212 s done_at=45.645997 s
+  rank=5 host=atlantica07 tasks=593 iterations=7763596098 busy=45.577113 s per_task=0.076858537 s done_at=45.645822 s
+  rank=6 host=atlantica07 tasks=594 iterations=7759902641 busy=45.585230 s per_task=0.076742811 s done_at=45.646047 s
+  rank=7 host=atlantica07 tasks=593 iterations=7761059273 busy=45.577017 s per_task=0.076858377 s done_at=45.646288 s
+  rank=8 host=atlantica08 tasks=572 iterations=7697685246 busy=45.231919 s per_task=0.079076782 s done_at=45.646733 s
+  rank=9 host=atlantica08 tasks=559 iterations=7701916313 busy=45.211888 s per_task=0.080879943 s done_at=45.646894 s
+  rank=10 host=atlantica08 tasks=559 iterations=7704230219 busy=45.224336 s per_task=0.080902211 s done_at=45.646095 s
+  rank=11 host=atlantica08 tasks=559 iterations=7703252480 busy=45.215314 s per_task=0.080886071 s done_at=45.647379 s
+  rank=12 host=atlantica08 tasks=561 iterations=7704820241 busy=45.227748 s per_task=0.080619871 s done_at=45.646433 s
+  rank=13 host=atlantica08 tasks=560 iterations=7702560558 busy=45.228515 s per_task=0.080765206 s done_at=45.646338 s
+  rank=14 host=atlantica08 tasks=562 iterations=7705409395 busy=45.225995 s per_task=0.080473300 s done_at=45.647239 s
+  rank=15 host=atlantica08 tasks=558 iterations=7700185552 busy=45.218944 s per_task=0.081037534 s done_at=45.646146 s
+### exp=fraca P=16 chunk=4 height=34560 rep=8
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.649071 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=593 iterations=7760187337 busy=45.577354 s per_task=0.076858944 s done_at=45.647454 s
+  rank=2 host=atlantica07 tasks=594 iterations=7761743391 busy=45.584729 s per_task=0.076741968 s done_at=45.647679 s
+  rank=3 host=atlantica07 tasks=592 iterations=7759769130 busy=45.577725 s per_task=0.076989400 s done_at=45.647900 s
+  rank=4 host=atlantica07 tasks=593 iterations=7762438571 busy=45.584538 s per_task=0.076871060 s done_at=45.647722 s
+  rank=5 host=atlantica07 tasks=590 iterations=7753853284 busy=45.578599 s per_task=0.077251863 s done_at=45.647147 s
+  rank=6 host=atlantica07 tasks=591 iterations=7761898013 busy=45.584484 s per_task=0.077131107 s done_at=45.647202 s
+  rank=7 host=atlantica07 tasks=591 iterations=7757915097 busy=45.577199 s per_task=0.077118781 s done_at=45.647520 s
+  rank=8 host=atlantica08 tasks=573 iterations=7701643610 busy=45.229874 s per_task=0.078935208 s done_at=45.648044 s
+  rank=9 host=atlantica08 tasks=562 iterations=7702971576 busy=45.226766 s per_task=0.080474673 s done_at=45.648491 s
+  rank=10 host=atlantica08 tasks=560 iterations=7699166370 busy=45.228895 s per_task=0.080765884 s done_at=45.647997 s
+  rank=11 host=atlantica08 tasks=560 iterations=7704077011 busy=45.227829 s per_task=0.080763980 s done_at=45.647573 s
+  rank=12 host=atlantica08 tasks=563 iterations=7703302311 busy=45.217403 s per_task=0.080315103 s done_at=45.649017 s
+  rank=13 host=atlantica08 tasks=561 iterations=7703598360 busy=45.224303 s per_task=0.080613730 s done_at=45.648541 s
+  rank=14 host=atlantica08 tasks=560 iterations=7701699302 busy=45.228355 s per_task=0.080764920 s done_at=45.649071 s
+  rank=15 host=atlantica08 tasks=557 iterations=7704287528 busy=45.224844 s per_task=0.081193615 s done_at=45.647623 s
+### exp=fraca P=16 chunk=4 height=34560 rep=9
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.646496 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=592 iterations=7757815851 busy=45.576643 s per_task=0.076987572 s done_at=45.645115 s
+  rank=2 host=atlantica07 tasks=593 iterations=7759200832 busy=45.585014 s per_task=0.076871862 s done_at=45.645737 s
+  rank=3 host=atlantica07 tasks=591 iterations=7753729062 busy=45.577054 s per_task=0.077118534 s done_at=45.645285 s
+  rank=4 host=atlantica07 tasks=595 iterations=7760324749 busy=45.584669 s per_task=0.076612889 s done_at=45.645570 s
+  rank=5 host=atlantica07 tasks=591 iterations=7757880065 busy=45.576636 s per_task=0.077117827 s done_at=45.645349 s
+  rank=6 host=atlantica07 tasks=593 iterations=7762064224 busy=45.584064 s per_task=0.076870259 s done_at=45.645400 s
+  rank=7 host=atlantica07 tasks=591 iterations=7763835438 busy=45.576163 s per_task=0.077117027 s done_at=45.644922 s
+  rank=8 host=atlantica08 tasks=572 iterations=7698981200 busy=45.221971 s per_task=0.079059390 s done_at=45.645624 s
+  rank=9 host=atlantica08 tasks=560 iterations=7702470788 busy=45.221821 s per_task=0.080753252 s done_at=45.646496 s
+  rank=10 host=atlantica08 tasks=561 iterations=7704861011 busy=45.227866 s per_task=0.080620082 s done_at=45.646358 s
+  rank=11 host=atlantica08 tasks=561 iterations=7703107747 busy=45.229993 s per_task=0.080623874 s done_at=45.645674 s
+  rank=12 host=atlantica08 tasks=562 iterations=7702826387 busy=45.221213 s per_task=0.080464791 s done_at=45.645168 s
+  rank=13 host=atlantica08 tasks=559 iterations=7704559004 busy=45.227922 s per_task=0.080908626 s done_at=45.645220 s
+  rank=14 host=atlantica08 tasks=560 iterations=7703284277 busy=45.225121 s per_task=0.080759145 s done_at=45.646002 s
+  rank=15 host=atlantica08 tasks=559 iterations=7703610256 busy=45.222755 s per_task=0.080899383 s done_at=45.645900 s
+### exp=fraca P=16 chunk=4 height=34560 rep=10
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 16 --ntasks-per-node=8 --cpu-bind=cores ./julia_mpi --width 3840 --max-iter 6000 --height 34560 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=16 width=3840 height=34560 max_iter=6000 chunk=4 time=45.646297 s iterations=115938550891 checksum=4cd8e0bce6035263
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=596 iterations=7760367741 busy=45.578330 s per_task=0.076473708 s done_at=45.645364 s
+  rank=2 host=atlantica07 tasks=595 iterations=7759007140 busy=45.585334 s per_task=0.076614008 s done_at=45.644847 s
+  rank=3 host=atlantica07 tasks=594 iterations=7760021174 busy=45.577356 s per_task=0.076729555 s done_at=45.644922 s
+  rank=4 host=atlantica07 tasks=594 iterations=7758686287 busy=45.585242 s per_task=0.076742832 s done_at=45.645464 s
+  rank=5 host=atlantica07 tasks=594 iterations=7762353205 busy=45.575972 s per_task=0.076727225 s done_at=45.645533 s
+  rank=6 host=atlantica07 tasks=593 iterations=7764450642 busy=45.584362 s per_task=0.076870763 s done_at=45.644634 s
+  rank=7 host=atlantica07 tasks=591 iterations=7754306390 busy=45.577252 s per_task=0.077118869 s done_at=45.644985 s
+  rank=8 host=atlantica08 tasks=572 iterations=7702067503 busy=45.229428 s per_task=0.079072427 s done_at=45.645583 s
+  rank=9 host=atlantica08 tasks=560 iterations=7705105305 busy=45.225675 s per_task=0.080760133 s done_at=45.645809 s
+  rank=10 host=atlantica08 tasks=559 iterations=7702958388 busy=45.222153 s per_task=0.080898305 s done_at=45.645045 s
+  rank=11 host=atlantica08 tasks=558 iterations=7700841073 busy=45.226112 s per_task=0.081050380 s done_at=45.646297 s
+  rank=12 host=atlantica08 tasks=560 iterations=7703800720 busy=45.221142 s per_task=0.080752039 s done_at=45.645097 s
+  rank=13 host=atlantica08 tasks=559 iterations=7702114749 busy=45.218519 s per_task=0.080891804 s done_at=45.645737 s
+  rank=14 host=atlantica08 tasks=558 iterations=7702657782 busy=45.222921 s per_task=0.081044661 s done_at=45.644689 s
+  rank=15 host=atlantica08 tasks=557 iterations=7699812792 busy=45.217843 s per_task=0.081181047 s done_at=45.645415 s
+### exp=fraca P=32 chunk=4 height=69120 rep=1
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.851023 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=574 iterations=7465417270 busy=52.742323 s per_task=0.091885580 s done_at=52.849623 s
+  rank=2 host=atlantica07 tasks=647 iterations=8527696559 busy=52.733636 s per_task=0.081504847 s done_at=52.849933 s
+  rank=3 host=atlantica07 tasks=569 iterations=7463568468 busy=52.739863 s per_task=0.092688687 s done_at=52.850016 s
+  rank=4 host=atlantica07 tasks=568 iterations=7468867112 busy=52.744660 s per_task=0.092860317 s done_at=52.850081 s
+  rank=5 host=atlantica07 tasks=568 iterations=7459597490 busy=52.738287 s per_task=0.092849096 s done_at=52.850162 s
+  rank=6 host=atlantica07 tasks=566 iterations=7458629891 busy=52.741911 s per_task=0.093183589 s done_at=52.848043 s
+  rank=7 host=atlantica07 tasks=570 iterations=7471927100 busy=52.738072 s per_task=0.092522933 s done_at=52.848123 s
+  rank=8 host=atlantica07 tasks=568 iterations=7468515018 busy=52.745440 s per_task=0.092861691 s done_at=52.848182 s
+  rank=9 host=atlantica07 tasks=568 iterations=7472710834 busy=52.734145 s per_task=0.092841804 s done_at=52.848259 s
+  rank=10 host=atlantica07 tasks=565 iterations=7465341561 busy=52.741296 s per_task=0.093347427 s done_at=52.850228 s
+  rank=11 host=atlantica07 tasks=564 iterations=7458497302 busy=52.735799 s per_task=0.093503190 s done_at=52.850308 s
+  rank=12 host=atlantica07 tasks=566 iterations=7469874431 busy=52.742085 s per_task=0.093183896 s done_at=52.848321 s
+  rank=13 host=atlantica07 tasks=565 iterations=7472204607 busy=52.734926 s per_task=0.093336153 s done_at=52.850385 s
+  rank=14 host=atlantica07 tasks=564 iterations=7465082312 busy=52.739999 s per_task=0.093510636 s done_at=52.848389 s
+  rank=15 host=atlantica07 tasks=562 iterations=7462624201 busy=52.733997 s per_task=0.093832734 s done_at=52.848475 s
+  rank=16 host=atlantica08 tasks=548 iterations=7431141049 busy=52.378959 s per_task=0.095582042 s done_at=52.850452 s
+  rank=17 host=atlantica08 tasks=544 iterations=7427677612 busy=52.378533 s per_task=0.096284067 s done_at=52.848545 s
+  rank=18 host=atlantica08 tasks=543 iterations=7426621774 busy=52.371613 s per_task=0.096448642 s done_at=52.848614 s
+  rank=19 host=atlantica08 tasks=543 iterations=7429291767 busy=52.381052 s per_task=0.096466026 s done_at=52.848682 s
+  rank=20 host=atlantica08 tasks=542 iterations=7426039742 busy=52.375491 s per_task=0.096633747 s done_at=52.850521 s
+  rank=21 host=atlantica08 tasks=544 iterations=7427706140 busy=52.383079 s per_task=0.096292425 s done_at=52.850588 s
+  rank=22 host=atlantica08 tasks=543 iterations=7423576633 busy=52.379417 s per_task=0.096463014 s done_at=52.850659 s
+  rank=23 host=atlantica08 tasks=542 iterations=7424193548 busy=52.380316 s per_task=0.096642649 s done_at=52.848754 s
+  rank=24 host=atlantica08 tasks=543 iterations=7427509658 busy=52.387737 s per_task=0.096478337 s done_at=52.848822 s
+  rank=25 host=atlantica08 tasks=541 iterations=7424815681 busy=52.377656 s per_task=0.096816370 s done_at=52.850725 s
+  rank=26 host=atlantica08 tasks=544 iterations=7427070240 busy=52.371145 s per_task=0.096270487 s done_at=52.848888 s
+  rank=27 host=atlantica08 tasks=544 iterations=7424548963 busy=52.378186 s per_task=0.096283429 s done_at=52.849696 s
+  rank=28 host=atlantica08 tasks=544 iterations=7428779256 busy=52.386332 s per_task=0.096298404 s done_at=52.851023 s
+  rank=29 host=atlantica08 tasks=543 iterations=7427831633 busy=52.379960 s per_task=0.096464014 s done_at=52.849798 s
+  rank=30 host=atlantica08 tasks=543 iterations=7423868298 busy=52.380588 s per_task=0.096465172 s done_at=52.849864 s
+  rank=31 host=atlantica08 tasks=545 iterations=7426632245 busy=52.384851 s per_task=0.096118993 s done_at=52.850957 s
+### exp=fraca P=32 chunk=4 height=69120 rep=2
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.875795 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=567 iterations=7463310693 busy=52.760663 s per_task=0.093052316 s done_at=52.872962 s
+  rank=2 host=atlantica07 tasks=649 iterations=8444918549 busy=52.763966 s per_task=0.081300410 s done_at=52.874717 s
+  rank=3 host=atlantica07 tasks=568 iterations=7468112436 busy=52.761692 s per_task=0.092890303 s done_at=52.873043 s
+  rank=4 host=atlantica07 tasks=568 iterations=7470458524 busy=52.768793 s per_task=0.092902805 s done_at=52.873105 s
+  rank=5 host=atlantica07 tasks=568 iterations=7466709130 busy=52.761884 s per_task=0.092890641 s done_at=52.873179 s
+  rank=6 host=atlantica07 tasks=569 iterations=7469656132 busy=52.768586 s per_task=0.092739168 s done_at=52.873238 s
+  rank=7 host=atlantica07 tasks=567 iterations=7464845756 busy=52.760559 s per_task=0.093052133 s done_at=52.873309 s
+  rank=8 host=atlantica07 tasks=568 iterations=7471719954 busy=52.768777 s per_task=0.092902776 s done_at=52.873380 s
+  rank=9 host=atlantica07 tasks=570 iterations=7474629518 busy=52.760535 s per_task=0.092562343 s done_at=52.874797 s
+  rank=10 host=atlantica07 tasks=569 iterations=7470577440 busy=52.768482 s per_task=0.092738984 s done_at=52.874865 s
+  rank=11 host=atlantica07 tasks=568 iterations=7469163646 busy=52.762129 s per_task=0.092891072 s done_at=52.874944 s
+  rank=12 host=atlantica07 tasks=567 iterations=7468733959 busy=52.767725 s per_task=0.093064771 s done_at=52.875008 s
+  rank=13 host=atlantica07 tasks=569 iterations=7476311006 busy=52.763338 s per_task=0.092729944 s done_at=52.873460 s
+  rank=14 host=atlantica07 tasks=566 iterations=7468657992 busy=52.766301 s per_task=0.093226681 s done_at=52.873526 s
+  rank=15 host=atlantica07 tasks=564 iterations=7463932525 busy=52.759553 s per_task=0.093545307 s done_at=52.873604 s
+  rank=16 host=atlantica08 tasks=547 iterations=7429001758 busy=52.395121 s per_task=0.095786327 s done_at=52.875077 s
+  rank=17 host=atlantica08 tasks=545 iterations=7430798556 busy=52.408127 s per_task=0.096161701 s done_at=52.873674 s
+  rank=18 host=atlantica08 tasks=541 iterations=7427443391 busy=52.398302 s per_task=0.096854533 s done_at=52.875729 s
+  rank=19 host=atlantica08 tasks=541 iterations=7429400947 busy=52.392357 s per_task=0.096843544 s done_at=52.875145 s
+  rank=20 host=atlantica08 tasks=542 iterations=7423826372 busy=52.387769 s per_task=0.096656400 s done_at=52.873748 s
+  rank=21 host=atlantica08 tasks=542 iterations=7428874798 busy=52.411319 s per_task=0.096699851 s done_at=52.875213 s
+  rank=22 host=atlantica08 tasks=540 iterations=7424017720 busy=52.388419 s per_task=0.097015590 s done_at=52.873816 s
+  rank=23 host=atlantica08 tasks=542 iterations=7431371114 busy=52.393243 s per_task=0.096666501 s done_at=52.875283 s
+  rank=24 host=atlantica08 tasks=543 iterations=7424900620 busy=52.394247 s per_task=0.096490326 s done_at=52.873883 s
+  rank=25 host=atlantica08 tasks=540 iterations=7426514809 busy=52.393122 s per_task=0.097024300 s done_at=52.873950 s
+  rank=26 host=atlantica08 tasks=541 iterations=7432539759 busy=52.405645 s per_task=0.096868105 s done_at=52.874019 s
+  rank=27 host=atlantica08 tasks=543 iterations=7430266985 busy=52.386851 s per_task=0.096476705 s done_at=52.875348 s
+  rank=28 host=atlantica08 tasks=543 iterations=7433305580 busy=52.399948 s per_task=0.096500825 s done_at=52.875794 s
+  rank=29 host=atlantica08 tasks=546 iterations=7433375632 busy=52.406924 s per_task=0.095983378 s done_at=52.875419 s
+  rank=30 host=atlantica08 tasks=545 iterations=7431686768 busy=52.405153 s per_task=0.096156245 s done_at=52.874084 s
+  rank=31 host=atlantica08 tasks=542 iterations=7428796326 busy=52.403099 s per_task=0.096684685 s done_at=52.875667 s
+### exp=fraca P=32 chunk=4 height=69120 rep=3
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.873972 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=566 iterations=7469509322 busy=52.761209 s per_task=0.093217683 s done_at=52.870987 s
+  rank=2 host=atlantica07 tasks=644 iterations=8446915213 busy=52.758089 s per_task=0.081922498 s done_at=52.871889 s
+  rank=3 host=atlantica07 tasks=565 iterations=7464235483 busy=52.759750 s per_task=0.093380089 s done_at=52.871069 s
+  rank=4 host=atlantica07 tasks=569 iterations=7473531541 busy=52.770044 s per_task=0.092741730 s done_at=52.871134 s
+  rank=5 host=atlantica07 tasks=564 iterations=7455556850 busy=52.761177 s per_task=0.093548187 s done_at=52.871215 s
+  rank=6 host=atlantica07 tasks=569 iterations=7468311321 busy=52.768605 s per_task=0.092739200 s done_at=52.871281 s
+  rank=7 host=atlantica07 tasks=570 iterations=7477342418 busy=52.761193 s per_task=0.092563496 s done_at=52.871973 s
+  rank=8 host=atlantica07 tasks=571 iterations=7473204240 busy=52.769602 s per_task=0.092416115 s done_at=52.872049 s
+  rank=9 host=atlantica07 tasks=570 iterations=7476509945 busy=52.763613 s per_task=0.092567743 s done_at=52.872133 s
+  rank=10 host=atlantica07 tasks=569 iterations=7468095176 busy=52.769612 s per_task=0.092740971 s done_at=52.872199 s
+  rank=11 host=atlantica07 tasks=567 iterations=7466409585 busy=52.763307 s per_task=0.093056978 s done_at=52.872276 s
+  rank=12 host=atlantica07 tasks=569 iterations=7467177777 busy=52.769717 s per_task=0.092741155 s done_at=52.872343 s
+  rank=13 host=atlantica07 tasks=568 iterations=7476973308 busy=52.760899 s per_task=0.092888906 s done_at=52.872430 s
+  rank=14 host=atlantica07 tasks=566 iterations=7469036758 busy=52.766092 s per_task=0.093226310 s done_at=52.872496 s
+  rank=15 host=atlantica07 tasks=565 iterations=7463500517 busy=52.760085 s per_task=0.093380681 s done_at=52.872579 s
+  rank=16 host=atlantica08 tasks=544 iterations=7425967415 busy=52.379850 s per_task=0.096286489 s done_at=52.872648 s
+  rank=17 host=atlantica08 tasks=546 iterations=7432784990 busy=52.392983 s per_task=0.095957843 s done_at=52.872722 s
+  rank=18 host=atlantica08 tasks=545 iterations=7422453530 busy=52.381837 s per_task=0.096113462 s done_at=52.872793 s
+  rank=19 host=atlantica08 tasks=545 iterations=7430176773 busy=52.393875 s per_task=0.096135551 s done_at=52.873699 s
+  rank=20 host=atlantica08 tasks=544 iterations=7426318279 busy=52.397030 s per_task=0.096318071 s done_at=52.873767 s
+  rank=21 host=atlantica08 tasks=544 iterations=7427598570 busy=52.410181 s per_task=0.096342245 s done_at=52.870767 s
+  rank=22 host=atlantica08 tasks=541 iterations=7425534157 busy=52.388229 s per_task=0.096835913 s done_at=52.870834 s
+  rank=23 host=atlantica08 tasks=541 iterations=7429068855 busy=52.402952 s per_task=0.096863127 s done_at=52.872861 s
+  rank=24 host=atlantica08 tasks=543 iterations=7429089124 busy=52.390219 s per_task=0.096482908 s done_at=52.873838 s
+  rank=25 host=atlantica08 tasks=543 iterations=7430195961 busy=52.407017 s per_task=0.096513843 s done_at=52.873906 s
+  rank=26 host=atlantica08 tasks=540 iterations=7425783069 busy=52.396780 s per_task=0.097031074 s done_at=52.873972 s
+  rank=27 host=atlantica08 tasks=543 iterations=7430293851 busy=52.401437 s per_task=0.096503567 s done_at=52.870903 s
+  rank=28 host=atlantica08 tasks=542 iterations=7430904267 busy=52.403321 s per_task=0.096685093 s done_at=52.873629 s
+  rank=29 host=atlantica08 tasks=543 iterations=7430118219 busy=52.390648 s per_task=0.096483699 s done_at=52.872932 s
+  rank=30 host=atlantica08 tasks=542 iterations=7434043726 busy=52.404538 s per_task=0.096687339 s done_at=52.873001 s
+  rank=31 host=atlantica08 tasks=542 iterations=7431218155 busy=52.398457 s per_task=0.096676120 s done_at=52.873068 s
+### exp=fraca P=32 chunk=4 height=69120 rep=4
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.849614 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=578 iterations=7474616597 busy=52.742424 s per_task=0.091249869 s done_at=52.848614 s
+  rank=2 host=atlantica07 tasks=643 iterations=8526231220 busy=52.733716 s per_task=0.082012000 s done_at=52.846887 s
+  rank=3 host=atlantica07 tasks=568 iterations=7456107621 busy=52.735922 s per_task=0.092844932 s done_at=52.846966 s
+  rank=4 host=atlantica07 tasks=571 iterations=7472445808 busy=52.743076 s per_task=0.092369660 s done_at=52.847030 s
+  rank=5 host=atlantica07 tasks=569 iterations=7467268295 busy=52.737552 s per_task=0.092684626 s done_at=52.847115 s
+  rank=6 host=atlantica07 tasks=568 iterations=7464430089 busy=52.744532 s per_task=0.092860091 s done_at=52.847180 s
+  rank=7 host=atlantica07 tasks=569 iterations=7467422009 busy=52.734140 s per_task=0.092678628 s done_at=52.847258 s
+  rank=8 host=atlantica07 tasks=570 iterations=7471003416 busy=52.743325 s per_task=0.092532150 s done_at=52.847323 s
+  rank=9 host=atlantica07 tasks=571 iterations=7472356872 busy=52.735646 s per_task=0.092356648 s done_at=52.848973 s
+  rank=10 host=atlantica07 tasks=567 iterations=7464651071 busy=52.744160 s per_task=0.093023210 s done_at=52.849043 s
+  rank=11 host=atlantica07 tasks=567 iterations=7461858803 busy=52.735127 s per_task=0.093007279 s done_at=52.849121 s
+  rank=12 host=atlantica07 tasks=566 iterations=7464185219 busy=52.743752 s per_task=0.093186840 s done_at=52.849186 s
+  rank=13 host=atlantica07 tasks=562 iterations=7459650669 busy=52.732489 s per_task=0.093830051 s done_at=52.847404 s
+  rank=14 host=atlantica07 tasks=564 iterations=7463523698 busy=52.740336 s per_task=0.093511235 s done_at=52.847471 s
+  rank=15 host=atlantica07 tasks=564 iterations=7470366958 busy=52.732045 s per_task=0.093496533 s done_at=52.847550 s
+  rank=16 host=atlantica08 tasks=546 iterations=7425822834 busy=52.383706 s per_task=0.095940853 s done_at=52.849254 s
+  rank=17 host=atlantica08 tasks=543 iterations=7428665334 busy=52.380780 s per_task=0.096465524 s done_at=52.847618 s
+  rank=18 host=atlantica08 tasks=543 iterations=7424365857 busy=52.380891 s per_task=0.096465730 s done_at=52.849325 s
+  rank=19 host=atlantica08 tasks=540 iterations=7427725218 busy=52.375915 s per_task=0.096992435 s done_at=52.847689 s
+  rank=20 host=atlantica08 tasks=543 iterations=7427652335 busy=52.384508 s per_task=0.096472391 s done_at=52.847754 s
+  rank=21 host=atlantica08 tasks=540 iterations=7425508325 busy=52.379089 s per_task=0.096998313 s done_at=52.849394 s
+  rank=22 host=atlantica08 tasks=543 iterations=7427687896 busy=52.386293 s per_task=0.096475678 s done_at=52.849458 s
+  rank=23 host=atlantica08 tasks=542 iterations=7427477300 busy=52.382057 s per_task=0.096645862 s done_at=52.847817 s
+  rank=24 host=atlantica08 tasks=540 iterations=7423807335 busy=52.373480 s per_task=0.096987927 s done_at=52.848686 s
+  rank=25 host=atlantica08 tasks=543 iterations=7424863048 busy=52.377888 s per_task=0.096460198 s done_at=52.849614 s
+  rank=26 host=atlantica08 tasks=543 iterations=7429745532 busy=52.381187 s per_task=0.096466275 s done_at=52.846675 s
+  rank=27 host=atlantica08 tasks=544 iterations=7426011896 busy=52.372176 s per_task=0.096272383 s done_at=52.846748 s
+  rank=28 host=atlantica08 tasks=543 iterations=7424231795 busy=52.375323 s per_task=0.096455476 s done_at=52.848755 s
+  rank=29 host=atlantica08 tasks=543 iterations=7429856192 busy=52.376779 s per_task=0.096458157 s done_at=52.848822 s
+  rank=30 host=atlantica08 tasks=544 iterations=7420202073 busy=52.369235 s per_task=0.096266976 s done_at=52.848887 s
+  rank=31 host=atlantica08 tasks=543 iterations=7428117080 busy=52.379497 s per_task=0.096463161 s done_at=52.846817 s
+### exp=fraca P=32 chunk=4 height=69120 rep=5
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.870608 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=568 iterations=7465048873 busy=52.760286 s per_task=0.092887828 s done_at=52.869746 s
+  rank=2 host=atlantica07 tasks=650 iterations=8456326676 busy=52.758161 s per_task=0.081166402 s done_at=52.869315 s
+  rank=3 host=atlantica07 tasks=568 iterations=7468257653 busy=52.758103 s per_task=0.092883985 s done_at=52.869824 s
+  rank=4 host=atlantica07 tasks=570 iterations=7474812301 busy=52.765119 s per_task=0.092570383 s done_at=52.869889 s
+  rank=5 host=atlantica07 tasks=567 iterations=7465216738 busy=52.759107 s per_task=0.093049572 s done_at=52.867639 s
+  rank=6 host=atlantica07 tasks=568 iterations=7470644570 busy=52.764117 s per_task=0.092894571 s done_at=52.867704 s
+  rank=7 host=atlantica07 tasks=567 iterations=7468824512 busy=52.757527 s per_task=0.093046785 s done_at=52.867781 s
+  rank=8 host=atlantica07 tasks=568 iterations=7476018676 busy=52.764928 s per_task=0.092896000 s done_at=52.867846 s
+  rank=9 host=atlantica07 tasks=568 iterations=7472820240 busy=52.756795 s per_task=0.092881682 s done_at=52.867926 s
+  rank=10 host=atlantica07 tasks=567 iterations=7467489834 busy=52.762179 s per_task=0.093054989 s done_at=52.867990 s
+  rank=11 host=atlantica07 tasks=566 iterations=7464068758 busy=52.755650 s per_task=0.093207862 s done_at=52.869972 s
+  rank=12 host=atlantica07 tasks=568 iterations=7472288424 busy=52.764190 s per_task=0.092894701 s done_at=52.870037 s
+  rank=13 host=atlantica07 tasks=566 iterations=7462802350 busy=52.753997 s per_task=0.093204941 s done_at=52.868069 s
+  rank=14 host=atlantica07 tasks=567 iterations=7468645588 busy=52.764328 s per_task=0.093058779 s done_at=52.870102 s
+  rank=15 host=atlantica07 tasks=564 iterations=7466097127 busy=52.755124 s per_task=0.093537453 s done_at=52.868150 s
+  rank=16 host=atlantica08 tasks=546 iterations=7428388836 busy=52.401434 s per_task=0.095973322 s done_at=52.868228 s
+  rank=17 host=atlantica08 tasks=543 iterations=7429819960 busy=52.396723 s per_task=0.096494887 s done_at=52.868297 s
+  rank=18 host=atlantica08 tasks=543 iterations=7430093682 busy=52.399069 s per_task=0.096499205 s done_at=52.868367 s
+  rank=19 host=atlantica08 tasks=543 iterations=7432779885 busy=52.394570 s per_task=0.096490921 s done_at=52.868436 s
+  rank=20 host=atlantica08 tasks=543 iterations=7428697071 busy=52.398603 s per_task=0.096498348 s done_at=52.868503 s
+  rank=21 host=atlantica08 tasks=540 iterations=7426394927 busy=52.391831 s per_task=0.097021909 s done_at=52.870171 s
+  rank=22 host=atlantica08 tasks=541 iterations=7423238620 busy=52.399518 s per_task=0.096856780 s done_at=52.870243 s
+  rank=23 host=atlantica08 tasks=541 iterations=7427549311 busy=52.385750 s per_task=0.096831332 s done_at=52.870309 s
+  rank=24 host=atlantica08 tasks=544 iterations=7429462720 busy=52.386612 s per_task=0.096298919 s done_at=52.868569 s
+  rank=25 host=atlantica08 tasks=545 iterations=7431896308 busy=52.391925 s per_task=0.096131972 s done_at=52.869388 s
+  rank=26 host=atlantica08 tasks=546 iterations=7430375145 busy=52.389443 s per_task=0.095951361 s done_at=52.869458 s
+  rank=27 host=atlantica08 tasks=542 iterations=7425967091 busy=52.383136 s per_task=0.096647853 s done_at=52.869527 s
+  rank=28 host=atlantica08 tasks=545 iterations=7427540560 busy=52.401166 s per_task=0.096148929 s done_at=52.869594 s
+  rank=29 host=atlantica08 tasks=543 iterations=7431274972 busy=52.391014 s per_task=0.096484372 s done_at=52.870543 s
+  rank=30 host=atlantica08 tasks=543 iterations=7430087961 busy=52.382990 s per_task=0.096469595 s done_at=52.870608 s
+  rank=31 host=atlantica08 tasks=540 iterations=7424929026 busy=52.382784 s per_task=0.097005156 s done_at=52.869662 s
+### exp=fraca P=32 chunk=4 height=69120 rep=6
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.871357 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=570 iterations=7466357106 busy=52.762424 s per_task=0.092565657 s done_at=52.868754 s
+  rank=2 host=atlantica07 tasks=649 iterations=8442956689 busy=52.760636 s per_task=0.081295278 s done_at=52.869610 s
+  rank=3 host=atlantica07 tasks=569 iterations=7469110549 busy=52.762611 s per_task=0.092728666 s done_at=52.868835 s
+  rank=4 host=atlantica07 tasks=570 iterations=7475697053 busy=52.769290 s per_task=0.092577702 s done_at=52.868903 s
+  rank=5 host=atlantica07 tasks=567 iterations=7463291580 busy=52.760225 s per_task=0.093051542 s done_at=52.868986 s
+  rank=6 host=atlantica07 tasks=568 iterations=7470493833 busy=52.767172 s per_task=0.092899951 s done_at=52.870531 s
+  rank=7 host=atlantica07 tasks=570 iterations=7470378071 busy=52.760159 s per_task=0.092561682 s done_at=52.870613 s
+  rank=8 host=atlantica07 tasks=571 iterations=7476485944 busy=52.767939 s per_task=0.092413204 s done_at=52.870676 s
+  rank=9 host=atlantica07 tasks=568 iterations=7476270235 busy=52.759373 s per_task=0.092886221 s done_at=52.869066 s
+  rank=10 host=atlantica07 tasks=566 iterations=7463969405 busy=52.764851 s per_task=0.093224119 s done_at=52.869679 s
+  rank=11 host=atlantica07 tasks=567 iterations=7467379012 busy=52.761041 s per_task=0.093052983 s done_at=52.869759 s
+  rank=12 host=atlantica07 tasks=565 iterations=7465800853 busy=52.768594 s per_task=0.093395742 s done_at=52.869824 s
+  rank=13 host=atlantica07 tasks=566 iterations=7476712048 busy=52.760345 s per_task=0.093216158 s done_at=52.869905 s
+  rank=14 host=atlantica07 tasks=565 iterations=7467414337 busy=52.765692 s per_task=0.093390605 s done_at=52.869970 s
+  rank=15 host=atlantica07 tasks=566 iterations=7462271237 busy=52.759317 s per_task=0.093214342 s done_at=52.870051 s
+  rank=16 host=atlantica08 tasks=545 iterations=7431420491 busy=52.378100 s per_task=0.096106606 s done_at=52.870120 s
+  rank=17 host=atlantica08 tasks=543 iterations=7428806270 busy=52.395901 s per_task=0.096493371 s done_at=52.870190 s
+  rank=18 host=atlantica08 tasks=540 iterations=7420902094 busy=52.392002 s per_task=0.097022226 s done_at=52.870255 s
+  rank=19 host=atlantica08 tasks=544 iterations=7432405446 busy=52.407991 s per_task=0.096338219 s done_at=52.870326 s
+  rank=20 host=atlantica08 tasks=543 iterations=7428803508 busy=52.393484 s per_task=0.096488921 s done_at=52.871084 s
+  rank=21 host=atlantica08 tasks=542 iterations=7428523218 busy=52.402180 s per_task=0.096682990 s done_at=52.871154 s
+  rank=22 host=atlantica08 tasks=544 iterations=7429768807 busy=52.404661 s per_task=0.096332097 s done_at=52.871224 s
+  rank=23 host=atlantica08 tasks=543 iterations=7426247125 busy=52.401528 s per_task=0.096503735 s done_at=52.871290 s
+  rank=24 host=atlantica08 tasks=543 iterations=7428774715 busy=52.403411 s per_task=0.096507202 s done_at=52.871357 s
+  rank=25 host=atlantica08 tasks=541 iterations=7427096139 busy=52.400110 s per_task=0.096857873 s done_at=52.868397 s
+  rank=26 host=atlantica08 tasks=543 iterations=7431448247 busy=52.401704 s per_task=0.096504059 s done_at=52.868464 s
+  rank=27 host=atlantica08 tasks=542 iterations=7429850379 busy=52.396314 s per_task=0.096672166 s done_at=52.868533 s
+  rank=28 host=atlantica08 tasks=542 iterations=7434933900 busy=52.402784 s per_task=0.096684103 s done_at=52.870394 s
+  rank=29 host=atlantica08 tasks=541 iterations=7426343964 busy=52.394667 s per_task=0.096847813 s done_at=52.868605 s
+  rank=30 host=atlantica08 tasks=542 iterations=7427109777 busy=52.401479 s per_task=0.096681695 s done_at=52.868669 s
+  rank=31 host=atlantica08 tasks=545 iterations=7430836363 busy=52.396256 s per_task=0.096139919 s done_at=52.870460 s
+### exp=fraca P=32 chunk=4 height=69120 rep=7
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.874053 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=577 iterations=7467806123 busy=52.764062 s per_task=0.091445514 s done_at=52.871323 s
+  rank=2 host=atlantica07 tasks=640 iterations=8450784607 busy=52.754704 s per_task=0.082429225 s done_at=52.872525 s
+  rank=3 host=atlantica07 tasks=570 iterations=7469525586 busy=52.758842 s per_task=0.092559372 s done_at=52.873423 s
+  rank=4 host=atlantica07 tasks=568 iterations=7470112988 busy=52.766084 s per_task=0.092898036 s done_at=52.872593 s
+  rank=5 host=atlantica07 tasks=566 iterations=7462408849 busy=52.758612 s per_task=0.093213095 s done_at=52.874053 s
+  rank=6 host=atlantica07 tasks=569 iterations=7470448977 busy=52.763663 s per_task=0.092730515 s done_at=52.872659 s
+  rank=7 host=atlantica07 tasks=567 iterations=7472574715 busy=52.758827 s per_task=0.093049078 s done_at=52.870636 s
+  rank=8 host=atlantica07 tasks=569 iterations=7476583509 busy=52.767198 s per_task=0.092736727 s done_at=52.871390 s
+  rank=9 host=atlantica07 tasks=566 iterations=7462013037 busy=52.760370 s per_task=0.093216202 s done_at=52.871473 s
+  rank=10 host=atlantica07 tasks=566 iterations=7462065215 busy=52.765656 s per_task=0.093225541 s done_at=52.871539 s
+  rank=11 host=atlantica07 tasks=566 iterations=7473275379 busy=52.759864 s per_task=0.093215307 s done_at=52.871621 s
+  rank=12 host=atlantica07 tasks=565 iterations=7468495318 busy=52.763790 s per_task=0.093387240 s done_at=52.871687 s
+  rank=13 host=atlantica07 tasks=565 iterations=7469550287 busy=52.756510 s per_task=0.093374354 s done_at=52.871770 s
+  rank=14 host=atlantica07 tasks=565 iterations=7469090015 busy=52.765061 s per_task=0.093389488 s done_at=52.871834 s
+  rank=15 host=atlantica07 tasks=567 iterations=7473132918 busy=52.757401 s per_task=0.093046562 s done_at=52.871911 s
+  rank=16 host=atlantica08 tasks=547 iterations=7431204020 busy=52.406685 s per_task=0.095807467 s done_at=52.871980 s
+  rank=17 host=atlantica08 tasks=545 iterations=7433780124 busy=52.397063 s per_task=0.096141400 s done_at=52.872052 s
+  rank=18 host=atlantica08 tasks=544 iterations=7426599743 busy=52.398774 s per_task=0.096321276 s done_at=52.873493 s
+  rank=19 host=atlantica08 tasks=544 iterations=7430092419 busy=52.388408 s per_task=0.096302220 s done_at=52.873561 s
+  rank=20 host=atlantica08 tasks=544 iterations=7432043839 busy=52.403093 s per_task=0.096329215 s done_at=52.872119 s
+  rank=21 host=atlantica08 tasks=543 iterations=7428550362 busy=52.405711 s per_task=0.096511438 s done_at=52.873632 s
+  rank=22 host=atlantica08 tasks=544 iterations=7429887603 busy=52.405122 s per_task=0.096332945 s done_at=52.873700 s
+  rank=23 host=atlantica08 tasks=542 iterations=7431264160 busy=52.411849 s per_task=0.096700828 s done_at=52.872187 s
+  rank=24 host=atlantica08 tasks=541 iterations=7425166421 busy=52.379030 s per_task=0.096818909 s done_at=52.872255 s
+  rank=25 host=atlantica08 tasks=544 iterations=7429962590 busy=52.394892 s per_task=0.096314139 s done_at=52.873769 s
+  rank=26 host=atlantica08 tasks=543 iterations=7426737345 busy=52.396976 s per_task=0.096495352 s done_at=52.873837 s
+  rank=27 host=atlantica08 tasks=540 iterations=7424622792 busy=52.393693 s per_task=0.097025358 s done_at=52.872325 s
+  rank=28 host=atlantica08 tasks=541 iterations=7423878656 busy=52.387905 s per_task=0.096835314 s done_at=52.872391 s
+  rank=29 host=atlantica08 tasks=543 iterations=7428067688 busy=52.401642 s per_task=0.096503945 s done_at=52.873908 s
+  rank=30 host=atlantica08 tasks=544 iterations=7430250912 busy=52.404490 s per_task=0.096331783 s done_at=52.872457 s
+  rank=31 host=atlantica08 tasks=545 iterations=7427882198 busy=52.395533 s per_task=0.096138592 s done_at=52.873970 s
+### exp=fraca P=32 chunk=4 height=69120 rep=8
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.855603 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=579 iterations=7467195136 busy=52.747768 s per_task=0.091101500 s done_at=52.852872 s
+  rank=2 host=atlantica07 tasks=646 iterations=8536039426 busy=52.736205 s per_task=0.081634992 s done_at=52.853576 s
+  rank=3 host=atlantica07 tasks=568 iterations=7468863439 busy=52.739483 s per_task=0.092851203 s done_at=52.853655 s
+  rank=4 host=atlantica07 tasks=568 iterations=7469445936 busy=52.745287 s per_task=0.092861421 s done_at=52.853722 s
+  rank=5 host=atlantica07 tasks=564 iterations=7456379176 busy=52.739363 s per_task=0.093509509 s done_at=52.854956 s
+  rank=6 host=atlantica07 tasks=564 iterations=7463243641 busy=52.746616 s per_task=0.093522370 s done_at=52.853786 s
+  rank=7 host=atlantica07 tasks=566 iterations=7464875279 busy=52.739443 s per_task=0.093179227 s done_at=52.854391 s
+  rank=8 host=atlantica07 tasks=566 iterations=7472357846 busy=52.747471 s per_task=0.093193412 s done_at=52.854312 s
+  rank=9 host=atlantica07 tasks=566 iterations=7465936845 busy=52.740028 s per_task=0.093180262 s done_at=52.854469 s
+  rank=10 host=atlantica07 tasks=566 iterations=7469216897 busy=52.742175 s per_task=0.093184054 s done_at=52.854533 s
+  rank=11 host=atlantica07 tasks=566 iterations=7463736982 busy=52.739131 s per_task=0.093178677 s done_at=52.852189 s
+  rank=12 host=atlantica07 tasks=566 iterations=7467052826 busy=52.743618 s per_task=0.093186604 s done_at=52.852255 s
+  rank=13 host=atlantica07 tasks=567 iterations=7469171154 busy=52.737521 s per_task=0.093011501 s done_at=52.852955 s
+  rank=14 host=atlantica07 tasks=566 iterations=7465303715 busy=52.746238 s per_task=0.093191233 s done_at=52.853020 s
+  rank=15 host=atlantica07 tasks=566 iterations=7463739008 busy=52.738101 s per_task=0.093176857 s done_at=52.853097 s
+  rank=16 host=atlantica08 tasks=547 iterations=7427341544 busy=52.387680 s per_task=0.095772723 s done_at=52.855407 s
+  rank=17 host=atlantica08 tasks=544 iterations=7429885249 busy=52.379675 s per_task=0.096286167 s done_at=52.854605 s
+  rank=18 host=atlantica08 tasks=541 iterations=7424622798 busy=52.360673 s per_task=0.096784977 s done_at=52.854673 s
+  rank=19 host=atlantica08 tasks=543 iterations=7425433896 busy=52.362448 s per_task=0.096431765 s done_at=52.855471 s
+  rank=20 host=atlantica08 tasks=543 iterations=7425272057 busy=52.374628 s per_task=0.096454195 s done_at=52.855538 s
+  rank=21 host=atlantica08 tasks=541 iterations=7419882134 busy=52.372677 s per_task=0.096807166 s done_at=52.853167 s
+  rank=22 host=atlantica08 tasks=544 iterations=7429547157 busy=52.375233 s per_task=0.096278002 s done_at=52.853234 s
+  rank=23 host=atlantica08 tasks=544 iterations=7423423614 busy=52.368066 s per_task=0.096264827 s done_at=52.854742 s
+  rank=24 host=atlantica08 tasks=544 iterations=7424376378 busy=52.376056 s per_task=0.096279515 s done_at=52.854809 s
+  rank=25 host=atlantica08 tasks=544 iterations=7424524769 busy=52.367002 s per_task=0.096262871 s done_at=52.855342 s
+  rank=26 host=atlantica08 tasks=544 iterations=7427646587 busy=52.388945 s per_task=0.096303208 s done_at=52.853304 s
+  rank=27 host=atlantica08 tasks=543 iterations=7429509461 busy=52.381259 s per_task=0.096466407 s done_at=52.853371 s
+  rank=28 host=atlantica08 tasks=545 iterations=7423757027 busy=52.366038 s per_task=0.096084473 s done_at=52.854876 s
+  rank=29 host=atlantica08 tasks=543 iterations=7427101083 busy=52.378508 s per_task=0.096461340 s done_at=52.853439 s
+  rank=30 host=atlantica08 tasks=542 iterations=7426915770 busy=52.364683 s per_task=0.096613807 s done_at=52.853505 s
+  rank=31 host=atlantica08 tasks=544 iterations=7426061565 busy=52.378416 s per_task=0.096283852 s done_at=52.855603 s
+### exp=fraca P=32 chunk=4 height=69120 rep=9
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.869586 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=575 iterations=7467740582 busy=52.756593 s per_task=0.091750597 s done_at=52.866920 s
+  rank=2 host=atlantica07 tasks=643 iterations=8459797821 busy=52.751117 s per_task=0.082039063 s done_at=52.868978 s
+  rank=3 host=atlantica07 tasks=569 iterations=7468925472 busy=52.757565 s per_task=0.092719797 s done_at=52.868231 s
+  rank=4 host=atlantica07 tasks=570 iterations=7470663405 busy=52.767224 s per_task=0.092574076 s done_at=52.868293 s
+  rank=5 host=atlantica07 tasks=567 iterations=7467699845 busy=52.756910 s per_task=0.093045697 s done_at=52.866230 s
+  rank=6 host=atlantica07 tasks=568 iterations=7467546965 busy=52.763149 s per_task=0.092892868 s done_at=52.866986 s
+  rank=7 host=atlantica07 tasks=568 iterations=7471741617 busy=52.754384 s per_task=0.092877436 s done_at=52.867065 s
+  rank=8 host=atlantica07 tasks=570 iterations=7474859751 busy=52.762529 s per_task=0.092565840 s done_at=52.867132 s
+  rank=9 host=atlantica07 tasks=567 iterations=7472859134 busy=52.753501 s per_task=0.093039684 s done_at=52.867216 s
+  rank=10 host=atlantica07 tasks=566 iterations=7462088366 busy=52.763811 s per_task=0.093222281 s done_at=52.867280 s
+  rank=11 host=atlantica07 tasks=566 iterations=7467590861 busy=52.752039 s per_task=0.093201482 s done_at=52.867357 s
+  rank=12 host=atlantica07 tasks=567 iterations=7469573089 busy=52.760717 s per_task=0.093052410 s done_at=52.867423 s
+  rank=13 host=atlantica07 tasks=565 iterations=7469821632 busy=52.754559 s per_task=0.093370901 s done_at=52.867502 s
+  rank=14 host=atlantica07 tasks=565 iterations=7466229568 busy=52.760084 s per_task=0.093380680 s done_at=52.869046 s
+  rank=15 host=atlantica07 tasks=562 iterations=7459071876 busy=52.754392 s per_task=0.093869024 s done_at=52.867581 s
+  rank=16 host=atlantica08 tasks=544 iterations=7431550933 busy=52.396079 s per_task=0.096316321 s done_at=52.867651 s
+  rank=17 host=atlantica08 tasks=544 iterations=7431460425 busy=52.388963 s per_task=0.096303241 s done_at=52.869114 s
+  rank=18 host=atlantica08 tasks=541 iterations=7423330154 busy=52.391694 s per_task=0.096842318 s done_at=52.869183 s
+  rank=19 host=atlantica08 tasks=545 iterations=7432193565 busy=52.384716 s per_task=0.096118745 s done_at=52.867720 s
+  rank=20 host=atlantica08 tasks=544 iterations=7423720450 busy=52.403076 s per_task=0.096329183 s done_at=52.869253 s
+  rank=21 host=atlantica08 tasks=545 iterations=7430298280 busy=52.401056 s per_task=0.096148726 s done_at=52.869320 s
+  rank=22 host=atlantica08 tasks=543 iterations=7427546664 busy=52.406465 s per_task=0.096512827 s done_at=52.869387 s
+  rank=23 host=atlantica08 tasks=540 iterations=7427942311 busy=52.400716 s per_task=0.097038363 s done_at=52.867790 s
+  rank=24 host=atlantica08 tasks=545 iterations=7428574469 busy=52.392924 s per_task=0.096133805 s done_at=52.867868 s
+  rank=25 host=atlantica08 tasks=543 iterations=7425429949 busy=52.387115 s per_task=0.096477191 s done_at=52.867939 s
+  rank=26 host=atlantica08 tasks=544 iterations=7430554712 busy=52.387695 s per_task=0.096300910 s done_at=52.869452 s
+  rank=27 host=atlantica08 tasks=542 iterations=7426570388 busy=52.379110 s per_task=0.096640425 s done_at=52.868008 s
+  rank=28 host=atlantica08 tasks=543 iterations=7431225055 busy=52.400473 s per_task=0.096501791 s done_at=52.869520 s
+  rank=29 host=atlantica08 tasks=546 iterations=7430031820 busy=52.409027 s per_task=0.095987229 s done_at=52.868081 s
+  rank=30 host=atlantica08 tasks=542 iterations=7429129980 busy=52.382468 s per_task=0.096646620 s done_at=52.869586 s
+  rank=31 host=atlantica08 tasks=541 iterations=7432089256 busy=52.389049 s per_task=0.096837429 s done_at=52.868146 s
+### exp=fraca P=32 chunk=4 height=69120 rep=10
++ env OMPI_MCA_mpi_yield_when_idle=0 srun -N 2 -n 32 --ntasks-per-node=16 --cpu-bind=threads ./julia_mpi --width 3840 --max-iter 6000 --height 69120 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=32 width=3840 height=69120 max_iter=6000 chunk=4 time=52.849719 s iterations=231877858395 checksum=102bc85b442dbbc3
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=571 iterations=7469253621 busy=52.737174 s per_task=0.092359324 s done_at=52.848523 s
+  rank=2 host=atlantica07 tasks=652 iterations=8542434331 busy=52.733225 s per_task=0.080879180 s done_at=52.847170 s
+  rank=3 host=atlantica07 tasks=568 iterations=7458837167 busy=52.736167 s per_task=0.092845364 s done_at=52.848957 s
+  rank=4 host=atlantica07 tasks=568 iterations=7464841400 busy=52.743060 s per_task=0.092857499 s done_at=52.847578 s
+  rank=5 host=atlantica07 tasks=568 iterations=7465428076 busy=52.737502 s per_task=0.092847715 s done_at=52.847656 s
+  rank=6 host=atlantica07 tasks=568 iterations=7463051073 busy=52.742900 s per_task=0.092857218 s done_at=52.847722 s
+  rank=7 host=atlantica07 tasks=568 iterations=7468795501 busy=52.732086 s per_task=0.092838180 s done_at=52.846292 s
+  rank=8 host=atlantica07 tasks=570 iterations=7471928763 busy=52.741672 s per_task=0.092529250 s done_at=52.846364 s
+  rank=9 host=atlantica07 tasks=566 iterations=7467737476 busy=52.733079 s per_task=0.093167984 s done_at=52.847803 s
+  rank=10 host=atlantica07 tasks=564 iterations=7460745299 busy=52.738932 s per_task=0.093508745 s done_at=52.846429 s
+  rank=11 host=atlantica07 tasks=564 iterations=7459787319 busy=52.732019 s per_task=0.093496487 s done_at=52.846508 s
+  rank=12 host=atlantica07 tasks=566 iterations=7469175103 busy=52.739706 s per_task=0.093179693 s done_at=52.847868 s
+  rank=13 host=atlantica07 tasks=564 iterations=7466740850 busy=52.734116 s per_task=0.093500205 s done_at=52.846590 s
+  rank=14 host=atlantica07 tasks=566 iterations=7467932600 busy=52.739875 s per_task=0.093179991 s done_at=52.847937 s
+  rank=15 host=atlantica07 tasks=564 iterations=7462801782 busy=52.733284 s per_task=0.093498731 s done_at=52.848016 s
+  rank=16 host=atlantica08 tasks=546 iterations=7426836172 busy=52.373728 s per_task=0.095922578 s done_at=52.846656 s
+  rank=17 host=atlantica08 tasks=542 iterations=7429852932 busy=52.386581 s per_task=0.096654209 s done_at=52.847239 s
+  rank=18 host=atlantica08 tasks=545 iterations=7427542921 busy=52.376301 s per_task=0.096103304 s done_at=52.848590 s
+  rank=19 host=atlantica08 tasks=542 iterations=7429997386 busy=52.379544 s per_task=0.096641225 s done_at=52.847305 s
+  rank=20 host=atlantica08 tasks=544 iterations=7422851274 busy=52.378969 s per_task=0.096284869 s done_at=52.849387 s
+  rank=21 host=atlantica08 tasks=545 iterations=7425485985 busy=52.376634 s per_task=0.096103915 s done_at=52.849321 s
+  rank=22 host=atlantica08 tasks=542 iterations=7424460085 busy=52.374939 s per_task=0.096632730 s done_at=52.847376 s
+  rank=23 host=atlantica08 tasks=542 iterations=7422944016 busy=52.373367 s per_task=0.096629828 s done_at=52.848660 s
+  rank=24 host=atlantica08 tasks=544 iterations=7429581014 busy=52.368370 s per_task=0.096265386 s done_at=52.848738 s
+  rank=25 host=atlantica08 tasks=543 iterations=7421277214 busy=52.373992 s per_task=0.096453025 s done_at=52.848805 s
+  rank=26 host=atlantica08 tasks=542 iterations=7422467535 busy=52.369234 s per_task=0.096622202 s done_at=52.849455 s
+  rank=27 host=atlantica08 tasks=543 iterations=7426563263 busy=52.369540 s per_task=0.096444824 s done_at=52.847443 s
+  rank=28 host=atlantica08 tasks=545 iterations=7425944609 busy=52.375805 s per_task=0.096102394 s done_at=52.848871 s
+  rank=29 host=atlantica08 tasks=543 iterations=7427590757 busy=52.380030 s per_task=0.096464143 s done_at=52.849523 s
+  rank=30 host=atlantica08 tasks=543 iterations=7428227028 busy=52.384236 s per_task=0.096471890 s done_at=52.847508 s
+  rank=31 host=atlantica08 tasks=542 iterations=7426745843 busy=52.367513 s per_task=0.096619028 s done_at=52.849719 s
+### exp=fraca P=64 chunk=4 height=138240 rep=1
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.678588 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=557 iterations=7312758640 busy=98.696945 s per_task=0.177193797 s done_at=104.667548 s
+  rank=2 host=atlantica07 tasks=537 iterations=7159513729 busy=99.051235 s per_task=0.184452952 s done_at=104.667628 s
+  rank=3 host=atlantica07 tasks=570 iterations=7740785228 busy=98.212242 s per_task=0.172302179 s done_at=104.667715 s
+  rank=4 host=atlantica07 tasks=546 iterations=7345500236 busy=98.021840 s per_task=0.179527179 s done_at=104.667806 s
+  rank=5 host=atlantica07 tasks=544 iterations=7233710367 busy=99.098373 s per_task=0.182166127 s done_at=104.667881 s
+  rank=6 host=atlantica07 tasks=573 iterations=7697916668 busy=98.120314 s per_task=0.171239641 s done_at=104.667970 s
+  rank=7 host=atlantica07 tasks=584 iterations=7746430344 busy=98.097866 s per_task=0.167975799 s done_at=104.676612 s
+  rank=8 host=atlantica07 tasks=547 iterations=7382136353 busy=98.005798 s per_task=0.179169649 s done_at=104.676690 s
+  rank=9 host=atlantica07 tasks=528 iterations=7116660498 busy=98.133048 s per_task=0.185858046 s done_at=104.676767 s
+  rank=10 host=atlantica07 tasks=538 iterations=7285259815 busy=97.949715 s per_task=0.182062667 s done_at=104.676848 s
+  rank=11 host=atlantica07 tasks=539 iterations=7154469039 busy=98.366424 s per_task=0.182498004 s done_at=104.676924 s
+  rank=12 host=atlantica07 tasks=550 iterations=7307975062 busy=98.589626 s per_task=0.179253866 s done_at=104.677012 s
+  rank=13 host=atlantica07 tasks=610 iterations=7846814175 busy=99.364894 s per_task=0.162893269 s done_at=104.677100 s
+  rank=14 host=atlantica07 tasks=552 iterations=7362915589 busy=97.628568 s per_task=0.176863348 s done_at=104.677188 s
+  rank=15 host=atlantica07 tasks=543 iterations=7181501301 busy=98.166501 s per_task=0.180785453 s done_at=104.677265 s
+  rank=16 host=atlantica07 tasks=565 iterations=7495588105 busy=98.291686 s per_task=0.173967585 s done_at=104.667469 s
+  rank=17 host=atlantica07 tasks=567 iterations=7479633047 busy=98.888491 s per_task=0.174406509 s done_at=104.677350 s
+  rank=18 host=atlantica07 tasks=549 iterations=7204350882 busy=98.534048 s per_task=0.179479140 s done_at=104.677428 s
+  rank=19 host=atlantica07 tasks=551 iterations=7416801539 busy=98.491648 s per_task=0.178750723 s done_at=104.677512 s
+  rank=20 host=atlantica07 tasks=537 iterations=7191706710 busy=99.990768 s per_task=0.186202548 s done_at=104.678588 s
+  rank=21 host=atlantica07 tasks=547 iterations=7302783412 busy=98.054646 s per_task=0.179258950 s done_at=104.677605 s
+  rank=22 host=atlantica07 tasks=553 iterations=7410285078 busy=98.004829 s per_task=0.177223922 s done_at=104.677681 s
+  rank=23 host=atlantica07 tasks=545 iterations=7339138764 busy=97.900270 s per_task=0.179633523 s done_at=104.677768 s
+  rank=24 host=atlantica07 tasks=564 iterations=7677466965 busy=98.107952 s per_task=0.173950269 s done_at=104.677854 s
+  rank=25 host=atlantica07 tasks=548 iterations=7228675900 busy=98.125023 s per_task=0.179060261 s done_at=104.677930 s
+  rank=26 host=atlantica07 tasks=550 iterations=7376165968 busy=97.824315 s per_task=0.177862391 s done_at=104.678017 s
+  rank=27 host=atlantica07 tasks=557 iterations=7480265787 busy=98.124422 s per_task=0.176165929 s done_at=104.678102 s
+  rank=28 host=atlantica07 tasks=540 iterations=7243247362 busy=98.290694 s per_task=0.182019804 s done_at=104.678178 s
+  rank=29 host=atlantica07 tasks=544 iterations=7251321986 busy=98.349105 s per_task=0.180788795 s done_at=104.678258 s
+  rank=30 host=atlantica07 tasks=566 iterations=7605648043 busy=97.764457 s per_task=0.172728723 s done_at=104.678344 s
+  rank=31 host=atlantica07 tasks=569 iterations=7666094253 busy=98.023937 s per_task=0.172274054 s done_at=104.678424 s
+  rank=32 host=atlantica08 tasks=546 iterations=7234265998 busy=97.491202 s per_task=0.178555316 s done_at=104.664991 s
+  rank=33 host=atlantica08 tasks=551 iterations=7316296524 busy=98.218311 s per_task=0.178254647 s done_at=104.665063 s
+  rank=34 host=atlantica08 tasks=554 iterations=7320475155 busy=97.862538 s per_task=0.176647181 s done_at=104.665129 s
+  rank=35 host=atlantica08 tasks=550 iterations=7273934874 busy=97.622240 s per_task=0.177494982 s done_at=104.665195 s
+  rank=36 host=atlantica08 tasks=538 iterations=7241070277 busy=97.856103 s per_task=0.181888666 s done_at=104.665264 s
+  rank=37 host=atlantica08 tasks=546 iterations=7380618494 busy=97.690481 s per_task=0.178920294 s done_at=104.665331 s
+  rank=38 host=atlantica08 tasks=524 iterations=7127847909 busy=97.813091 s per_task=0.186666204 s done_at=104.665399 s
+  rank=39 host=atlantica08 tasks=544 iterations=7202996976 busy=98.069406 s per_task=0.180274643 s done_at=104.665474 s
+  rank=40 host=atlantica08 tasks=544 iterations=7352843019 busy=97.693359 s per_task=0.179583381 s done_at=104.665550 s
+  rank=41 host=atlantica08 tasks=542 iterations=7333844121 busy=98.127983 s per_task=0.181047939 s done_at=104.665628 s
+  rank=42 host=atlantica08 tasks=548 iterations=7369228575 busy=98.205219 s per_task=0.179206605 s done_at=104.665704 s
+  rank=43 host=atlantica08 tasks=529 iterations=7208295703 busy=97.672789 s per_task=0.184636653 s done_at=104.665782 s
+  rank=44 host=atlantica08 tasks=530 iterations=7190554101 busy=97.890323 s per_task=0.184698723 s done_at=104.665856 s
+  rank=45 host=atlantica08 tasks=534 iterations=7262390753 busy=98.166871 s per_task=0.183833092 s done_at=104.665934 s
+  rank=46 host=atlantica08 tasks=534 iterations=7254507874 busy=97.703381 s per_task=0.182965134 s done_at=104.666009 s
+  rank=47 host=atlantica08 tasks=560 iterations=7425477208 busy=97.581950 s per_task=0.174253483 s done_at=104.666083 s
+  rank=48 host=atlantica08 tasks=566 iterations=7608205115 busy=98.645384 s per_task=0.174285131 s done_at=104.666158 s
+  rank=49 host=atlantica08 tasks=546 iterations=7283816037 busy=97.375510 s per_task=0.178343424 s done_at=104.666235 s
+  rank=50 host=atlantica08 tasks=552 iterations=7584544074 busy=98.420883 s per_task=0.178298700 s done_at=104.666310 s
+  rank=51 host=atlantica08 tasks=552 iterations=7356276150 busy=97.625566 s per_task=0.176857909 s done_at=104.666385 s
+  rank=52 host=atlantica08 tasks=543 iterations=7374198064 busy=97.584521 s per_task=0.179713667 s done_at=104.666463 s
+  rank=53 host=atlantica08 tasks=543 iterations=7249603702 busy=97.448325 s per_task=0.179462845 s done_at=104.666539 s
+  rank=54 host=atlantica08 tasks=549 iterations=7385278400 busy=97.752438 s per_task=0.178055442 s done_at=104.666616 s
+  rank=55 host=atlantica08 tasks=540 iterations=7319071869 busy=98.638814 s per_task=0.182664471 s done_at=104.666696 s
+  rank=56 host=atlantica08 tasks=561 iterations=7472794311 busy=98.820738 s per_task=0.176151048 s done_at=104.666772 s
+  rank=57 host=atlantica08 tasks=538 iterations=7234246123 busy=97.818240 s per_task=0.181818290 s done_at=104.666849 s
+  rank=58 host=atlantica08 tasks=530 iterations=7248175804 busy=97.837331 s per_task=0.184598738 s done_at=104.666934 s
+  rank=59 host=atlantica08 tasks=551 iterations=7597830440 busy=97.855832 s per_task=0.177596791 s done_at=104.667012 s
+  rank=60 host=atlantica08 tasks=526 iterations=7226938316 busy=97.752972 s per_task=0.185842151 s done_at=104.667096 s
+  rank=61 host=atlantica08 tasks=538 iterations=7323148828 busy=97.944182 s per_task=0.182052384 s done_at=104.667173 s
+  rank=62 host=atlantica08 tasks=542 iterations=7404326398 busy=97.495293 s per_task=0.179880614 s done_at=104.667252 s
+  rank=63 host=atlantica08 tasks=539 iterations=7346631526 busy=97.471923 s per_task=0.180838446 s done_at=104.667329 s
+### exp=fraca P=64 chunk=4 height=138240 rep=2
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.459228 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=576 iterations=7438642245 busy=97.896876 s per_task=0.169959855 s done_at=104.455042 s
+  rank=2 host=atlantica07 tasks=556 iterations=7372081416 busy=99.751342 s per_task=0.179408889 s done_at=104.445802 s
+  rank=3 host=atlantica07 tasks=542 iterations=7311844805 busy=98.613597 s per_task=0.181943906 s done_at=104.455132 s
+  rank=4 host=atlantica07 tasks=580 iterations=7411458090 busy=98.418632 s per_task=0.169687296 s done_at=104.455222 s
+  rank=5 host=atlantica07 tasks=552 iterations=7345922323 busy=98.064713 s per_task=0.177653465 s done_at=104.455299 s
+  rank=6 host=atlantica07 tasks=542 iterations=7348212157 busy=99.597801 s per_task=0.183759780 s done_at=104.455388 s
+  rank=7 host=atlantica07 tasks=548 iterations=7351162833 busy=99.923817 s per_task=0.182342732 s done_at=104.455466 s
+  rank=8 host=atlantica07 tasks=578 iterations=7807255661 busy=97.372192 s per_task=0.168464000 s done_at=104.455547 s
+  rank=9 host=atlantica07 tasks=538 iterations=7293709553 busy=99.016694 s per_task=0.184045899 s done_at=104.455634 s
+  rank=10 host=atlantica07 tasks=545 iterations=7323316575 busy=97.885651 s per_task=0.179606699 s done_at=104.455720 s
+  rank=11 host=atlantica07 tasks=560 iterations=7406154740 busy=98.050653 s per_task=0.175090452 s done_at=104.455797 s
+  rank=12 host=atlantica07 tasks=556 iterations=7386912822 busy=97.905469 s per_task=0.176088973 s done_at=104.455877 s
+  rank=13 host=atlantica07 tasks=564 iterations=7330775026 busy=98.892491 s per_task=0.175341297 s done_at=104.455967 s
+  rank=14 host=atlantica07 tasks=548 iterations=7349312884 busy=98.809661 s per_task=0.180309600 s done_at=104.456053 s
+  rank=15 host=atlantica07 tasks=558 iterations=7399575764 busy=98.023005 s per_task=0.175668468 s done_at=104.456130 s
+  rank=16 host=atlantica07 tasks=538 iterations=7287048083 busy=98.492932 s per_task=0.183072364 s done_at=104.456220 s
+  rank=17 host=atlantica07 tasks=542 iterations=7344688257 busy=97.993987 s per_task=0.180800714 s done_at=104.456308 s
+  rank=18 host=atlantica07 tasks=544 iterations=7300589168 busy=97.817908 s per_task=0.179812331 s done_at=104.456393 s
+  rank=19 host=atlantica07 tasks=552 iterations=7354381100 busy=99.613962 s per_task=0.180460076 s done_at=104.456471 s
+  rank=20 host=atlantica07 tasks=584 iterations=7825659833 busy=98.383742 s per_task=0.168465311 s done_at=104.456550 s
+  rank=21 host=atlantica07 tasks=559 iterations=7404321008 busy=99.347690 s per_task=0.177723953 s done_at=104.456642 s
+  rank=22 host=atlantica07 tasks=543 iterations=7367743427 busy=97.754547 s per_task=0.180026790 s done_at=104.456721 s
+  rank=23 host=atlantica07 tasks=545 iterations=7364250019 busy=98.022143 s per_task=0.179857143 s done_at=104.456800 s
+  rank=24 host=atlantica07 tasks=548 iterations=7399510477 busy=101.275952 s per_task=0.184810132 s done_at=104.456878 s
+  rank=25 host=atlantica07 tasks=550 iterations=7351067324 busy=98.765971 s per_task=0.179574492 s done_at=104.456957 s
+  rank=26 host=atlantica07 tasks=554 iterations=7349820912 busy=98.532452 s per_task=0.177856412 s done_at=104.443172 s
+  rank=27 host=atlantica07 tasks=544 iterations=7311590638 busy=97.564919 s per_task=0.179347277 s done_at=104.443277 s
+  rank=28 host=atlantica07 tasks=541 iterations=7320239659 busy=97.833860 s per_task=0.180838928 s done_at=104.443363 s
+  rank=29 host=atlantica07 tasks=563 iterations=7358989019 busy=99.549532 s per_task=0.176819772 s done_at=104.457035 s
+  rank=30 host=atlantica07 tasks=543 iterations=7345266462 busy=98.306136 s per_task=0.181042608 s done_at=104.457122 s
+  rank=31 host=atlantica07 tasks=546 iterations=7338584752 busy=98.217959 s per_task=0.179886372 s done_at=104.457205 s
+  rank=32 host=atlantica08 tasks=571 iterations=7559598958 busy=98.255634 s per_task=0.172076417 s done_at=104.443441 s
+  rank=33 host=atlantica08 tasks=551 iterations=7198321103 busy=98.002184 s per_task=0.177862403 s done_at=104.443555 s
+  rank=34 host=atlantica08 tasks=539 iterations=7314796234 busy=97.374830 s per_task=0.180658311 s done_at=104.443637 s
+  rank=35 host=atlantica08 tasks=538 iterations=7327999899 busy=97.830602 s per_task=0.181841268 s done_at=104.443741 s
+  rank=36 host=atlantica08 tasks=552 iterations=7551692360 busy=97.824728 s per_task=0.177218709 s done_at=104.443821 s
+  rank=37 host=atlantica08 tasks=553 iterations=7413382983 busy=98.102678 s per_task=0.177400865 s done_at=104.445877 s
+  rank=38 host=atlantica08 tasks=536 iterations=7188519418 busy=97.593102 s per_task=0.182076683 s done_at=104.445954 s
+  rank=39 host=atlantica08 tasks=542 iterations=7320960629 busy=99.251146 s per_task=0.183120196 s done_at=104.446027 s
+  rank=40 host=atlantica08 tasks=535 iterations=7330633981 busy=98.725839 s per_task=0.184534278 s done_at=104.446098 s
+  rank=41 host=atlantica08 tasks=536 iterations=7289037974 busy=98.420019 s per_task=0.183619438 s done_at=104.458197 s
+  rank=42 host=atlantica08 tasks=542 iterations=7309618811 busy=97.831251 s per_task=0.180500463 s done_at=104.458280 s
+  rank=43 host=atlantica08 tasks=564 iterations=7417678824 busy=97.897264 s per_task=0.173576710 s done_at=104.458349 s
+  rank=44 host=atlantica08 tasks=559 iterations=7365932790 busy=99.023211 s per_task=0.177143490 s done_at=104.446174 s
+  rank=45 host=atlantica08 tasks=545 iterations=7337888850 busy=98.898447 s per_task=0.181465041 s done_at=104.454576 s
+  rank=46 host=atlantica08 tasks=545 iterations=7402111677 busy=97.805541 s per_task=0.179459708 s done_at=104.454649 s
+  rank=47 host=atlantica08 tasks=544 iterations=7329089351 busy=98.466060 s per_task=0.181003786 s done_at=104.458124 s
+  rank=48 host=atlantica08 tasks=535 iterations=7182959035 busy=97.785010 s per_task=0.182775719 s done_at=104.458422 s
+  rank=49 host=atlantica08 tasks=533 iterations=7217344592 busy=97.986297 s per_task=0.183839206 s done_at=104.454728 s
+  rank=50 host=atlantica08 tasks=545 iterations=7340340982 busy=98.833079 s per_task=0.181345098 s done_at=104.454799 s
+  rank=51 host=atlantica08 tasks=546 iterations=7346727107 busy=98.427122 s per_task=0.180269454 s done_at=104.458493 s
+  rank=52 host=atlantica08 tasks=566 iterations=7373591487 busy=99.116957 s per_task=0.175118299 s done_at=104.458565 s
+  rank=53 host=atlantica08 tasks=546 iterations=7324273868 busy=98.592537 s per_task=0.180572413 s done_at=104.458643 s
+  rank=54 host=atlantica08 tasks=554 iterations=7370169397 busy=97.987002 s per_task=0.176871844 s done_at=104.458715 s
+  rank=55 host=atlantica08 tasks=544 iterations=7341733826 busy=98.237541 s per_task=0.180583715 s done_at=104.458792 s
+  rank=56 host=atlantica08 tasks=553 iterations=7368244103 busy=97.424245 s per_task=0.176174042 s done_at=104.458862 s
+  rank=57 host=atlantica08 tasks=547 iterations=7426352703 busy=98.141358 s per_task=0.179417474 s done_at=104.454877 s
+  rank=58 host=atlantica08 tasks=531 iterations=7215800730 busy=98.113495 s per_task=0.184771177 s done_at=104.454950 s
+  rank=59 host=atlantica08 tasks=530 iterations=7324540561 busy=98.214915 s per_task=0.185311161 s done_at=104.458935 s
+  rank=60 host=atlantica08 tasks=533 iterations=7329546905 busy=98.441937 s per_task=0.184694066 s done_at=104.459008 s
+  rank=61 host=atlantica08 tasks=532 iterations=7330376568 busy=98.470563 s per_task=0.185095043 s done_at=104.459084 s
+  rank=62 host=atlantica08 tasks=529 iterations=7332552156 busy=97.547790 s per_task=0.184400359 s done_at=104.459158 s
+  rank=63 host=atlantica08 tasks=545 iterations=7371348669 busy=98.491793 s per_task=0.180718886 s done_at=104.459228 s
+### exp=fraca P=64 chunk=4 height=138240 rep=3
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.518179 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=549 iterations=7341678342 busy=99.514355 s per_task=0.181264763 s done_at=104.516025 s
+  rank=2 host=atlantica07 tasks=553 iterations=7358825254 busy=99.039713 s per_task=0.179095322 s done_at=104.516114 s
+  rank=3 host=atlantica07 tasks=557 iterations=7368982024 busy=98.525207 s per_task=0.176885470 s done_at=104.516191 s
+  rank=4 host=atlantica07 tasks=559 iterations=7371695915 busy=98.073340 s per_task=0.175444258 s done_at=104.516281 s
+  rank=5 host=atlantica07 tasks=550 iterations=7354675491 busy=99.730009 s per_task=0.181327290 s done_at=104.516358 s
+  rank=6 host=atlantica07 tasks=548 iterations=7336383588 busy=99.392728 s per_task=0.181373592 s done_at=104.517686 s
+  rank=7 host=atlantica07 tasks=545 iterations=7337514404 busy=98.379105 s per_task=0.180512119 s done_at=104.517770 s
+  rank=8 host=atlantica07 tasks=547 iterations=7347057370 busy=98.615837 s per_task=0.180284894 s done_at=104.517849 s
+  rank=9 host=atlantica07 tasks=548 iterations=7369944856 busy=97.462755 s per_task=0.177851743 s done_at=104.516435 s
+  rank=10 host=atlantica07 tasks=546 iterations=7335993871 busy=98.994346 s per_task=0.181308327 s done_at=104.517929 s
+  rank=11 host=atlantica07 tasks=561 iterations=7370698457 busy=97.989959 s per_task=0.174670158 s done_at=104.518013 s
+  rank=12 host=atlantica07 tasks=553 iterations=7353041009 busy=99.603663 s per_task=0.180115123 s done_at=104.518103 s
+  rank=13 host=atlantica07 tasks=588 iterations=7841480283 busy=98.222303 s per_task=0.167044732 s done_at=104.518179 s
+  rank=14 host=atlantica07 tasks=551 iterations=7345530237 busy=98.554429 s per_task=0.178864663 s done_at=104.516513 s
+  rank=15 host=atlantica07 tasks=559 iterations=7368894851 busy=98.067654 s per_task=0.175434086 s done_at=104.516603 s
+  rank=16 host=atlantica07 tasks=568 iterations=7365220955 busy=98.152251 s per_task=0.172803260 s done_at=104.517034 s
+  rank=17 host=atlantica07 tasks=552 iterations=7354743236 busy=97.510467 s per_task=0.176649397 s done_at=104.516688 s
+  rank=18 host=atlantica07 tasks=547 iterations=7341185044 busy=98.470231 s per_task=0.180018703 s done_at=104.516775 s
+  rank=19 host=atlantica07 tasks=546 iterations=7347038316 busy=98.265738 s per_task=0.179973879 s done_at=104.516851 s
+  rank=20 host=atlantica07 tasks=551 iterations=7342851904 busy=98.969225 s per_task=0.179617469 s done_at=104.517120 s
+  rank=21 host=atlantica07 tasks=555 iterations=7362326606 busy=98.496508 s per_task=0.177471186 s done_at=104.517203 s
+  rank=22 host=atlantica07 tasks=548 iterations=7341659700 busy=98.149354 s per_task=0.179104661 s done_at=104.517277 s
+  rank=23 host=atlantica07 tasks=552 iterations=7344383912 busy=99.018578 s per_task=0.179381481 s done_at=104.517364 s
+  rank=24 host=atlantica07 tasks=549 iterations=7355115056 busy=98.574972 s per_task=0.179553683 s done_at=104.517448 s
+  rank=25 host=atlantica07 tasks=548 iterations=7339802515 busy=98.183188 s per_task=0.179166401 s done_at=104.517532 s
+  rank=26 host=atlantica07 tasks=575 iterations=7807661175 busy=97.451672 s per_task=0.169481169 s done_at=104.517605 s
+  rank=27 host=atlantica07 tasks=543 iterations=7330805057 busy=99.181166 s per_task=0.182654081 s done_at=104.513166 s
+  rank=28 host=atlantica07 tasks=550 iterations=7349747782 busy=98.245101 s per_task=0.178627457 s done_at=104.513265 s
+  rank=29 host=atlantica07 tasks=560 iterations=7378726894 busy=97.579657 s per_task=0.174249387 s done_at=104.513350 s
+  rank=30 host=atlantica07 tasks=553 iterations=7356649401 busy=98.052857 s per_task=0.177310772 s done_at=104.513428 s
+  rank=31 host=atlantica07 tasks=546 iterations=7371053234 busy=101.228248 s per_task=0.185399721 s done_at=104.513497 s
+  rank=32 host=atlantica08 tasks=558 iterations=7400208626 busy=97.666534 s per_task=0.175029630 s done_at=104.513571 s
+  rank=33 host=atlantica08 tasks=564 iterations=7458621568 busy=98.942564 s per_task=0.175430078 s done_at=104.513637 s
+  rank=34 host=atlantica08 tasks=551 iterations=7442399324 busy=97.989779 s per_task=0.177839890 s done_at=104.513709 s
+  rank=35 host=atlantica08 tasks=549 iterations=7404056434 busy=97.988335 s per_task=0.178485127 s done_at=104.513784 s
+  rank=36 host=atlantica08 tasks=557 iterations=7371161653 busy=98.201640 s per_task=0.176304560 s done_at=104.513856 s
+  rank=37 host=atlantica08 tasks=539 iterations=7302599700 busy=97.674353 s per_task=0.181214013 s done_at=104.513932 s
+  rank=38 host=atlantica08 tasks=541 iterations=7300889073 busy=98.154862 s per_task=0.181432277 s done_at=104.514008 s
+  rank=39 host=atlantica08 tasks=535 iterations=7257627122 busy=97.806946 s per_task=0.182816721 s done_at=104.514084 s
+  rank=40 host=atlantica08 tasks=547 iterations=7385358282 busy=98.652538 s per_task=0.180351989 s done_at=104.514159 s
+  rank=41 host=atlantica08 tasks=549 iterations=7407603290 busy=97.918059 s per_task=0.178357121 s done_at=104.514239 s
+  rank=42 host=atlantica08 tasks=541 iterations=7261375991 busy=98.290075 s per_task=0.181682209 s done_at=104.514316 s
+  rank=43 host=atlantica08 tasks=539 iterations=7303527777 busy=98.257839 s per_task=0.182296548 s done_at=104.514395 s
+  rank=44 host=atlantica08 tasks=543 iterations=7385076381 busy=97.763839 s per_task=0.180043902 s done_at=104.514473 s
+  rank=45 host=atlantica08 tasks=533 iterations=7255120045 busy=97.628558 s per_task=0.183168027 s done_at=104.514556 s
+  rank=46 host=atlantica08 tasks=537 iterations=7365490678 busy=98.672468 s per_task=0.183747613 s done_at=104.514636 s
+  rank=47 host=atlantica08 tasks=541 iterations=7342214185 busy=97.892770 s per_task=0.180947819 s done_at=104.514713 s
+  rank=48 host=atlantica08 tasks=538 iterations=7291558966 busy=98.432467 s per_task=0.182959975 s done_at=104.514787 s
+  rank=49 host=atlantica08 tasks=563 iterations=7435699603 busy=98.659929 s per_task=0.175239661 s done_at=104.514860 s
+  rank=50 host=atlantica08 tasks=543 iterations=7354809874 busy=97.900512 s per_task=0.180295603 s done_at=104.514936 s
+  rank=51 host=atlantica08 tasks=551 iterations=7399762156 busy=97.613745 s per_task=0.177157431 s done_at=104.515011 s
+  rank=52 host=atlantica08 tasks=545 iterations=7399774995 busy=98.263040 s per_task=0.180299156 s done_at=104.515084 s
+  rank=53 host=atlantica08 tasks=533 iterations=7272887175 busy=98.622484 s per_task=0.185032803 s done_at=104.515157 s
+  rank=54 host=atlantica08 tasks=547 iterations=7353487852 busy=97.780308 s per_task=0.178757419 s done_at=104.515233 s
+  rank=55 host=atlantica08 tasks=539 iterations=7275164471 busy=97.482941 s per_task=0.180858888 s done_at=104.515308 s
+  rank=56 host=atlantica08 tasks=530 iterations=7215368305 busy=97.679429 s per_task=0.184300810 s done_at=104.515384 s
+  rank=57 host=atlantica08 tasks=535 iterations=7287749867 busy=97.705263 s per_task=0.182626659 s done_at=104.515473 s
+  rank=58 host=atlantica08 tasks=539 iterations=7259111918 busy=97.673580 s per_task=0.181212579 s done_at=104.515559 s
+  rank=59 host=atlantica08 tasks=547 iterations=7343950198 busy=97.766336 s per_task=0.178731875 s done_at=104.515633 s
+  rank=60 host=atlantica08 tasks=536 iterations=7230064588 busy=98.928868 s per_task=0.184568784 s done_at=104.515710 s
+  rank=61 host=atlantica08 tasks=549 iterations=7429627935 busy=98.297093 s per_task=0.179047529 s done_at=104.515787 s
+  rank=62 host=atlantica08 tasks=540 iterations=7337630441 busy=97.860655 s per_task=0.181223436 s done_at=104.515866 s
+  rank=63 host=atlantica08 tasks=544 iterations=7331908351 busy=97.691981 s per_task=0.179580847 s done_at=104.515937 s
+### exp=fraca P=64 chunk=4 height=138240 rep=4
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.767446 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=552 iterations=7360397188 busy=98.137561 s per_task=0.177785437 s done_at=104.751687 s
+  rank=2 host=atlantica07 tasks=552 iterations=7351191281 busy=99.185538 s per_task=0.179683946 s done_at=104.751770 s
+  rank=3 host=atlantica07 tasks=553 iterations=7349132347 busy=99.598628 s per_task=0.180106017 s done_at=104.751855 s
+  rank=4 host=atlantica07 tasks=553 iterations=7366396617 busy=98.014251 s per_task=0.177240960 s done_at=104.751929 s
+  rank=5 host=atlantica07 tasks=559 iterations=7402047624 busy=98.156301 s per_task=0.175592667 s done_at=104.752001 s
+  rank=6 host=atlantica07 tasks=547 iterations=7341213049 busy=99.386923 s per_task=0.181694558 s done_at=104.760939 s
+  rank=7 host=atlantica07 tasks=581 iterations=7808169493 busy=99.303536 s per_task=0.170918307 s done_at=104.767446 s
+  rank=8 host=atlantica07 tasks=547 iterations=7344874599 busy=98.901476 s per_task=0.180807086 s done_at=104.761023 s
+  rank=9 host=atlantica07 tasks=550 iterations=7378853882 busy=97.846160 s per_task=0.177902109 s done_at=104.761104 s
+  rank=10 host=atlantica07 tasks=538 iterations=7311142997 busy=98.730116 s per_task=0.183513227 s done_at=104.761192 s
+  rank=11 host=atlantica07 tasks=549 iterations=7349735880 busy=98.137088 s per_task=0.178756080 s done_at=104.761272 s
+  rank=12 host=atlantica07 tasks=546 iterations=7348440439 busy=98.447602 s per_task=0.180306963 s done_at=104.761359 s
+  rank=13 host=atlantica07 tasks=551 iterations=7369032657 busy=97.576137 s per_task=0.177089179 s done_at=104.761449 s
+  rank=14 host=atlantica07 tasks=542 iterations=7337281112 busy=98.110422 s per_task=0.181015538 s done_at=104.761532 s
+  rank=15 host=atlantica07 tasks=580 iterations=7807496010 busy=97.296560 s per_task=0.167752689 s done_at=104.761612 s
+  rank=16 host=atlantica07 tasks=557 iterations=7352135129 busy=99.377339 s per_task=0.178415331 s done_at=104.763981 s
+  rank=17 host=atlantica07 tasks=544 iterations=7341995973 busy=97.667738 s per_task=0.179536283 s done_at=104.764079 s
+  rank=18 host=atlantica07 tasks=559 iterations=7373131820 busy=98.135247 s per_task=0.175555003 s done_at=104.764170 s
+  rank=19 host=atlantica07 tasks=545 iterations=7338442198 busy=98.825592 s per_task=0.181331362 s done_at=104.764247 s
+  rank=20 host=atlantica07 tasks=549 iterations=7347860759 busy=98.087488 s per_task=0.178665734 s done_at=104.764333 s
+  rank=21 host=atlantica07 tasks=549 iterations=7346284105 busy=99.733373 s per_task=0.181663703 s done_at=104.764418 s
+  rank=22 host=atlantica07 tasks=548 iterations=7332501120 busy=98.704037 s per_task=0.180116856 s done_at=104.764494 s
+  rank=23 host=atlantica07 tasks=551 iterations=7352920745 busy=99.988454 s per_task=0.181467249 s done_at=104.764582 s
+  rank=24 host=atlantica07 tasks=551 iterations=7351987235 busy=98.211121 s per_task=0.178241599 s done_at=104.764667 s
+  rank=25 host=atlantica07 tasks=535 iterations=7351176337 busy=101.070386 s per_task=0.188916610 s done_at=104.764748 s
+  rank=26 host=atlantica07 tasks=554 iterations=7357274500 busy=98.386677 s per_task=0.177593279 s done_at=104.764832 s
+  rank=27 host=atlantica07 tasks=563 iterations=7414104894 busy=97.712612 s per_task=0.173557037 s done_at=104.764910 s
+  rank=28 host=atlantica07 tasks=547 iterations=7346844080 busy=98.116968 s per_task=0.179372885 s done_at=104.764996 s
+  rank=29 host=atlantica07 tasks=551 iterations=7343325609 busy=98.782762 s per_task=0.179279060 s done_at=104.765072 s
+  rank=30 host=atlantica07 tasks=545 iterations=7347358055 busy=97.514589 s per_task=0.178925852 s done_at=104.765158 s
+  rank=31 host=atlantica07 tasks=548 iterations=7350233674 busy=98.594758 s per_task=0.179917442 s done_at=104.765248 s
+  rank=32 host=atlantica08 tasks=561 iterations=7364957716 busy=98.544148 s per_task=0.175658017 s done_at=104.765331 s
+  rank=33 host=atlantica08 tasks=550 iterations=7303631335 busy=98.921585 s per_task=0.179857428 s done_at=104.765404 s
+  rank=34 host=atlantica08 tasks=555 iterations=7342312234 busy=98.767768 s per_task=0.177959942 s done_at=104.751364 s
+  rank=35 host=atlantica08 tasks=557 iterations=7323792945 busy=98.975942 s per_task=0.177694689 s done_at=104.765475 s
+  rank=36 host=atlantica08 tasks=561 iterations=7386342015 busy=98.181311 s per_task=0.175011249 s done_at=104.751446 s
+  rank=37 host=atlantica08 tasks=552 iterations=7336614015 busy=98.534086 s per_task=0.178503778 s done_at=104.751519 s
+  rank=38 host=atlantica08 tasks=551 iterations=7343046709 busy=98.338869 s per_task=0.178473447 s done_at=104.765553 s
+  rank=39 host=atlantica08 tasks=549 iterations=7344916106 busy=98.807747 s per_task=0.179977682 s done_at=104.765627 s
+  rank=40 host=atlantica08 tasks=551 iterations=7342338048 busy=99.361512 s per_task=0.180329423 s done_at=104.765703 s
+  rank=41 host=atlantica08 tasks=543 iterations=7335069441 busy=98.934842 s per_task=0.182200445 s done_at=104.765780 s
+  rank=42 host=atlantica08 tasks=539 iterations=7340058942 busy=98.380636 s per_task=0.182524371 s done_at=104.765856 s
+  rank=43 host=atlantica08 tasks=545 iterations=7308204495 busy=98.473159 s per_task=0.180684695 s done_at=104.765932 s
+  rank=44 host=atlantica08 tasks=543 iterations=7366083689 busy=98.048992 s per_task=0.180569046 s done_at=104.766008 s
+  rank=45 host=atlantica08 tasks=541 iterations=7377292962 busy=98.158840 s per_task=0.181439631 s done_at=104.766078 s
+  rank=46 host=atlantica08 tasks=546 iterations=7338433688 busy=98.406025 s per_task=0.180230816 s done_at=104.751600 s
+  rank=47 host=atlantica08 tasks=543 iterations=7324377300 busy=98.524760 s per_task=0.181445231 s done_at=104.766153 s
+  rank=48 host=atlantica08 tasks=546 iterations=7324979479 busy=99.001746 s per_task=0.181321879 s done_at=104.766226 s
+  rank=49 host=atlantica08 tasks=545 iterations=7355320332 busy=97.799250 s per_task=0.179448165 s done_at=104.766301 s
+  rank=50 host=atlantica08 tasks=537 iterations=7235598032 busy=98.425130 s per_task=0.183287020 s done_at=104.766375 s
+  rank=51 host=atlantica08 tasks=547 iterations=7410859502 busy=98.152048 s per_task=0.179437017 s done_at=104.766450 s
+  rank=52 host=atlantica08 tasks=539 iterations=7336789688 busy=97.955349 s per_task=0.181735341 s done_at=104.766529 s
+  rank=53 host=atlantica08 tasks=543 iterations=7351268052 busy=98.711397 s per_task=0.181788945 s done_at=104.766605 s
+  rank=54 host=atlantica08 tasks=545 iterations=7347524369 busy=98.369519 s per_task=0.180494531 s done_at=104.766680 s
+  rank=55 host=atlantica08 tasks=543 iterations=7342544483 busy=98.205698 s per_task=0.180857638 s done_at=104.766757 s
+  rank=56 host=atlantica08 tasks=544 iterations=7337407055 busy=98.491105 s per_task=0.181049825 s done_at=104.766842 s
+  rank=57 host=atlantica08 tasks=539 iterations=7345129467 busy=97.626030 s per_task=0.181124359 s done_at=104.766915 s
+  rank=58 host=atlantica08 tasks=543 iterations=7335395068 busy=98.749163 s per_task=0.181858495 s done_at=104.766990 s
+  rank=59 host=atlantica08 tasks=541 iterations=7343191913 busy=99.216995 s per_task=0.183395554 s done_at=104.767065 s
+  rank=60 host=atlantica08 tasks=538 iterations=7337436234 busy=99.150089 s per_task=0.184293846 s done_at=104.767143 s
+  rank=61 host=atlantica08 tasks=541 iterations=7344346835 busy=98.386509 s per_task=0.181860461 s done_at=104.767218 s
+  rank=62 host=atlantica08 tasks=542 iterations=7315056442 busy=98.358966 s per_task=0.181474108 s done_at=104.767292 s
+  rank=63 host=atlantica08 tasks=544 iterations=7339953564 busy=98.267121 s per_task=0.180638091 s done_at=104.767365 s
+### exp=fraca P=64 chunk=4 height=138240 rep=5
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.574620 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=553 iterations=7359638733 busy=99.251814 s per_task=0.179478868 s done_at=104.572464 s
+  rank=2 host=atlantica07 tasks=560 iterations=7376134271 busy=98.860608 s per_task=0.176536800 s done_at=104.572550 s
+  rank=3 host=atlantica07 tasks=576 iterations=7419653428 busy=97.921467 s per_task=0.170002546 s done_at=104.572634 s
+  rank=4 host=atlantica07 tasks=556 iterations=7338384340 busy=97.828491 s per_task=0.175950524 s done_at=104.572722 s
+  rank=5 host=atlantica07 tasks=557 iterations=7356984490 busy=98.188799 s per_task=0.176281507 s done_at=104.572809 s
+  rank=6 host=atlantica07 tasks=586 iterations=7817480038 busy=98.068686 s per_task=0.167352706 s done_at=104.572884 s
+  rank=7 host=atlantica07 tasks=551 iterations=7336826748 busy=97.776004 s per_task=0.177451913 s done_at=104.572971 s
+  rank=8 host=atlantica07 tasks=551 iterations=7342433231 busy=99.548688 s per_task=0.180669125 s done_at=104.573049 s
+  rank=9 host=atlantica07 tasks=547 iterations=7344952909 busy=98.736568 s per_task=0.180505609 s done_at=104.573133 s
+  rank=10 host=atlantica07 tasks=550 iterations=7343914931 busy=98.253633 s per_task=0.178642969 s done_at=104.573219 s
+  rank=11 host=atlantica07 tasks=550 iterations=7333622438 busy=97.383901 s per_task=0.177061639 s done_at=104.573304 s
+  rank=12 host=atlantica07 tasks=553 iterations=7352184442 busy=99.950623 s per_task=0.180742537 s done_at=104.573381 s
+  rank=13 host=atlantica07 tasks=556 iterations=7390214257 busy=98.662713 s per_task=0.177450922 s done_at=104.573470 s
+  rank=14 host=atlantica07 tasks=552 iterations=7353059998 busy=98.065797 s per_task=0.177655429 s done_at=104.573554 s
+  rank=15 host=atlantica07 tasks=551 iterations=7361534745 busy=98.513752 s per_task=0.178790839 s done_at=104.573630 s
+  rank=16 host=atlantica07 tasks=576 iterations=7367364458 busy=100.089350 s per_task=0.173766233 s done_at=104.569975 s
+  rank=17 host=atlantica07 tasks=554 iterations=7357086401 busy=99.764005 s per_task=0.180079431 s done_at=104.574538 s
+  rank=18 host=atlantica07 tasks=547 iterations=7350304012 busy=98.164952 s per_task=0.179460607 s done_at=104.573712 s
+  rank=19 host=atlantica07 tasks=577 iterations=7809981235 busy=97.663409 s per_task=0.169260674 s done_at=104.574620 s
+  rank=20 host=atlantica07 tasks=540 iterations=7348495550 busy=101.203769 s per_task=0.187414387 s done_at=104.573792 s
+  rank=21 host=atlantica07 tasks=549 iterations=7337012537 busy=98.255153 s per_task=0.178971136 s done_at=104.574381 s
+  rank=22 host=atlantica07 tasks=557 iterations=7365895355 busy=98.371524 s per_task=0.176609559 s done_at=104.573870 s
+  rank=23 host=atlantica07 tasks=543 iterations=7332121680 busy=99.097968 s per_task=0.182500861 s done_at=104.573956 s
+  rank=24 host=atlantica07 tasks=543 iterations=7332413206 busy=98.844205 s per_task=0.182033527 s done_at=104.574034 s
+  rank=25 host=atlantica07 tasks=542 iterations=7346466947 busy=97.653631 s per_task=0.180172752 s done_at=104.574115 s
+  rank=26 host=atlantica07 tasks=551 iterations=7382439522 busy=98.942296 s per_task=0.179568595 s done_at=104.574201 s
+  rank=27 host=atlantica07 tasks=540 iterations=7336842885 busy=99.162571 s per_task=0.183634391 s done_at=104.574464 s
+  rank=28 host=atlantica07 tasks=535 iterations=7321355356 busy=97.580588 s per_task=0.182393623 s done_at=104.567274 s
+  rank=29 host=atlantica07 tasks=543 iterations=7351022273 busy=97.907417 s per_task=0.180308318 s done_at=104.567348 s
+  rank=30 host=atlantica07 tasks=547 iterations=7344719287 busy=99.219231 s per_task=0.181387991 s done_at=104.567417 s
+  rank=31 host=atlantica07 tasks=546 iterations=7353591371 busy=97.776309 s per_task=0.179077489 s done_at=104.567488 s
+  rank=32 host=atlantica08 tasks=552 iterations=7313241646 busy=97.750272 s per_task=0.177083826 s done_at=104.570062 s
+  rank=33 host=atlantica08 tasks=551 iterations=7309472541 busy=97.506258 s per_task=0.176962357 s done_at=104.570132 s
+  rank=34 host=atlantica08 tasks=567 iterations=7436569679 busy=98.333465 s per_task=0.173427627 s done_at=104.570207 s
+  rank=35 host=atlantica08 tasks=550 iterations=7317009379 busy=98.216716 s per_task=0.178575847 s done_at=104.570280 s
+  rank=36 host=atlantica08 tasks=541 iterations=7338458856 busy=98.999878 s per_task=0.182994228 s done_at=104.570351 s
+  rank=37 host=atlantica08 tasks=549 iterations=7346677060 busy=97.771661 s per_task=0.178090456 s done_at=104.570427 s
+  rank=38 host=atlantica08 tasks=549 iterations=7413891198 busy=98.171196 s per_task=0.178818208 s done_at=104.570507 s
+  rank=39 host=atlantica08 tasks=543 iterations=7356196243 busy=98.424659 s per_task=0.181260883 s done_at=104.570582 s
+  rank=40 host=atlantica08 tasks=533 iterations=7264717285 busy=99.125213 s per_task=0.185976009 s done_at=104.570658 s
+  rank=41 host=atlantica08 tasks=547 iterations=7317668905 busy=97.373656 s per_task=0.178013997 s done_at=104.570731 s
+  rank=42 host=atlantica08 tasks=549 iterations=7383448629 busy=97.537011 s per_task=0.177663043 s done_at=104.570803 s
+  rank=43 host=atlantica08 tasks=573 iterations=7528636049 busy=97.699055 s per_task=0.170504458 s done_at=104.570879 s
+  rank=44 host=atlantica08 tasks=545 iterations=7318632352 busy=97.930595 s per_task=0.179689165 s done_at=104.570951 s
+  rank=45 host=atlantica08 tasks=535 iterations=7263558953 busy=98.363284 s per_task=0.183856606 s done_at=104.571023 s
+  rank=46 host=atlantica08 tasks=537 iterations=7291349943 busy=99.107035 s per_task=0.184556862 s done_at=104.571102 s
+  rank=47 host=atlantica08 tasks=537 iterations=7314854493 busy=97.562343 s per_task=0.181680342 s done_at=104.571178 s
+  rank=48 host=atlantica08 tasks=542 iterations=7328064074 busy=97.537113 s per_task=0.179957773 s done_at=104.571255 s
+  rank=49 host=atlantica08 tasks=543 iterations=7316557083 busy=98.796171 s per_task=0.181945065 s done_at=104.571327 s
+  rank=50 host=atlantica08 tasks=541 iterations=7355330182 busy=98.217289 s per_task=0.181547670 s done_at=104.571399 s
+  rank=51 host=atlantica08 tasks=561 iterations=7392154571 busy=97.682906 s per_task=0.174122828 s done_at=104.571474 s
+  rank=52 host=atlantica08 tasks=541 iterations=7394434597 busy=99.085922 s per_task=0.183153275 s done_at=104.571549 s
+  rank=53 host=atlantica08 tasks=535 iterations=7287365457 busy=98.281996 s per_task=0.183704665 s done_at=104.571621 s
+  rank=54 host=atlantica08 tasks=535 iterations=7353887852 busy=97.935354 s per_task=0.183056736 s done_at=104.571692 s
+  rank=55 host=atlantica08 tasks=533 iterations=7271498607 busy=98.343065 s per_task=0.184508565 s done_at=104.571768 s
+  rank=56 host=atlantica08 tasks=546 iterations=7343663701 busy=98.390931 s per_task=0.180203170 s done_at=104.571839 s
+  rank=57 host=atlantica08 tasks=539 iterations=7340853614 busy=97.658082 s per_task=0.181183826 s done_at=104.571913 s
+  rank=58 host=atlantica08 tasks=537 iterations=7313213592 busy=98.569676 s per_task=0.183556194 s done_at=104.571987 s
+  rank=59 host=atlantica08 tasks=537 iterations=7309072148 busy=97.843443 s per_task=0.182203805 s done_at=104.572064 s
+  rank=60 host=atlantica08 tasks=548 iterations=7358321460 busy=98.699596 s per_task=0.180108753 s done_at=104.572150 s
+  rank=61 host=atlantica08 tasks=539 iterations=7332314544 busy=98.228194 s per_task=0.182241548 s done_at=104.572223 s
+  rank=62 host=atlantica08 tasks=542 iterations=7355693533 busy=97.635549 s per_task=0.180139389 s done_at=104.572296 s
+  rank=63 host=atlantica08 tasks=544 iterations=7322314263 busy=98.962770 s per_task=0.181916857 s done_at=104.572367 s
+### exp=fraca P=64 chunk=4 height=138240 rep=6
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.638433 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=541 iterations=7144756337 busy=98.411857 s per_task=0.181907314 s done_at=104.632476 s
+  rank=2 host=atlantica07 tasks=553 iterations=7417977510 busy=98.737644 s per_task=0.178549085 s done_at=104.632559 s
+  rank=3 host=atlantica07 tasks=533 iterations=7098391922 busy=97.966226 s per_task=0.183801549 s done_at=104.632650 s
+  rank=4 host=atlantica07 tasks=545 iterations=7197343993 busy=98.522205 s per_task=0.180774688 s done_at=104.637270 s
+  rank=5 host=atlantica07 tasks=568 iterations=7458961166 busy=98.649618 s per_task=0.173678906 s done_at=104.632732 s
+  rank=6 host=atlantica07 tasks=533 iterations=7146205975 busy=98.453189 s per_task=0.184715177 s done_at=104.632818 s
+  rank=7 host=atlantica07 tasks=536 iterations=7187957628 busy=98.575334 s per_task=0.183909205 s done_at=104.632905 s
+  rank=8 host=atlantica07 tasks=532 iterations=7070023760 busy=97.870553 s per_task=0.183967205 s done_at=104.632996 s
+  rank=9 host=atlantica07 tasks=589 iterations=7879483038 busy=97.725886 s per_task=0.165918313 s done_at=104.633077 s
+  rank=10 host=atlantica07 tasks=565 iterations=7466311953 busy=98.505695 s per_task=0.174346363 s done_at=104.633156 s
+  rank=11 host=atlantica07 tasks=535 iterations=7140153231 busy=97.923343 s per_task=0.183034285 s done_at=104.633246 s
+  rank=12 host=atlantica07 tasks=565 iterations=7479880163 busy=97.890470 s per_task=0.173257469 s done_at=104.633328 s
+  rank=13 host=atlantica07 tasks=568 iterations=7639035777 busy=98.539488 s per_task=0.173485014 s done_at=104.633408 s
+  rank=14 host=atlantica07 tasks=549 iterations=7173677043 busy=98.286239 s per_task=0.179027757 s done_at=104.633495 s
+  rank=15 host=atlantica07 tasks=541 iterations=7159606230 busy=98.941446 s per_task=0.182886222 s done_at=104.633580 s
+  rank=16 host=atlantica07 tasks=565 iterations=7600064355 busy=99.820073 s per_task=0.176672696 s done_at=104.633662 s
+  rank=17 host=atlantica07 tasks=583 iterations=7775869288 busy=98.100327 s per_task=0.168268142 s done_at=104.633744 s
+  rank=18 host=atlantica07 tasks=541 iterations=7169034994 busy=97.969908 s per_task=0.181090403 s done_at=104.633832 s
+  rank=19 host=atlantica07 tasks=546 iterations=7291519026 busy=97.970018 s per_task=0.179432268 s done_at=104.633949 s
+  rank=20 host=atlantica07 tasks=557 iterations=7487554782 busy=97.952079 s per_task=0.175856514 s done_at=104.634034 s
+  rank=21 host=atlantica07 tasks=574 iterations=7873579064 busy=98.669438 s per_task=0.171897976 s done_at=104.634140 s
+  rank=22 host=atlantica07 tasks=543 iterations=7139667633 busy=97.875876 s per_task=0.180250231 s done_at=104.634248 s
+  rank=23 host=atlantica07 tasks=538 iterations=7258522387 busy=98.862849 s per_task=0.183759943 s done_at=104.634330 s
+  rank=24 host=atlantica07 tasks=541 iterations=7287771425 busy=98.240175 s per_task=0.181589973 s done_at=104.634420 s
+  rank=25 host=atlantica07 tasks=555 iterations=7240993598 busy=97.928799 s per_task=0.176448286 s done_at=104.634512 s
+  rank=26 host=atlantica07 tasks=560 iterations=7440541082 busy=98.727701 s per_task=0.176299466 s done_at=104.634592 s
+  rank=27 host=atlantica07 tasks=533 iterations=7147793121 busy=98.011405 s per_task=0.183886313 s done_at=104.634684 s
+  rank=28 host=atlantica07 tasks=534 iterations=7129730897 busy=98.193225 s per_task=0.183882444 s done_at=104.634772 s
+  rank=29 host=atlantica07 tasks=582 iterations=7586822232 busy=98.043252 s per_task=0.168459196 s done_at=104.634855 s
+  rank=30 host=atlantica07 tasks=591 iterations=7998426256 busy=98.305842 s per_task=0.166338142 s done_at=104.634937 s
+  rank=31 host=atlantica07 tasks=567 iterations=7608179428 busy=98.240964 s per_task=0.173264487 s done_at=104.635018 s
+  rank=32 host=atlantica08 tasks=557 iterations=7344435839 busy=98.319230 s per_task=0.176515674 s done_at=104.635103 s
+  rank=33 host=atlantica08 tasks=546 iterations=7342331870 busy=98.515719 s per_task=0.180431720 s done_at=104.635190 s
+  rank=34 host=atlantica08 tasks=553 iterations=7363914376 busy=98.417769 s per_task=0.177970649 s done_at=104.635277 s
+  rank=35 host=atlantica08 tasks=549 iterations=7361545137 busy=98.084631 s per_task=0.178660530 s done_at=104.635364 s
+  rank=36 host=atlantica08 tasks=547 iterations=7321878205 busy=99.274733 s per_task=0.181489457 s done_at=104.635487 s
+  rank=37 host=atlantica08 tasks=543 iterations=7351162198 busy=97.841087 s per_task=0.180186163 s done_at=104.635570 s
+  rank=38 host=atlantica08 tasks=548 iterations=7358186281 busy=97.869179 s per_task=0.178593392 s done_at=104.635650 s
+  rank=39 host=atlantica08 tasks=537 iterations=7328166560 busy=98.481594 s per_task=0.183392167 s done_at=104.637346 s
+  rank=40 host=atlantica08 tasks=546 iterations=7368024705 busy=98.609549 s per_task=0.180603570 s done_at=104.637423 s
+  rank=41 host=atlantica08 tasks=540 iterations=7343930361 busy=99.184302 s per_task=0.183674633 s done_at=104.637494 s
+  rank=42 host=atlantica08 tasks=557 iterations=7366865245 busy=98.899292 s per_task=0.177557078 s done_at=104.637564 s
+  rank=43 host=atlantica08 tasks=540 iterations=7339120638 busy=97.771976 s per_task=0.181059215 s done_at=104.637636 s
+  rank=44 host=atlantica08 tasks=538 iterations=7325279092 busy=98.451705 s per_task=0.182995734 s done_at=104.637709 s
+  rank=45 host=atlantica08 tasks=543 iterations=7352305319 busy=97.411470 s per_task=0.179394972 s done_at=104.637780 s
+  rank=46 host=atlantica08 tasks=538 iterations=7312188304 busy=98.278466 s per_task=0.182673729 s done_at=104.637851 s
+  rank=47 host=atlantica08 tasks=546 iterations=7362587563 busy=98.096570 s per_task=0.179664048 s done_at=104.637924 s
+  rank=48 host=atlantica08 tasks=548 iterations=7335864285 busy=98.721717 s per_task=0.180149119 s done_at=104.637996 s
+  rank=49 host=atlantica08 tasks=538 iterations=7347706793 busy=97.980917 s per_task=0.182120663 s done_at=104.638071 s
+  rank=50 host=atlantica08 tasks=539 iterations=7327614481 busy=98.313882 s per_task=0.182400523 s done_at=104.638143 s
+  rank=51 host=atlantica08 tasks=535 iterations=7335897716 busy=98.059926 s per_task=0.183289582 s done_at=104.638215 s
+  rank=52 host=atlantica08 tasks=540 iterations=7331115540 busy=98.060118 s per_task=0.181592811 s done_at=104.638287 s
+  rank=53 host=atlantica08 tasks=550 iterations=7357084188 busy=99.151939 s per_task=0.180276253 s done_at=104.638361 s
+  rank=54 host=atlantica08 tasks=540 iterations=7328825950 busy=98.757793 s per_task=0.182884803 s done_at=104.638433 s
+  rank=55 host=atlantica08 tasks=541 iterations=7369896066 busy=98.772542 s per_task=0.182574015 s done_at=104.631658 s
+  rank=56 host=atlantica08 tasks=538 iterations=7328282478 busy=99.094302 s per_task=0.184190153 s done_at=104.631761 s
+  rank=57 host=atlantica08 tasks=544 iterations=7339310843 busy=97.835909 s per_task=0.179845422 s done_at=104.631841 s
+  rank=58 host=atlantica08 tasks=533 iterations=7310160866 busy=97.969163 s per_task=0.183807060 s done_at=104.631914 s
+  rank=59 host=atlantica08 tasks=555 iterations=7380751455 busy=99.142432 s per_task=0.178635013 s done_at=104.631987 s
+  rank=60 host=atlantica08 tasks=546 iterations=7371106910 busy=97.397768 s per_task=0.178384190 s done_at=104.632061 s
+  rank=61 host=atlantica08 tasks=537 iterations=7340862490 busy=98.471952 s per_task=0.183374212 s done_at=104.632170 s
+  rank=62 host=atlantica08 tasks=542 iterations=7346727253 busy=97.447066 s per_task=0.179791635 s done_at=104.632253 s
+  rank=63 host=atlantica08 tasks=543 iterations=7364289262 busy=98.882552 s per_task=0.182104147 s done_at=104.632358 s
+### exp=fraca P=64 chunk=4 height=138240 rep=7
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.639030 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=567 iterations=7392574652 busy=97.878654 s per_task=0.172625492 s done_at=104.629457 s
+  rank=2 host=atlantica07 tasks=547 iterations=7347705587 busy=99.319560 s per_task=0.181571409 s done_at=104.629540 s
+  rank=3 host=atlantica07 tasks=554 iterations=7330974591 busy=98.186806 s per_task=0.177232501 s done_at=104.629619 s
+  rank=4 host=atlantica07 tasks=547 iterations=7381372240 busy=97.830475 s per_task=0.178849132 s done_at=104.629696 s
+  rank=5 host=atlantica07 tasks=547 iterations=7336210886 busy=99.203997 s per_task=0.181360140 s done_at=104.629972 s
+  rank=6 host=atlantica07 tasks=540 iterations=7302457016 busy=98.558595 s per_task=0.182515916 s done_at=104.630047 s
+  rank=7 host=atlantica07 tasks=546 iterations=7332371301 busy=99.764617 s per_task=0.182719079 s done_at=104.630130 s
+  rank=8 host=atlantica07 tasks=541 iterations=7312074854 busy=97.788189 s per_task=0.180754509 s done_at=104.630205 s
+  rank=9 host=atlantica07 tasks=548 iterations=7349669698 busy=98.549828 s per_task=0.179835452 s done_at=104.630293 s
+  rank=10 host=atlantica07 tasks=544 iterations=7348816804 busy=98.121287 s per_task=0.180370013 s done_at=104.638944 s
+  rank=11 host=atlantica07 tasks=545 iterations=7340137232 busy=98.594823 s per_task=0.180907933 s done_at=104.639030 s
+  rank=12 host=atlantica07 tasks=546 iterations=7347294877 busy=98.903839 s per_task=0.181142561 s done_at=104.625370 s
+  rank=13 host=atlantica07 tasks=539 iterations=7379145558 busy=101.106446 s per_task=0.187581532 s done_at=104.625452 s
+  rank=14 host=atlantica07 tasks=541 iterations=7343710755 busy=98.878798 s per_task=0.182770421 s done_at=104.625532 s
+  rank=15 host=atlantica07 tasks=544 iterations=7370204693 busy=97.779943 s per_task=0.179742542 s done_at=104.625617 s
+  rank=16 host=atlantica07 tasks=571 iterations=7445311561 busy=97.808574 s per_task=0.171293475 s done_at=104.629883 s
+  rank=17 host=atlantica07 tasks=550 iterations=7353239351 busy=98.334365 s per_task=0.178789755 s done_at=104.625702 s
+  rank=18 host=atlantica07 tasks=570 iterations=7786792337 busy=97.441836 s per_task=0.170950589 s done_at=104.625778 s
+  rank=19 host=atlantica07 tasks=542 iterations=7338400996 busy=98.382536 s per_task=0.181517594 s done_at=104.625869 s
+  rank=20 host=atlantica07 tasks=545 iterations=7322966664 busy=98.965239 s per_task=0.181587594 s done_at=104.625946 s
+  rank=21 host=atlantica07 tasks=548 iterations=7327628551 busy=98.837362 s per_task=0.180360149 s done_at=104.626025 s
+  rank=22 host=atlantica07 tasks=559 iterations=7389390120 busy=98.019731 s per_task=0.175348356 s done_at=104.626110 s
+  rank=23 host=atlantica07 tasks=545 iterations=7346367476 busy=98.239772 s per_task=0.180256462 s done_at=104.626203 s
+  rank=24 host=atlantica07 tasks=573 iterations=7771881733 busy=98.290664 s per_task=0.171536935 s done_at=104.626278 s
+  rank=25 host=atlantica07 tasks=549 iterations=7348463205 busy=99.811537 s per_task=0.181806078 s done_at=104.626376 s
+  rank=26 host=atlantica07 tasks=551 iterations=7366092315 busy=97.526867 s per_task=0.176999759 s done_at=104.626462 s
+  rank=27 host=atlantica07 tasks=543 iterations=7345110862 busy=98.016865 s per_task=0.180509879 s done_at=104.626551 s
+  rank=28 host=atlantica07 tasks=555 iterations=7429347199 busy=97.650980 s per_task=0.175947712 s done_at=104.626637 s
+  rank=29 host=atlantica07 tasks=543 iterations=7332513215 busy=97.940613 s per_task=0.180369453 s done_at=104.626715 s
+  rank=30 host=atlantica07 tasks=543 iterations=7335881035 busy=97.843106 s per_task=0.180189882 s done_at=104.626801 s
+  rank=31 host=atlantica07 tasks=548 iterations=7350688264 busy=97.848094 s per_task=0.178554917 s done_at=104.626879 s
+  rank=32 host=atlantica08 tasks=557 iterations=7336786096 busy=97.328995 s per_task=0.174737872 s done_at=104.626971 s
+  rank=33 host=atlantica08 tasks=544 iterations=7275556803 busy=98.447731 s per_task=0.180970093 s done_at=104.627048 s
+  rank=34 host=atlantica08 tasks=545 iterations=7328595468 busy=98.028069 s per_task=0.179868017 s done_at=104.627123 s
+  rank=35 host=atlantica08 tasks=550 iterations=7337384025 busy=97.876746 s per_task=0.177957719 s done_at=104.627197 s
+  rank=36 host=atlantica08 tasks=552 iterations=7333746283 busy=98.888349 s per_task=0.179145559 s done_at=104.627276 s
+  rank=37 host=atlantica08 tasks=552 iterations=7338539557 busy=98.404854 s per_task=0.178269664 s done_at=104.627351 s
+  rank=38 host=atlantica08 tasks=550 iterations=7354943520 busy=97.878617 s per_task=0.177961121 s done_at=104.627425 s
+  rank=39 host=atlantica08 tasks=552 iterations=7321563127 busy=98.316582 s per_task=0.178109750 s done_at=104.627499 s
+  rank=40 host=atlantica08 tasks=570 iterations=7471029663 busy=98.513972 s per_task=0.172831529 s done_at=104.627581 s
+  rank=41 host=atlantica08 tasks=546 iterations=7332900196 busy=99.311858 s per_task=0.181889850 s done_at=104.627660 s
+  rank=42 host=atlantica08 tasks=552 iterations=7329295109 busy=97.738998 s per_task=0.177063402 s done_at=104.627737 s
+  rank=43 host=atlantica08 tasks=556 iterations=7436672783 busy=98.697097 s per_task=0.177512764 s done_at=104.627812 s
+  rank=44 host=atlantica08 tasks=555 iterations=7357610188 busy=98.304366 s per_task=0.177124984 s done_at=104.627890 s
+  rank=45 host=atlantica08 tasks=544 iterations=7329540448 busy=98.643873 s per_task=0.181330649 s done_at=104.627968 s
+  rank=46 host=atlantica08 tasks=543 iterations=7336594852 busy=99.266664 s per_task=0.182811536 s done_at=104.628046 s
+  rank=47 host=atlantica08 tasks=544 iterations=7344167464 busy=97.453336 s per_task=0.179142162 s done_at=104.628121 s
+  rank=48 host=atlantica08 tasks=544 iterations=7306746643 busy=99.267019 s per_task=0.182476138 s done_at=104.628201 s
+  rank=49 host=atlantica08 tasks=537 iterations=7290442257 busy=97.573021 s per_task=0.181700225 s done_at=104.628276 s
+  rank=50 host=atlantica08 tasks=538 iterations=7322059560 busy=98.505750 s per_task=0.183096189 s done_at=104.628351 s
+  rank=51 host=atlantica08 tasks=546 iterations=7330446544 busy=97.734747 s per_task=0.179001368 s done_at=104.628428 s
+  rank=52 host=atlantica08 tasks=546 iterations=7351967180 busy=97.982778 s per_task=0.179455637 s done_at=104.628502 s
+  rank=53 host=atlantica08 tasks=549 iterations=7357999823 busy=97.992743 s per_task=0.178493157 s done_at=104.628582 s
+  rank=54 host=atlantica08 tasks=545 iterations=7349069011 busy=97.513319 s per_task=0.178923521 s done_at=104.628668 s
+  rank=55 host=atlantica08 tasks=546 iterations=7374728965 busy=97.460520 s per_task=0.178499120 s done_at=104.628742 s
+  rank=56 host=atlantica08 tasks=551 iterations=7342363079 busy=99.189226 s per_task=0.180016744 s done_at=104.628817 s
+  rank=57 host=atlantica08 tasks=537 iterations=7297747665 busy=98.627965 s per_task=0.183664740 s done_at=104.628894 s
+  rank=58 host=atlantica08 tasks=545 iterations=7294372989 busy=98.534152 s per_task=0.180796610 s done_at=104.628970 s
+  rank=59 host=atlantica08 tasks=546 iterations=7351158173 busy=98.000213 s per_task=0.179487569 s done_at=104.629047 s
+  rank=60 host=atlantica08 tasks=548 iterations=7407991748 busy=97.657094 s per_task=0.178206377 s done_at=104.629130 s
+  rank=61 host=atlantica08 tasks=545 iterations=7339483340 busy=97.468646 s per_task=0.178841552 s done_at=104.629210 s
+  rank=62 host=atlantica08 tasks=537 iterations=7302452733 busy=97.782634 s per_task=0.182090567 s done_at=104.629287 s
+  rank=63 host=atlantica08 tasks=557 iterations=7364502643 busy=98.513499 s per_task=0.176864450 s done_at=104.629364 s
+### exp=fraca P=64 chunk=4 height=138240 rep=8
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.595258 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=550 iterations=7210285868 busy=99.221789 s per_task=0.180403253 s done_at=104.580358 s
+  rank=2 host=atlantica07 tasks=586 iterations=7838724239 busy=98.651397 s per_task=0.168347094 s done_at=104.580438 s
+  rank=3 host=atlantica07 tasks=561 iterations=7401599670 busy=101.202280 s per_task=0.180396221 s done_at=104.580516 s
+  rank=4 host=atlantica07 tasks=541 iterations=7258922061 busy=97.649235 s per_task=0.180497663 s done_at=104.580594 s
+  rank=5 host=atlantica07 tasks=554 iterations=7299096554 busy=97.812184 s per_task=0.176556290 s done_at=104.580684 s
+  rank=6 host=atlantica07 tasks=557 iterations=7350104734 busy=98.207822 s per_task=0.176315660 s done_at=104.580768 s
+  rank=7 host=atlantica07 tasks=545 iterations=7231245239 busy=98.927242 s per_task=0.181517875 s done_at=104.580856 s
+  rank=8 host=atlantica07 tasks=560 iterations=7418115601 busy=98.253774 s per_task=0.175453168 s done_at=104.580936 s
+  rank=9 host=atlantica07 tasks=580 iterations=7948062593 busy=97.787548 s per_task=0.168599221 s done_at=104.581020 s
+  rank=10 host=atlantica07 tasks=536 iterations=7178321773 busy=98.951828 s per_task=0.184611620 s done_at=104.581115 s
+  rank=11 host=atlantica07 tasks=568 iterations=7427729509 busy=99.768003 s per_task=0.175647893 s done_at=104.581202 s
+  rank=12 host=atlantica07 tasks=545 iterations=7219912216 busy=98.536467 s per_task=0.180800858 s done_at=104.581320 s
+  rank=13 host=atlantica07 tasks=540 iterations=7273220534 busy=98.313584 s per_task=0.182062192 s done_at=104.581430 s
+  rank=14 host=atlantica07 tasks=591 iterations=7697760428 busy=98.709827 s per_task=0.167021703 s done_at=104.581513 s
+  rank=15 host=atlantica07 tasks=542 iterations=7237855632 busy=98.508470 s per_task=0.181749944 s done_at=104.581603 s
+  rank=16 host=atlantica07 tasks=565 iterations=7341547171 busy=99.176313 s per_task=0.175533297 s done_at=104.593744 s
+  rank=17 host=atlantica07 tasks=552 iterations=7376963750 busy=99.154554 s per_task=0.179627815 s done_at=104.581694 s
+  rank=18 host=atlantica07 tasks=556 iterations=7435666667 busy=99.162957 s per_task=0.178350642 s done_at=104.581796 s
+  rank=19 host=atlantica07 tasks=563 iterations=7321713615 busy=99.150604 s per_task=0.176111198 s done_at=104.581885 s
+  rank=20 host=atlantica07 tasks=587 iterations=7561997599 busy=98.097003 s per_task=0.167115848 s done_at=104.581967 s
+  rank=21 host=atlantica07 tasks=561 iterations=7444106330 busy=98.657813 s per_task=0.175860630 s done_at=104.582052 s
+  rank=22 host=atlantica07 tasks=544 iterations=7181443177 busy=98.131428 s per_task=0.180388654 s done_at=104.582139 s
+  rank=23 host=atlantica07 tasks=548 iterations=7370192598 busy=98.971658 s per_task=0.180605216 s done_at=104.582249 s
+  rank=24 host=atlantica07 tasks=566 iterations=7503715004 busy=98.184937 s per_task=0.173471620 s done_at=104.582328 s
+  rank=25 host=atlantica07 tasks=560 iterations=7424433788 busy=98.864525 s per_task=0.176543795 s done_at=104.582411 s
+  rank=26 host=atlantica07 tasks=545 iterations=7299617936 busy=98.156969 s per_task=0.180104530 s done_at=104.582497 s
+  rank=27 host=atlantica07 tasks=536 iterations=7195330620 busy=98.158345 s per_task=0.183131241 s done_at=104.582582 s
+  rank=28 host=atlantica07 tasks=553 iterations=7566364792 busy=97.817254 s per_task=0.176884727 s done_at=104.595002 s
+  rank=29 host=atlantica07 tasks=556 iterations=7408361445 busy=97.924068 s per_task=0.176122425 s done_at=104.595085 s
+  rank=30 host=atlantica07 tasks=551 iterations=7422713079 busy=98.338457 s per_task=0.178472700 s done_at=104.595173 s
+  rank=31 host=atlantica07 tasks=551 iterations=7214675968 busy=98.159279 s per_task=0.178147512 s done_at=104.595258 s
+  rank=32 host=atlantica08 tasks=526 iterations=6940685405 busy=98.257209 s per_task=0.186800778 s done_at=104.582671 s
+  rank=33 host=atlantica08 tasks=597 iterations=8151633791 busy=98.350534 s per_task=0.164741263 s done_at=104.582749 s
+  rank=34 host=atlantica08 tasks=524 iterations=6799062822 busy=97.864255 s per_task=0.186763845 s done_at=104.582829 s
+  rank=35 host=atlantica08 tasks=500 iterations=6697121157 busy=97.932292 s per_task=0.195864585 s done_at=104.582907 s
+  rank=36 host=atlantica08 tasks=512 iterations=6815576374 busy=98.001451 s per_task=0.191409084 s done_at=104.593820 s
+  rank=37 host=atlantica08 tasks=494 iterations=6765244161 busy=98.012817 s per_task=0.198406512 s done_at=104.593892 s
+  rank=38 host=atlantica08 tasks=538 iterations=7377473591 busy=97.980080 s per_task=0.182119108 s done_at=104.593964 s
+  rank=39 host=atlantica08 tasks=526 iterations=7025494225 busy=98.074930 s per_task=0.186454240 s done_at=104.594039 s
+  rank=40 host=atlantica08 tasks=554 iterations=7472344321 busy=97.612611 s per_task=0.176196049 s done_at=104.594111 s
+  rank=41 host=atlantica08 tasks=517 iterations=6974415060 busy=97.937854 s per_task=0.189434920 s done_at=104.594184 s
+  rank=42 host=atlantica08 tasks=538 iterations=7405666564 busy=97.911230 s per_task=0.181991134 s done_at=104.594254 s
+  rank=43 host=atlantica08 tasks=526 iterations=7282425123 busy=97.687101 s per_task=0.185716921 s done_at=104.594329 s
+  rank=44 host=atlantica08 tasks=597 iterations=8501706726 busy=97.986573 s per_task=0.164131614 s done_at=104.594400 s
+  rank=45 host=atlantica08 tasks=523 iterations=6916161762 busy=97.922721 s per_task=0.187232736 s done_at=104.594471 s
+  rank=46 host=atlantica08 tasks=587 iterations=8022712592 busy=97.870964 s per_task=0.166730773 s done_at=104.594542 s
+  rank=47 host=atlantica08 tasks=513 iterations=6770136566 busy=97.970616 s per_task=0.190975859 s done_at=104.594617 s
+  rank=48 host=atlantica08 tasks=519 iterations=6954248518 busy=97.782785 s per_task=0.188406137 s done_at=104.594686 s
+  rank=49 host=atlantica08 tasks=541 iterations=7328339040 busy=98.608882 s per_task=0.182271501 s done_at=104.594758 s
+  rank=50 host=atlantica08 tasks=544 iterations=7371240824 busy=98.737555 s per_task=0.181502858 s done_at=104.594834 s
+  rank=51 host=atlantica08 tasks=590 iterations=8163976500 busy=98.633577 s per_task=0.167175554 s done_at=104.594905 s
+  rank=52 host=atlantica08 tasks=611 iterations=8287170940 busy=98.776129 s per_task=0.161663059 s done_at=104.579328 s
+  rank=53 host=atlantica08 tasks=587 iterations=8433305398 busy=97.866229 s per_task=0.166722707 s done_at=104.579408 s
+  rank=54 host=atlantica08 tasks=526 iterations=6932796740 busy=97.844123 s per_task=0.186015442 s done_at=104.579481 s
+  rank=55 host=atlantica08 tasks=527 iterations=7127483576 busy=98.315019 s per_task=0.186556014 s done_at=104.579556 s
+  rank=56 host=atlantica08 tasks=562 iterations=7906992203 busy=97.943823 s per_task=0.174277264 s done_at=104.579632 s
+  rank=57 host=atlantica08 tasks=533 iterations=7090658115 busy=97.790750 s per_task=0.183472326 s done_at=104.579739 s
+  rank=58 host=atlantica08 tasks=526 iterations=7068749387 busy=98.034655 s per_task=0.186377671 s done_at=104.579817 s
+  rank=59 host=atlantica08 tasks=517 iterations=6961155321 busy=98.078514 s per_task=0.189706990 s done_at=104.579916 s
+  rank=60 host=atlantica08 tasks=547 iterations=7495720148 busy=97.914012 s per_task=0.179001850 s done_at=104.579993 s
+  rank=61 host=atlantica08 tasks=532 iterations=7100177972 busy=97.934791 s per_task=0.184087953 s done_at=104.580089 s
+  rank=62 host=atlantica08 tasks=563 iterations=7619382176 busy=97.983553 s per_task=0.174038283 s done_at=104.580185 s
+  rank=63 host=atlantica08 tasks=513 iterations=6934196275 busy=98.021503 s per_task=0.191075054 s done_at=104.580257 s
+### exp=fraca P=64 chunk=4 height=138240 rep=9
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.644436 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=561 iterations=7414945464 busy=98.741824 s per_task=0.176010382 s done_at=104.627872 s
+  rank=2 host=atlantica07 tasks=546 iterations=7315140817 busy=97.965634 s per_task=0.179424238 s done_at=104.627960 s
+  rank=3 host=atlantica07 tasks=543 iterations=7257765459 busy=97.997980 s per_task=0.180475101 s done_at=104.628053 s
+  rank=4 host=atlantica07 tasks=569 iterations=7593843185 busy=99.088233 s per_task=0.174144522 s done_at=104.628133 s
+  rank=5 host=atlantica07 tasks=545 iterations=7248005282 busy=98.173666 s per_task=0.180135168 s done_at=104.628221 s
+  rank=6 host=atlantica07 tasks=548 iterations=7310158567 busy=98.359739 s per_task=0.179488574 s done_at=104.628300 s
+  rank=7 host=atlantica07 tasks=562 iterations=7580264394 busy=97.668576 s per_task=0.173787502 s done_at=104.628383 s
+  rank=8 host=atlantica07 tasks=548 iterations=7189221674 busy=98.861685 s per_task=0.180404535 s done_at=104.631031 s
+  rank=9 host=atlantica07 tasks=555 iterations=7380355857 busy=98.898262 s per_task=0.178195067 s done_at=104.628473 s
+  rank=10 host=atlantica07 tasks=566 iterations=7532545887 busy=98.681289 s per_task=0.174348567 s done_at=104.628555 s
+  rank=11 host=atlantica07 tasks=566 iterations=7501868157 busy=98.054655 s per_task=0.173241440 s done_at=104.628637 s
+  rank=12 host=atlantica07 tasks=538 iterations=7276662833 busy=99.253389 s per_task=0.184485854 s done_at=104.628733 s
+  rank=13 host=atlantica07 tasks=542 iterations=7299524099 busy=98.766171 s per_task=0.182225408 s done_at=104.628823 s
+  rank=14 host=atlantica07 tasks=551 iterations=7339668182 busy=98.925881 s per_task=0.179538804 s done_at=104.628945 s
+  rank=15 host=atlantica07 tasks=555 iterations=7455920176 busy=97.858894 s per_task=0.176322332 s done_at=104.629028 s
+  rank=16 host=atlantica07 tasks=554 iterations=7386387460 busy=97.954930 s per_task=0.176813954 s done_at=104.629143 s
+  rank=17 host=atlantica07 tasks=550 iterations=7378020433 busy=97.295968 s per_task=0.176901761 s done_at=104.643933 s
+  rank=18 host=atlantica07 tasks=553 iterations=7467021853 busy=98.489149 s per_task=0.178099728 s done_at=104.644009 s
+  rank=19 host=atlantica07 tasks=562 iterations=7366254865 busy=98.033894 s per_task=0.174437534 s done_at=104.629226 s
+  rank=20 host=atlantica07 tasks=558 iterations=7498055731 busy=97.963585 s per_task=0.175561980 s done_at=104.629306 s
+  rank=21 host=atlantica07 tasks=543 iterations=7249674986 busy=98.350790 s per_task=0.181124843 s done_at=104.629393 s
+  rank=22 host=atlantica07 tasks=539 iterations=7240217940 busy=98.062170 s per_task=0.181933524 s done_at=104.644117 s
+  rank=23 host=atlantica07 tasks=568 iterations=7596478264 busy=98.146242 s per_task=0.172792680 s done_at=104.629474 s
+  rank=24 host=atlantica07 tasks=543 iterations=7309192105 busy=97.985548 s per_task=0.180452206 s done_at=104.644206 s
+  rank=25 host=atlantica07 tasks=547 iterations=7338306671 busy=98.170285 s per_task=0.179470356 s done_at=104.629590 s
+  rank=26 host=atlantica07 tasks=543 iterations=7281794166 busy=98.016269 s per_task=0.180508783 s done_at=104.644294 s
+  rank=27 host=atlantica07 tasks=543 iterations=7248900789 busy=97.933860 s per_task=0.180357017 s done_at=104.629680 s
+  rank=28 host=atlantica07 tasks=581 iterations=7822888922 busy=97.556612 s per_task=0.167911552 s done_at=104.629761 s
+  rank=29 host=atlantica07 tasks=563 iterations=7520899485 busy=99.132736 s per_task=0.176079460 s done_at=104.644436 s
+  rank=30 host=atlantica07 tasks=544 iterations=7225345752 busy=97.870041 s per_task=0.179908164 s done_at=104.631125 s
+  rank=31 host=atlantica07 tasks=545 iterations=7286179301 busy=98.038951 s per_task=0.179887983 s done_at=104.631208 s
+  rank=32 host=atlantica08 tasks=556 iterations=7324533514 busy=98.234605 s per_task=0.176680943 s done_at=104.631289 s
+  rank=33 host=atlantica08 tasks=549 iterations=7333873741 busy=97.523523 s per_task=0.177638476 s done_at=104.631363 s
+  rank=34 host=atlantica08 tasks=563 iterations=7356447282 busy=98.663158 s per_task=0.175245397 s done_at=104.631438 s
+  rank=35 host=atlantica08 tasks=570 iterations=7374475154 busy=97.757222 s per_task=0.171503899 s done_at=104.631510 s
+  rank=36 host=atlantica08 tasks=553 iterations=7333111311 busy=98.646979 s per_task=0.178385134 s done_at=104.643246 s
+  rank=37 host=atlantica08 tasks=545 iterations=7326622860 busy=98.641979 s per_task=0.180994456 s done_at=104.643321 s
+  rank=38 host=atlantica08 tasks=537 iterations=7316975953 busy=98.165080 s per_task=0.182802757 s done_at=104.643398 s
+  rank=39 host=atlantica08 tasks=544 iterations=7325666631 busy=99.088780 s per_task=0.182148494 s done_at=104.643473 s
+  rank=40 host=atlantica08 tasks=546 iterations=7341420176 busy=97.471670 s per_task=0.178519543 s done_at=104.643550 s
+  rank=41 host=atlantica08 tasks=542 iterations=7350288838 busy=97.539257 s per_task=0.179961729 s done_at=104.643629 s
+  rank=42 host=atlantica08 tasks=543 iterations=7325563839 busy=97.999045 s per_task=0.180477063 s done_at=104.643705 s
+  rank=43 host=atlantica08 tasks=540 iterations=7335810217 busy=97.606373 s per_task=0.180752543 s done_at=104.643778 s
+  rank=44 host=atlantica08 tasks=543 iterations=7332711233 busy=98.349066 s per_task=0.181121668 s done_at=104.643851 s
+  rank=45 host=atlantica08 tasks=545 iterations=7375176074 busy=98.486326 s per_task=0.180708854 s done_at=104.626277 s
+  rank=46 host=atlantica08 tasks=539 iterations=7330443005 busy=97.469961 s per_task=0.180834807 s done_at=104.626360 s
+  rank=47 host=atlantica08 tasks=540 iterations=7328943340 busy=97.362021 s per_task=0.180300039 s done_at=104.626432 s
+  rank=48 host=atlantica08 tasks=552 iterations=7349096377 busy=98.173365 s per_task=0.177850299 s done_at=104.626507 s
+  rank=49 host=atlantica08 tasks=545 iterations=7344017771 busy=97.671621 s per_task=0.179213984 s done_at=104.626584 s
+  rank=50 host=atlantica08 tasks=545 iterations=7330378398 busy=97.993023 s per_task=0.179803711 s done_at=104.626661 s
+  rank=51 host=atlantica08 tasks=541 iterations=7346279041 busy=98.225185 s per_task=0.181562264 s done_at=104.626735 s
+  rank=52 host=atlantica08 tasks=550 iterations=7367223048 busy=97.371356 s per_task=0.177038829 s done_at=104.626813 s
+  rank=53 host=atlantica08 tasks=539 iterations=7343149564 busy=98.605972 s per_task=0.182942435 s done_at=104.626904 s
+  rank=54 host=atlantica08 tasks=552 iterations=7366500888 busy=99.047576 s per_task=0.179434014 s done_at=104.626978 s
+  rank=55 host=atlantica08 tasks=541 iterations=7345510406 busy=97.542237 s per_task=0.180299884 s done_at=104.627096 s
+  rank=56 host=atlantica08 tasks=538 iterations=7330350630 busy=98.706804 s per_task=0.183469895 s done_at=104.627172 s
+  rank=57 host=atlantica08 tasks=537 iterations=7323552217 busy=98.324820 s per_task=0.183100224 s done_at=104.627250 s
+  rank=58 host=atlantica08 tasks=533 iterations=7312105556 busy=98.081283 s per_task=0.184017416 s done_at=104.627329 s
+  rank=59 host=atlantica08 tasks=542 iterations=7334039329 busy=98.183744 s per_task=0.181150819 s done_at=104.627430 s
+  rank=60 host=atlantica08 tasks=542 iterations=7348548785 busy=98.479815 s per_task=0.181697075 s done_at=104.627529 s
+  rank=61 host=atlantica08 tasks=543 iterations=7348764356 busy=97.425496 s per_task=0.179420802 s done_at=104.627629 s
+  rank=62 host=atlantica08 tasks=538 iterations=7318634503 busy=98.889269 s per_task=0.183809050 s done_at=104.627709 s
+  rank=63 host=atlantica08 tasks=536 iterations=7321530770 busy=98.920843 s per_task=0.184553811 s done_at=104.627785 s
+### exp=fraca P=64 chunk=4 height=138240 rep=10
++ env OMPI_MCA_mpi_yield_when_idle=1 srun -N 2 -n 64 --ntasks-per-node=32 --cpu-bind=threads --overcommit ./julia_mpi --width 3840 --max-iter 6000 --height 138240 --chunk 4 --rank-stats
+frame=0 c=-0.123000+0.745000i mode=mpi procs=64 width=3840 height=138240 max_iter=6000 chunk=4 time=104.680678 s iterations=463753253563 checksum=c247c4f4ed86b753
+  rank=0 host=atlantica07 role=master
+  rank=1 host=atlantica07 tasks=574 iterations=7505110068 busy=98.057263 s per_task=0.170831469 s done_at=104.664852 s
+  rank=2 host=atlantica07 tasks=565 iterations=7352583944 busy=98.594601 s per_task=0.174503719 s done_at=104.667538 s
+  rank=3 host=atlantica07 tasks=582 iterations=7899629310 busy=98.220039 s per_task=0.168762954 s done_at=104.664932 s
+  rank=4 host=atlantica07 tasks=547 iterations=7271139380 busy=98.938115 s per_task=0.180874068 s done_at=104.665017 s
+  rank=5 host=atlantica07 tasks=541 iterations=7305378852 busy=100.780572 s per_task=0.186285716 s done_at=104.665098 s
+  rank=6 host=atlantica07 tasks=554 iterations=7262177978 busy=98.900006 s per_task=0.178519866 s done_at=104.665185 s
+  rank=7 host=atlantica07 tasks=548 iterations=7370745387 busy=98.600454 s per_task=0.179927836 s done_at=104.665264 s
+  rank=8 host=atlantica07 tasks=562 iterations=7372566929 busy=98.339596 s per_task=0.174981488 s done_at=104.665355 s
+  rank=9 host=atlantica07 tasks=537 iterations=7260612534 busy=97.983430 s per_task=0.182464487 s done_at=104.665451 s
+  rank=10 host=atlantica07 tasks=565 iterations=7561422052 busy=98.613169 s per_task=0.174536583 s done_at=104.680230 s
+  rank=11 host=atlantica07 tasks=542 iterations=7340237709 busy=98.729298 s per_task=0.182157376 s done_at=104.665537 s
+  rank=12 host=atlantica07 tasks=540 iterations=7276600702 busy=98.057786 s per_task=0.181588493 s done_at=104.665623 s
+  rank=13 host=atlantica07 tasks=555 iterations=7341232614 busy=99.162207 s per_task=0.178670643 s done_at=104.665712 s
+  rank=14 host=atlantica07 tasks=577 iterations=7559211358 busy=98.874465 s per_task=0.171359558 s done_at=104.665792 s
+  rank=15 host=atlantica07 tasks=548 iterations=7464975913 busy=98.930985 s per_task=0.180530995 s done_at=104.680316 s
+  rank=16 host=atlantica07 tasks=560 iterations=7488686890 busy=100.015543 s per_task=0.178599185 s done_at=104.665874 s
+  rank=17 host=atlantica07 tasks=540 iterations=7257832773 busy=98.085175 s per_task=0.181639213 s done_at=104.665957 s
+  rank=18 host=atlantica07 tasks=584 iterations=7940506897 busy=98.658914 s per_task=0.168936496 s done_at=104.667626 s
+  rank=19 host=atlantica07 tasks=545 iterations=7287742977 busy=98.638518 s per_task=0.180988107 s done_at=104.667738 s
+  rank=20 host=atlantica07 tasks=536 iterations=7256121679 busy=97.950206 s per_task=0.182742923 s done_at=104.667825 s
+  rank=21 host=atlantica07 tasks=560 iterations=7315429956 busy=97.833188 s per_task=0.174702121 s done_at=104.667914 s
+  rank=22 host=atlantica07 tasks=546 iterations=7281247761 busy=98.596636 s per_task=0.180579919 s done_at=104.667997 s
+  rank=23 host=atlantica07 tasks=559 iterations=7519366437 busy=98.797014 s per_task=0.176738844 s done_at=104.668081 s
+  rank=24 host=atlantica07 tasks=550 iterations=7265284512 busy=97.950887 s per_task=0.178092521 s done_at=104.668160 s
+  rank=25 host=atlantica07 tasks=540 iterations=7281828405 busy=99.274548 s per_task=0.183841756 s done_at=104.668248 s
+  rank=26 host=atlantica07 tasks=538 iterations=7239936145 busy=97.542199 s per_task=0.181305202 s done_at=104.668337 s
+  rank=27 host=atlantica07 tasks=554 iterations=7405281009 busy=97.920605 s per_task=0.176751995 s done_at=104.668415 s
+  rank=28 host=atlantica07 tasks=556 iterations=7294787227 busy=98.587428 s per_task=0.177315517 s done_at=104.668494 s
+  rank=29 host=atlantica07 tasks=542 iterations=7231595862 busy=98.150202 s per_task=0.181088934 s done_at=104.668583 s
+  rank=30 host=atlantica07 tasks=544 iterations=7439270045 busy=97.663568 s per_task=0.179528618 s done_at=104.668670 s
+  rank=31 host=atlantica07 tasks=538 iterations=7232047909 busy=97.959675 s per_task=0.182081180 s done_at=104.668754 s
+  rank=32 host=atlantica08 tasks=556 iterations=7342664637 busy=98.452574 s per_task=0.177072975 s done_at=104.668838 s
+  rank=33 host=atlantica08 tasks=551 iterations=7340377170 busy=97.715852 s per_task=0.177342744 s done_at=104.668912 s
+  rank=34 host=atlantica08 tasks=553 iterations=7333208404 busy=98.191160 s per_task=0.177560867 s done_at=104.668993 s
+  rank=35 host=atlantica08 tasks=549 iterations=7338630520 busy=97.828307 s per_task=0.178193638 s done_at=104.669067 s
+  rank=36 host=atlantica08 tasks=556 iterations=7365527277 busy=97.986676 s per_task=0.176235029 s done_at=104.669141 s
+  rank=37 host=atlantica08 tasks=550 iterations=7338604333 busy=98.295016 s per_task=0.178718211 s done_at=104.679621 s
+  rank=38 host=atlantica08 tasks=551 iterations=7345560243 busy=98.681569 s per_task=0.179095407 s done_at=104.679698 s
+  rank=39 host=atlantica08 tasks=548 iterations=7335086300 busy=98.961662 s per_task=0.180586975 s done_at=104.679773 s
+  rank=40 host=atlantica08 tasks=542 iterations=7338440787 busy=98.243036 s per_task=0.181260214 s done_at=104.679846 s
+  rank=41 host=atlantica08 tasks=546 iterations=7330755941 busy=98.366637 s per_task=0.180158676 s done_at=104.679918 s
+  rank=42 host=atlantica08 tasks=545 iterations=7332221177 busy=99.398127 s per_task=0.182381885 s done_at=104.679992 s
+  rank=43 host=atlantica08 tasks=546 iterations=7335918326 busy=98.623880 s per_task=0.180629816 s done_at=104.680608 s
+  rank=44 host=atlantica08 tasks=556 iterations=7375398645 busy=97.608250 s per_task=0.175554406 s done_at=104.680537 s
+  rank=45 host=atlantica08 tasks=543 iterations=7339398390 busy=98.387829 s per_task=0.181193055 s done_at=104.680070 s
+  rank=46 host=atlantica08 tasks=540 iterations=7342460861 busy=97.494488 s per_task=0.180545349 s done_at=104.680678 s
+  rank=47 host=atlantica08 tasks=543 iterations=7331393566 busy=98.605915 s per_task=0.181594686 s done_at=104.680146 s
+  rank=48 host=atlantica08 tasks=544 iterations=7354845255 busy=98.018529 s per_task=0.180181119 s done_at=104.663568 s
+  rank=49 host=atlantica08 tasks=539 iterations=7351891696 busy=97.458171 s per_task=0.180812933 s done_at=104.663675 s
+  rank=50 host=atlantica08 tasks=544 iterations=7338599973 busy=97.858384 s per_task=0.179886735 s done_at=104.663751 s
+  rank=51 host=atlantica08 tasks=540 iterations=7329877997 busy=99.571782 s per_task=0.184392189 s done_at=104.663832 s
+  rank=52 host=atlantica08 tasks=544 iterations=7339876052 busy=98.171868 s per_task=0.180462992 s done_at=104.663908 s
+  rank=53 host=atlantica08 tasks=538 iterations=7322149245 busy=97.640611 s per_task=0.181488124 s done_at=104.663987 s
+  rank=54 host=atlantica08 tasks=540 iterations=7330714518 busy=97.724307 s per_task=0.180970938 s done_at=104.664060 s
+  rank=55 host=atlantica08 tasks=550 iterations=7349098968 busy=98.862624 s per_task=0.179750225 s done_at=104.664140 s
+  rank=56 host=atlantica08 tasks=543 iterations=7336594376 busy=99.128699 s per_task=0.182557456 s done_at=104.664217 s
+  rank=57 host=atlantica08 tasks=540 iterations=7333415087 busy=98.509771 s per_task=0.182425503 s done_at=104.664300 s
+  rank=58 host=atlantica08 tasks=540 iterations=7349250195 busy=97.333518 s per_task=0.180247255 s done_at=104.664384 s
+  rank=59 host=atlantica08 tasks=542 iterations=7340409863 busy=98.996317 s per_task=0.182650031 s done_at=104.664463 s
+  rank=60 host=atlantica08 tasks=541 iterations=7329497787 busy=99.373893 s per_task=0.183685568 s done_at=104.664538 s
+  rank=61 host=atlantica08 tasks=537 iterations=7332490486 busy=97.505260 s per_task=0.181574041 s done_at=104.664616 s
+  rank=62 host=atlantica08 tasks=533 iterations=7327839526 busy=97.698215 s per_task=0.183298714 s done_at=104.664692 s
+  rank=63 host=atlantica08 tasks=541 iterations=7340464748 busy=98.707587 s per_task=0.182453951 s done_at=104.664767 s
+===== fim em Tue Nov  3 00:16:48 -03 2026 =====

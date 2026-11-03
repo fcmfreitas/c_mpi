@@ -12,6 +12,12 @@ Entrada de referencia: 3840x2160, max_iter=6000; granularidade escolhida: 4 linh
 | 2160 | 4000 | 4838170295 | a1e11ca92826e0af | 1 | 0 | ok |
 | 2160 | 6000 | 7246708295 | afc642cca152dc8b | 1 | 1 | ok |
 | 2160 | 8000 | 9655246295 | bfc7fe2530d5e0eb | 1 | 0 | ok |
+| 4320 | 6000 | 14493044937 | d22ed37fc9357d13 | 1 | 1 | ok |
+| 8640 | 6000 | 28984369757 | 3e4ce54d20d6e5bb | 1 | 1 | ok |
+| 17280 | 6000 | 57968933303 | 3e3f51fe3b735c7b | 1 | 1 | ok |
+| 34560 | 6000 | 115938550891 | 4cd8e0bce6035263 | 1 | 1 | ok |
+| 69120 | 6000 | 231877858395 | 102bc85b442dbbc3 | 1 | 1 | ok |
+| 138240 | 6000 | 463753253563 | c247c4f4ed86b753 | 0 | 1 | ok |
 
 T1 = mediana 40.405 s (min 40.352, max 40.424) em 10 execucoes.
 
@@ -33,6 +39,18 @@ T1 = mediana 40.405 s (min 40.352, max 40.424) em 10 execucoes.
 | 64 (polling) | 1,76 | 1,72 | 1,86 | 22,95 | 36% | 2,49 | 91% | 0,08 |
 
 CPU/T1: soma do tempo ocupado dos escravos dividida por T1 (>1: cada nucleo calcula mais devagar que na sequencial); util.: fracao do tempo em que os escravos estao calculando; cauda: tempo entre o primeiro escravo liberado e o fim.
+
+
+## Escalabilidade fraca
+
+| P | linhas | tarefas | iter./iter.\textsubscript{1} | mediana (s) | min (s) | max (s) | E\textsubscript{fraca} | CPU/(P$\cdot$T1) | util. | equiv. seq |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | 4320 | 1080 | 2,00 | 80,68 | 80,65 | 80,73 | 50% | 1,00 | 100% | ok |
+| 4 | 8640 | 2160 | 4,00 | 53,79 | 53,78 | 54,27 | 75% | 1,00 | 100% | ok |
+| 8 | 17280 | 4320 | 8,00 | 48,65 | 48,65 | 48,65 | 83% | 1,05 | 100% | ok |
+| 16 | 34560 | 8640 | 16,00 | 45,65 | 45,64 | 45,65 | 89% | 1,05 | 99% | ok |
+| 32 | 69120 | 17280 | 32,00 | 52,87 | 52,85 | 52,88 | 76% | 1,26 | 99% | ok |
+| 64 | 138240 | 34560 | 64,00 | 104,64 | 104,46 | 104,77 | 39% | 2,40 | 94% | -- |
 
 
 ## Granularidade (P=32)

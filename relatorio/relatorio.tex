@@ -127,8 +127,7 @@ já é de 0,27\,s; com 32 linhas (68 tarefas), 1,0\,s dos 2,27\,s totais, e a ut
 cara (4,7\,s). \textbf{Balanceamento com 4 linhas} (Figura~\ref{fig:balance}): os 31 escravos
 ficam ocupados de 1,63 a 1,65\,s (99\% do tempo) e são liberados no mesmo instante ($\pm2$\,ms),
 com 16 a 20 tarefas cada; a variação vem do custo desigual das tarefas e da espera 0,65\,ms maior
-dos escravos do segundo nó, que pegam uma ou duas a menos. O fim do saco não custa nada: as
-últimas linhas da imagem (borda inferior) são baratas.
+dos escravos do segundo nó, que pegam uma ou duas a menos.
 
 \section{Resultados}
 \begin{table*}[t]
@@ -143,7 +142,7 @@ de referência; equiv.\ = checksum e iterações iguais aos da sequencial com a 
 \label{tab:escala}
 \end{table*}
 A Tabela~\ref{tab:escala} e a Figura~\ref{fig:curvas}(a,b) resumem as duas escalabilidades
-(mín.\ e máx.\ a menos de 1\% da mediana, exceto em $P=64$). Explicamos as curvas pela decomposição
+(mín.\ e máx.\ a menos de 1\% da mediana). Explicamos as curvas pela decomposição
 $E = \frac{P-1}{P}\cdot\frac{1}{\mathrm{CPU}/T_1}\cdot\mathrm{util}$, cujos fatores vêm do
 \code{--rank-stats} e reproduzem o $E$ medido em todos os pontos. \textbf{Núcleo do mestre:} com
 $P=2$ o único escravo repete a sequencial ($S=1{,}00$) e $E=50\%$ porque o mestre, que não calcula,
@@ -168,18 +167,20 @@ Util.\ segue em 99\% e a cauda em 0,01\,s. \textbf{Dois processos por thread ($P
 ganho ($S=23{,}6$, $E=37\%$): CPU/$T_1=2{,}40$ porque cada processo recebe metade de um thread, e
 util.\ cai a 90\% (cauda 0,08\,s) porque o escalonador do SO fatia o tempo de forma desigual entre
 os 63 escravos. Sem \code{yield\_when\_idle} (``64 (polling)'') é 3\% mais lento (1,76 contra
-1,71\,s): os processos ociosos em espera ativa competem pela CPU com os que calculam, e com
-tarefas pequenas o efeito explode (calibração em 720p, tarefas de 2\,ms: 0,34 contra 0,07\,s).
-\textbf{Fraca:} com o trabalho crescendo com $P$ (iter./iter.$_1$ = $P$ em todas as linhas),
-$E_\text{fraca}$ fica em ZZ para $P=2$--$16$, ZZ em $P=32$ e ZZ em $P=64$, ZZ a forte em todos os
-pontos. Os mesmos fatores atuam: o mestre sem calcular ($(P-1)/P$), o HT em 32 e a
-oversubscrição em 64; a diferença é que ZZ. Em suma, a fraca se sustenta ZZ que a forte: o problema
-é fartamente paralelo e o que limita as duas curvas é o hardware (núcleos físicos e HT) e o núcleo
-reservado ao mestre, não a comunicação nem o balanceamento.
+1,71\,s): os processos ociosos em espera ativa competem pela CPU com os que calculam.
+\textbf{Fraca:} com o trabalho crescendo exatamente com $P$ (iter./iter.$_1$ = $P$ em todas as
+linhas), $E_\text{fraca}$ é 50, 75, 83, 89, 76 e 39\% para $P=2$ a 64: a mesma curva da forte,
+ponto a ponto, dentro de 2\% (Figura~\ref{fig:curvas}b), com os mesmos fatores nas mesmas
+proporções (mestre sem calcular, 5\% por núcleo com o nó cheio, HT em 32 com CPU/$T_1=1{,}26$,
+dois processos por thread em 64 com 2,40) e util.\ em 99--100\% até $P=32$. A fraca só se sustenta
+um pouco melhor em $P=16$ e 64 (89 contra 88\% e 39 contra 37\%): com 16 vezes mais tarefas e
+execuções de 46--105\,s, a cauda do saco e o fatiamento desigual do SO se diluem (util.\ 94\% contra
+90\% em 64). Em suma, as duas escalabilidades são limitadas pelo hardware (núcleos físicos e HT) e
+pelo núcleo do mestre, não pela comunicação nem pelo balanceamento; por isso a fraca não ganha da
+forte: não há sobrecusto para diluir.
 
 \section{Uso de ferramentas de IA}
-Claude (Anthropic) foi usado para escrever os scripts \code{sbatch} e o \code{analyze.py},
-executar os experimentos no cluster e redigir a primeira versão deste relatório a partir das
-saídas; o código MPI, as tabelas e a análise foram revisados pelo grupo, que responde por cada
-chamada e cada número.
+Claude (Anthropic) escreveu os scripts \code{sbatch} e o \code{analyze.py}, executou os
+experimentos no cluster e redigiu a primeira versão deste relatório a partir das saídas; o grupo
+revisou o código MPI, as tabelas e a análise e responde por cada chamada e cada número.
 \end{document}

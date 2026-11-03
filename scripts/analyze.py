@@ -391,7 +391,7 @@ def plots(plt, out, strong, weak, gran, balance, chosen, procs):
                          "legend.fontsize": 6, "legend.frameon": False, "axes.labelsize": 7, "xtick.labelsize": 6.5,
                          "ytick.labelsize": 6.5})
     base = {k: v for k, v in strong.items() if "polling" not in k}
-    fig, axes = plt.subplots(1, 4, figsize=(7.0, 1.5))
+    fig, axes = plt.subplots(1, 4, figsize=(7.0, 1.38))
     ax_s, ax_e, ax_t, ax_c = axes
     # (a) speed-up da forte com a reta ideal
     if base:
@@ -460,7 +460,7 @@ def plots(plt, out, strong, weak, gran, balance, chosen, procs):
         ranks = [b["rank"] for b in balance]
         hosts = sorted({b["host"] for b in balance})
         colors = {h: c for h, c in zip(hosts, [BLUE, ORANGE, AQUA, YELLOW])}
-        fig, ax = plt.subplots(figsize=(7.0, 1.15))
+        fig, ax = plt.subplots(figsize=(7.0, 1.02))
         busy = [b["busy"] for b in balance]
         ax.bar(ranks, busy, color=[colors[b["host"]] for b in balance], width=0.7)
         ax.plot(ranks, [b["done_at"] for b in balance], color=INK, linewidth=0, marker="_", markersize=7)

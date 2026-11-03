@@ -146,5 +146,8 @@ qualquer P, `--chunk` e `--height`. Exemplos:
 
 - `--max-iter 500`: `iterations=69261705`, `checksum=982001c4f55f08af`.
 - `--max-iter 4000`: `iterations=537691205`, `checksum=f8b746cef3e07759`.
+- Entrada de referencia do T2 (`--width 3840 --height 2160 --max-iter 6000`):
+  `iterations=7246708295`, `checksum=afc642cca152dc8b` (sequencial e MPI, todo P e chunk;
+  as entradas da fraca estao em `results/resumo.md`).
 
 O CSV traz `frame,c_re,c_im,mode,procs,width,height,max_iter,chunk,seconds,iterations,checksum`.
