@@ -2,6 +2,8 @@
 # T1 (sequencial, 10x) e escalabilidade forte: entrada de referencia fixa,
 # P = 2, 4, 8, 16, 32 e 64 processos, 10 repeticoes cada, com --rank-stats
 # (tarefas, iteracoes e tempo ocupado por escravo, e instante de liberacao).
+# P=64 (2 processos por thread de hardware) roda com yield quando ocioso; a
+# variante "poll" (sem yield) mostra o custo da espera ativa do MPI nesse caso.
 #SBATCH --job-name=t2_forte
 #SBATCH --nodes=2
 #SBATCH --nodelist=atlantica05,atlantica06
@@ -28,6 +30,12 @@ for P in $PROCS; do
         mark exp=forte P="$P" chunk="$CHUNK" height="$HEIGHT" rep="$rep"
         run_mpi "$P" --height "$HEIGHT" --chunk "$CHUNK" --rank-stats
     done
+done
+
+echo "----- P=64 sem yield (espera ativa), $REPS repeticoes -----"
+for rep in $(seq "$REPS"); do
+    mark exp=forte_poll P=64 chunk="$CHUNK" height="$HEIGHT" rep="$rep"
+    YIELD=0 run_mpi 64 --height "$HEIGHT" --chunk "$CHUNK" --rank-stats
 done
 
 echo "===== fim em $(date) ====="

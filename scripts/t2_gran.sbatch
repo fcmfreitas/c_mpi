@@ -23,8 +23,10 @@ build
 
 echo "----- (a) ida e volta das mensagens de uma tarefa, P=32, por granularidade e por escravo -----"
 for chunk in $CHUNKS; do
+    # Menos idas e voltas para mensagens grandes (512 linhas = 7,9 MB), para o passo nao demorar.
+    n=$((2000 / chunk)); [ "$n" -lt 50 ] && n=50
     mark exp=pingpong P=32 chunk="$chunk" height="$HEIGHT" rep=1
-    run_mpi 32 --height "$HEIGHT" --chunk "$chunk" --pingpong 1000
+    run_mpi 32 --height "$HEIGHT" --chunk "$chunk" --pingpong "$n"
 done
 
 echo "----- (b)(c) tempo total e estatisticas por escravo, P=32, $REPS repeticoes por granularidade -----"

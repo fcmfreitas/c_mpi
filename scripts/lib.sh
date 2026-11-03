@@ -7,15 +7,15 @@ export LD_LIBRARY_PATH="$MPI_HOME/lib:$MPI_HOME/lib/openmpi:${LD_LIBRARY_PATH:-}
 
 # Opcoes do srun para P processos dentro do job de 2 nos exclusivos. Cada no tem
 # 8 nucleos fisicos e 16 threads de hardware (lscpu no cabecalho de cada saida):
-#   P <= 8 : 1 no, 1 processo por nucleo fisico (ranks 0..P-1 no primeiro no)
+#   P <= 8 : 1 no ($FIRST_NODE), 1 processo por nucleo fisico (--cpu-bind=cores)
 #   P = 16 : 2 nos x 8, 1 processo por nucleo fisico (ranks 0-7 no primeiro no, 8-15 no segundo)
 #   P = 32 : 2 nos x 16, 1 processo por thread de hardware (HT)
 #   P = 64 : 2 nos x 32, 2 processos por thread de hardware (--overcommit)
-# O mestre (rank 0) fica sempre no primeiro no (atlantica05).
+# O mestre (rank 0) fica sempre no primeiro no ($FIRST_NODE), como a sequencial.
 srun_opts() {
     local P=$1
     if [ "$P" -le 8 ]; then
-        echo "-N 1 -n $P --ntasks-per-node=$P --cpu-bind=cores"
+        echo "-N 1 -w $FIRST_NODE -n $P --ntasks-per-node=$P --cpu-bind=cores"
     elif [ "$P" -le 16 ]; then
         echo "-N 2 -n $P --ntasks-per-node=$((P / 2)) --cpu-bind=cores"
     elif [ "$P" -le 32 ]; then
@@ -37,16 +37,23 @@ mark() {
 }
 
 # Uma execucao MPI com P processos; os demais argumentos vao para o julia_mpi.
+# Com mais processos que threads de hardware (P=64), a espera ativa do OpenMPI
+# (polling) disputa o nucleo com o calculo: OMPI_MCA_mpi_yield_when_idle=1 faz
+# o processo ocioso ceder o processador (e o que o mpirun --oversubscribe faria).
+# YIELD=0 ou YIELD=1 no ambiente forca o modo, para medir o efeito.
 run_mpi() {
     local P=$1
     shift
+    local yield=0
+    [ "$P" -gt 32 ] && yield=1
+    yield=${YIELD:-$yield}
     # shellcheck disable=SC2046
-    run srun $(srun_opts "$P") ./julia_mpi --width "$WIDTH" --max-iter "$MAX_ITER" "$@"
+    run env OMPI_MCA_mpi_yield_when_idle="$yield" srun $(srun_opts "$P") ./julia_mpi --width "$WIDTH" --max-iter "$MAX_ITER" "$@"
 }
 
-# Uma execucao sequencial (T1), em um nucleo de um no exclusivo.
+# Uma execucao sequencial (T1), em um nucleo do primeiro no.
 run_seq() {
-    run srun -N 1 -n 1 --cpu-bind=cores ./julia_seq --width "$WIDTH" --max-iter "$MAX_ITER" "$@"
+    run srun -N 1 -w "$FIRST_NODE" -n 1 --cpu-bind=cores ./julia_seq --width "$WIDTH" --max-iter "$MAX_ITER" "$@"
 }
 
 # Cabecalho da saida: job, nos, hardware (lscpu nos nos de computo), compilador e parametros.
@@ -63,7 +70,7 @@ job_header() {
     echo "mpicc chama: $(mpicc --showme:command 2>/dev/null)"
     gcc --version | head -1
     echo "----- parametros -----"
-    echo "WIDTH=$WIDTH HEIGHT=$HEIGHT MAX_ITER=$MAX_ITER CHUNK=$CHUNK REPS=$REPS PROCS=\"$PROCS\" CHUNKS=\"$CHUNKS\""
+    echo "FIRST_NODE=$FIRST_NODE WIDTH=$WIDTH HEIGHT=$HEIGHT MAX_ITER=$MAX_ITER CHUNK=$CHUNK REPS=$REPS PROCS=\"$PROCS\" CHUNKS=\"$CHUNKS\""
 }
 
 # Compila no proprio no de computo: -march=native precisa ser o do no que executa

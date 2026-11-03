@@ -25,24 +25,22 @@ for P in $PROCS; do
 done
 
 echo "----- sequencial x max_iter (escolher max_iter com T1 entre 30 e 60 s) -----"
-for mi in 500 1000 2000 4000 8000; do
+for mi in 2000 4000 6000 8000; do
     mark exp=calibra P=1 chunk=0 height="$HEIGHT" rep=1
-    run srun -N 1 -n 1 --cpu-bind=cores ./julia_seq --width "$WIDTH" --height "$HEIGHT" --max-iter "$mi"
+    run srun -N 1 -w "$FIRST_NODE" -n 1 --cpu-bind=cores ./julia_seq --width "$WIDTH" --height "$HEIGHT" --max-iter "$mi"
 done
 
 echo "----- MPI curto em cada P (max_iter=500): iteracoes e checksum devem bater com a sequencial -----"
 mark exp=calibra_seq500 P=1 chunk=0 height="$HEIGHT" rep=1
-run srun -N 1 -n 1 --cpu-bind=cores ./julia_seq --width "$WIDTH" --height "$HEIGHT" --max-iter 500
+run srun -N 1 -w "$FIRST_NODE" -n 1 --cpu-bind=cores ./julia_seq --width "$WIDTH" --height "$HEIGHT" --max-iter 500
 for P in $PROCS; do
     mark exp=calibra_mpi P="$P" chunk="$CHUNK" height="$HEIGHT" rep=1
-    # shellcheck disable=SC2046
-    run srun $(srun_opts "$P") ./julia_mpi --width "$WIDTH" --height "$HEIGHT" --max-iter 500 --chunk "$CHUNK" --rank-stats
+    MAX_ITER=500 run_mpi "$P" --height "$HEIGHT" --chunk "$CHUNK" --rank-stats
 done
 
-echo "----- P=64 com yield quando ocioso (2 processos por thread: polling do MPI compete com o calculo) -----"
-mark exp=calibra_mpi_yield P=64 chunk="$CHUNK" height="$HEIGHT" rep=1
-# shellcheck disable=SC2046
-OMPI_MCA_mpi_yield_when_idle=1 run srun $(srun_opts 64) ./julia_mpi --width "$WIDTH" --height "$HEIGHT" --max-iter 500 --chunk "$CHUNK" --rank-stats
+echo "----- P=64 sem yield (2 processos por thread: o polling do MPI compete com o calculo) -----"
+mark exp=calibra_mpi_poll P=64 chunk="$CHUNK" height="$HEIGHT" rep=1
+MAX_ITER=500 YIELD=0 run_mpi 64 --height "$HEIGHT" --chunk "$CHUNK" --rank-stats
 
 echo "----- ping-pong curto, P=32 -----"
 mark exp=calibra_pingpong P=32 chunk="$CHUNK" height="$HEIGHT" rep=1
