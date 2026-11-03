@@ -1,5 +1,5 @@
 # Resumo das medicoes (gerado por scripts/analyze.py)
-Entrada de referencia: 1280x720, max_iter=500; granularidade escolhida: 4 linha(s) por tarefa.
+Entrada de referencia: 3840x2160, max_iter=6000; granularidade escolhida: 4 linha(s) por tarefa.
 
 
 ## T1 (sequencial) e equivalencia
@@ -12,6 +12,27 @@ Entrada de referencia: 1280x720, max_iter=500; granularidade escolhida: 4 linha(
 | 2160 | 4000 | 4838170295 | a1e11ca92826e0af | 1 | 0 | ok |
 | 2160 | 6000 | 7246708295 | afc642cca152dc8b | 1 | 1 | ok |
 | 2160 | 8000 | 9655246295 | bfc7fe2530d5e0eb | 1 | 0 | ok |
+
+T1 = mediana 40.405 s (min 40.352, max 40.424) em 10 execucoes.
+
+| versao | execucoes | mediana (s) | min (s) | max (s) |
+|---|---|---|---|---|
+| sequencial | 10 | 40,405 | 40,352 | 40,424 |
+
+
+## Escalabilidade forte
+
+| P | mediana (s) | min (s) | max (s) | S | E | CPU/T1 | util. | cauda (s) |
+|---|---|---|---|---|---|---|---|---|
+| 2 | 40,34 | 40,33 | 40,34 | 1,00 | 50% | 1,00 | 100% | 0,00 |
+| 4 | 13,45 | 13,45 | 13,58 | 3,00 | 75% | 1,00 | 100% | 0,00 |
+| 8 | 6,08 | 6,08 | 6,08 | 6,64 | 83% | 1,05 | 100% | 0,00 |
+| 16 | 2,87 | 2,86 | 2,87 | 14,10 | 88% | 1,05 | 99% | 0,00 |
+| 32 | 1,66 | 1,66 | 1,66 | 24,36 | 76% | 1,26 | 99% | 0,01 |
+| 64 | 1,71 | 1,68 | 1,76 | 23,56 | 37% | 2,40 | 90% | 0,08 |
+| 64 (polling) | 1,76 | 1,72 | 1,86 | 22,95 | 36% | 2,49 | 91% | 0,08 |
+
+CPU/T1: soma do tempo ocupado dos escravos dividida por T1 (>1: cada nucleo calcula mais devagar que na sequencial); util.: fracao do tempo em que os escravos estao calculando; cauda: tempo entre o primeiro escravo liberado e o fim.
 
 
 ## Granularidade (P=32)

@@ -391,7 +391,7 @@ def plots(plt, out, strong, weak, gran, balance, chosen, procs):
                          "legend.fontsize": 6, "legend.frameon": False, "axes.labelsize": 7, "xtick.labelsize": 6.5,
                          "ytick.labelsize": 6.5})
     base = {k: v for k, v in strong.items() if "polling" not in k}
-    fig, axes = plt.subplots(1, 4, figsize=(7.0, 1.65))
+    fig, axes = plt.subplots(1, 4, figsize=(7.0, 1.5))
     ax_s, ax_e, ax_t, ax_c = axes
     # (a) speed-up da forte com a reta ideal
     if base:
@@ -403,11 +403,14 @@ def plots(plt, out, strong, weak, gran, balance, chosen, procs):
         ax_s.plot([2, lim], [1, lim - 1], color=MUTED, linewidth=0.8, linestyle=":", label="$S=P-1$")
         ax_s.errorbar(Ps, S, yerr=err, color=BLUE, linewidth=1.3, marker="o", markersize=3.5, capsize=2, label="medido")
         for p_, s_ in zip(Ps, S):
-            ax_s.annotate(f"{s_:.1f}", (p_, s_), textcoords="offset points", xytext=(4, -8), fontsize=5.5, color=INK)
-        style(ax_s, "processos (P)", "speed-up (forte)", logx=False)
+            ax_s.annotate(f"{s_:.1f}".replace(".", ","), (p_, s_), textcoords="offset points", xytext=(5, -7), fontsize=5.5, color=INK)
+        style(ax_s, "processos (P)", "speed-up (forte)")
+        ax_s.set_yscale("log", base=2)
+        ax_s.yaxis.set_major_formatter(__import__("matplotlib").ticker.FuncFormatter(lambda v, _: f"{v:g}"))
         ax_s.set_xticks(Ps)
-        ax_s.set_xlim(0, lim + 4)
-        ax_s.set_ylim(0, lim + 4)
+        ax_s.set_yticks([1, 2, 4, 8, 16, 32, 64])
+        ax_s.set_xlim(1.5, lim * 1.6)
+        ax_s.set_ylim(0.7, lim * 1.6)
         ax_s.legend(loc="upper left")
         # (b) eficiencia forte e fraca
         E = [v["E"] * 100 for v in base.values()]
@@ -457,7 +460,7 @@ def plots(plt, out, strong, weak, gran, balance, chosen, procs):
         ranks = [b["rank"] for b in balance]
         hosts = sorted({b["host"] for b in balance})
         colors = {h: c for h, c in zip(hosts, [BLUE, ORANGE, AQUA, YELLOW])}
-        fig, ax = plt.subplots(figsize=(7.0, 1.3))
+        fig, ax = plt.subplots(figsize=(7.0, 1.15))
         busy = [b["busy"] for b in balance]
         ax.bar(ranks, busy, color=[colors[b["host"]] for b in balance], width=0.7)
         ax.plot(ranks, [b["done_at"] for b in balance], color=INK, linewidth=0, marker="_", markersize=7)
