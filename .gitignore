@@ -1,3 +1,8 @@
 julia_mpi
 julia_seq
 .env
+relatorio/*.aux
+relatorio/*.log
+relatorio/*.out
+relatorio/*.synctex.gz
+__pycache__/

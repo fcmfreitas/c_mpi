@@ -61,23 +61,62 @@ Cada execucao imprime uma linha `frame=... time=... iterations=... checksum=...`
 `--frames N` repete o calculo N vezes no mesmo processo, e `--csv ARQ` grava
 os tempos brutos.
 
+### No cluster Atlantica (LAD)
+
+Todas as medicoes do relatorio vem dos scripts em `scripts/`, submetidos com
+`sbatch` a partir da raiz do repositorio (as saidas brutas do Slurm ficam em
+`results/<job>.<id>.out`, que estao commitadas):
+
 ```sh
-# T1 sequencial (calibrar --max-iter para 30-60 s no cluster)
-./julia_seq --max-iter 4000
+git clone https://github.com/fcmfreitas/c_mpi.git && cd c_mpi
+sbatch scripts/t2_calibra.sbatch   # hardware, mapeamento dos ranks, calibracao de max_iter, checksums (minutos)
+sbatch scripts/t2_gran.sbatch      # P=32: ping-pong por granularidade e varredura de chunk com --rank-stats
+sbatch scripts/t2_forte.sbatch     # T1 (10x) e escalabilidade forte, P = 2..64, 10x cada
+sbatch scripts/t2_fraca.sbatch     # escalabilidade fraca (height = 2160*P), 10x cada
+sbatch scripts/t2_valida.sbatch    # sequencial com as entradas da fraca: checksums de referencia
+```
+
+- `scripts/config.sh`: parametros (entrada de referencia `3840x2160`, `MAX_ITER`,
+  granularidade escolhida `CHUNK`, serie de `PROCS`, `REPS=10`). Podem ser
+  sobrescritos pelo ambiente: `CHUNK=1 sbatch scripts/t2_forte.sbatch`.
+- `scripts/lib.sh`: distribuicao dos processos (`srun_opts`): ate P=8 em um no
+  (1 processo por nucleo fisico, `--cpu-bind=cores`); P=16 em 2 nos x 8;
+  P=32 em 2 nos x 16 (1 por thread de hardware, HT); P=64 com `--overcommit`
+  (2 por thread) e `OMPI_MCA_mpi_yield_when_idle=1`. O mestre (rank 0) e a
+  sequencial ficam sempre no primeiro no. Os nos sao fixos
+  (`#SBATCH -w atlantica07,atlantica08`, `--exclusive`) e a compilacao acontece
+  dentro do job, no no de computo (`-march=native` do no certo).
+
+### Analise e relatorio
+
+```sh
+python3 scripts/analyze.py          # results/*.out -> results/resumo.md, relatorio/tab_*.tex, relatorio/fig_*.pdf
+cd relatorio && pdflatex relatorio.tex
+```
+
+`analyze.py` usa, para cada experimento, o job mais recente em `results/`;
+reporta mediana, minimo e maximo das 10 repeticoes e confere que todas as
+execucoes com a mesma entrada tem as mesmas `iterations` e `checksum`.
+
+### Execucao manual
+
+```sh
+# T1 sequencial (entrada de referencia: T1 entre 30 e 60 s no no do cluster)
+./julia_seq --width 3840 --height 2160 --max-iter 6000
 
 # Escalabilidade forte
-mpirun -n 8 ./julia_mpi --max-iter 4000 --chunk 4
+mpirun -n 8 ./julia_mpi --width 3840 --height 2160 --max-iter 6000 --chunk 4
 
-# Escalabilidade fraca: height = 720 * P, mesma largura e max_iter
-mpirun -n 8 ./julia_mpi --max-iter 4000 --chunk 4 --height 5760
-./julia_seq --max-iter 4000 --height 5760     # confere iterations/checksum
+# Escalabilidade fraca: height = 2160 * P, mesma largura e max_iter
+mpirun -n 8 ./julia_mpi --width 3840 --height 17280 --max-iter 6000 --chunk 4
+./julia_seq --width 3840 --height 17280 --max-iter 6000     # confere iterations/checksum
 
 # Granularidade e balanceamento (por escravo: host, tarefas, iteracoes,
 # tempo ocupado, tempo medio por tarefa e instante em que foi liberado)
-mpirun -n 32 ./julia_mpi --max-iter 4000 --chunk 4 --rank-stats
+mpirun -n 32 ./julia_mpi --width 3840 --height 2160 --max-iter 6000 --chunk 4 --rank-stats
 
 # Ida e volta das mensagens de uma tarefa, sem calculo, com cada escravo
-mpirun -n 32 ./julia_mpi --chunk 4 --pingpong 1000
+mpirun -n 32 ./julia_mpi --width 3840 --chunk 4 --pingpong 1000
 ```
 
 ### Regra de crescimento da escalabilidade fraca
@@ -85,7 +124,7 @@ mpirun -n 32 ./julia_mpi --chunk 4 --pingpong 1000
 A regiao visivel do plano e fixa (`[-2, 2] x [-1.125, 1.125]`). Aumentar
 `--height` so torna a amostragem vertical mais densa, entao o numero de
 tarefas cresce na proporcao de `height` e o custo medio de uma linha fica o
-mesmo. Medido com `--max-iter 1000`:
+mesmo. Medido com `--width 1280 --max-iter 1000`:
 
 | height | iteracoes | razao |
 |---|---|---|
