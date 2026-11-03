@@ -11,7 +11,7 @@ export LD_LIBRARY_PATH="$MPI_HOME/lib:$MPI_HOME/lib/openmpi:${LD_LIBRARY_PATH:-}
 #   P = 16 : 2 nos x 8, 1 processo por nucleo fisico (ranks 0-7 no primeiro no, 8-15 no segundo)
 #   P = 32 : 2 nos x 16, 1 processo por thread de hardware (HT)
 #   P = 64 : 2 nos x 32, 2 processos por thread de hardware (--overcommit)
-# O mestre (rank 0) fica sempre no primeiro no ($FIRST_NODE), como a sequencial.
+# O mestre (rank 0) fica sempre no primeiro no ($FIRST_NODE, atlantica07), como a sequencial.
 srun_opts() {
     local P=$1
     if [ "$P" -le 8 ]; then

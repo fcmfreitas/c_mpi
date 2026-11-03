@@ -5,7 +5,7 @@
 # 10 repeticoes cada. T1 e o da sequencial com a entrada de referencia (t2_forte).
 #SBATCH --job-name=t2_fraca
 #SBATCH --nodes=2
-#SBATCH --nodelist=atlantica05,atlantica06
+#SBATCH --nodelist=atlantica07,atlantica08
 #SBATCH --exclusive
 #SBATCH --time=04:00:00
 #SBATCH --output=results/%x.%j.out

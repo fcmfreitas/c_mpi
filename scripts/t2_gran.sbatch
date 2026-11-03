@@ -9,7 +9,7 @@
 #      de cada escravo, em todas as execucoes.
 #SBATCH --job-name=t2_gran
 #SBATCH --nodes=2
-#SBATCH --nodelist=atlantica05,atlantica06
+#SBATCH --nodelist=atlantica07,atlantica08
 #SBATCH --exclusive
 #SBATCH --time=01:30:00
 #SBATCH --output=results/%x.%j.out

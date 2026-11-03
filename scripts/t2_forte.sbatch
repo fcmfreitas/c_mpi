@@ -6,7 +6,7 @@
 # variante "poll" (sem yield) mostra o custo da espera ativa do MPI nesse caso.
 #SBATCH --job-name=t2_forte
 #SBATCH --nodes=2
-#SBATCH --nodelist=atlantica05,atlantica06
+#SBATCH --nodelist=atlantica07,atlantica08
 #SBATCH --exclusive
 #SBATCH --time=02:00:00
 #SBATCH --output=results/%x.%j.out

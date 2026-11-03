@@ -3,7 +3,7 @@
 # Os nos (sempre os mesmos 2, exclusivos) estao fixos nas diretivas #SBATCH -w de cada script
 # e em FIRST_NODE (onde ficam o mestre e a sequencial).
 
-FIRST_NODE=${FIRST_NODE:-atlantica05}
+FIRST_NODE=${FIRST_NODE:-atlantica07}
 
 # Entrada de referencia: imagem 4K (3840x2160, 2160 linhas = tarefas de 1 linha) com
 # max_iter calibrado para T1 (sequencial) entre 30 e 60 s no no do cluster

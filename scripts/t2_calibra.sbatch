@@ -5,7 +5,7 @@
 # iteracoes e checksum contra a sequencial.
 #SBATCH --job-name=t2_calibra
 #SBATCH --nodes=2
-#SBATCH --nodelist=atlantica05,atlantica06
+#SBATCH --nodelist=atlantica07,atlantica08
 #SBATCH --exclusive
 #SBATCH --time=00:40:00
 #SBATCH --output=results/%x.%j.out
