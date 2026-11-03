@@ -12,6 +12,8 @@
 #SBATCH --no-requeue
 
 cd "$SLURM_SUBMIT_DIR" || exit 1
+# A sequencial roda no no que o Slurm der a este job (nao no atlantica07, que esta ocupado pelas medicoes).
+export FIRST_NODE=$SLURMD_NODENAME
 source scripts/config.sh
 source scripts/lib.sh
 job_header
