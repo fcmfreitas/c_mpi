@@ -138,18 +138,21 @@ class Tables:
     def note(self, text):
         self.md.append(text + "\n")
 
-    def table(self, name, header, rows, caption=None, align=None):
-        """Grava a tabela em markdown (no resumo) e em LaTeX (fragmento <out>/tab_<name>.tex)."""
+    def table(self, name, header, rows, caption=None, align=None, tex_drop=()):
+        """Grava a tabela em markdown (no resumo) e em LaTeX (fragmento <out>/tab_<name>.tex);
+        tex_drop lista os indices de colunas que ficam so no markdown."""
         self.md.append("| " + " | ".join(header) + " |")
         self.md.append("|" + "|".join("---" for _ in header) + "|")
         for row in rows:
             self.md.append("| " + " | ".join(str(c) for c in row) + " |")
         self.md.append("")
+        keep = [i for i in range(len(header)) if i not in tex_drop]
         cols = align or ("l" + "r" * (len(header) - 1))
+        cols = "".join(cols[i] for i in keep) if len(cols) == len(header) else cols
         tex = ["\\begin{tabular}{" + cols + "}", "\\toprule",
-               " & ".join(header) + " \\\\", "\\midrule"]
+               " & ".join(header[i] for i in keep) + " \\\\", "\\midrule"]
         for row in rows:
-            tex.append(" & ".join(str(c).replace("%", "\\%") for c in row) + " \\\\")
+            tex.append(" & ".join(str(row[i]).replace("%", "\\%") for i in keep) + " \\\\")
         tex += ["\\bottomrule", "\\end{tabular}"]
         with open(os.path.join(self.out_dir, f"tab_{name}.tex"), "w") as f:
             f.write("\n".join(tex) + "\n")
@@ -254,15 +257,16 @@ def main():
             ts = [r["frame"]["time"] for r in rs]
             T = med(ts)
             f = rs[0]["frame"]
-            weak[P] = {"T": T, "min": min(ts), "max": max(ts), "E": t1 / T, "E_min": t1 / max(ts), "E_max": t1 / min(ts),
-                       "util": agg(rs, "util"), "infl": agg(rs, "inflation", t1 * P), "tail": agg(rs, "tail")}
             v = valida.get(f["height"])
             equiv = "ok" if v and v["checksum"] == f["checksum"] and v["iterations"] == f["iterations"] else "--"
+            weak[P] = {"T": T, "min": min(ts), "max": max(ts), "E": t1 / T, "E_min": t1 / max(ts), "E_max": t1 / min(ts),
+                       "util": agg(rs, "util"), "infl": agg(rs, "inflation", t1 * P), "tail": agg(rs, "tail"),
+                       "iter_ratio": f["iterations"] / base_iter, "equiv": equiv}
             rows.append([P, f["height"], ceil_div(f["height"], rs[0]["chunk"]), fmt(f["iterations"] / base_iter, 2),
                          fmt(T, 2), fmt(min(ts), 2), fmt(max(ts), 2), fmt(weak[P]["E"] * 100, 0) + "%",
                          fmt(weak[P]["infl"], 2), fmt(weak[P]["util"] * 100, 0) + "%", equiv])
         tb.table("fraca", ["P", "linhas", "tarefas", "iter./iter.\\textsubscript{1}", "mediana (s)", "min (s)", "max (s)",
-                           "E\\textsubscript{fraca}", "CPU/(P$\\cdot$T1)", "util.", "equiv. seq"], rows)
+                           "E\\textsubscript{fraca}", "CPU/(P$\\cdot$T1)", "util.", "equiv. seq"], rows, tex_drop=(2, 9))
 
     # ---- granularidade -----------------------------------------------------------------------
     gran = by(runs, "gran")
@@ -292,7 +296,7 @@ def main():
                          fmt(g["intra"] * 1e6, 0) if g["intra"] else "--", fmt(g["inter"] * 1e6, 0) if g["inter"] else "--",
                          fmt(ratio, 0), fmt(g["util"] * 100, 0) + "%", fmt(g["tail"], 2)])
         tb.table("gran", ["linhas/tarefa", "tarefas", "mediana (s)", "min (s)", "max (s)", "tarefa (ms)",
-                          "ida e volta intra ($\\mu$s)", "inter ($\\mu$s)", "tarefa/inter", "util.", "cauda (s)"], rows)
+                          "ida e volta intra ($\\mu$s)", "inter ($\\mu$s)", "tarefa/inter", "util.", "cauda (s)"], rows, tex_drop=(8,))
         tb.note("tarefa: tempo medio de processar uma tarefa (tempo ocupado / tarefas, todos os escravos e repeticoes); "
                 "ida e volta: mediana do --pingpong entre o mestre e os escravos do mesmo no (intra) e do outro no (inter).")
 
@@ -327,6 +331,26 @@ def main():
         tb.table("balance_resumo", ["no", "escravos", "tarefas", "ocupado (s)", "liberado em (s)"], rows, align="lrrrr")
         tb.note(f"T (mediana) = {T:.3f} s.")
 
+    # Tabela LaTeX combinada (forte e fraca lado a lado), para o relatorio.
+    if strong:
+        lines = ["\\begin{tabular}{r rrr rr rr | rrr rr r}", "\\toprule",
+                 "& \\multicolumn{7}{c|}{forte (entrada de referência)} & \\multicolumn{6}{c}{fraca (\\code{height} $=2160P$)} \\\\",
+                 "$P$ & $T_P$ (s) & min & max & $S$ & $E$ & CPU/$T_1$ & cauda (s) & $T_P$ (s) & min & max & $E_\\text{fraca}$ & iter./iter.$_1$ & equiv. \\\\",
+                 "\\midrule"]
+        for label, st in strong.items():
+            Pn = st["P"]
+            w = weak.get(Pn) if "polling" not in label else None
+            row = [label, fmt(st["T"], 2), fmt(st["min"], 2), fmt(st["max"], 2), fmt(st["S"], 1), fmt(st["E"] * 100, 0) + "\\%",
+                   fmt(st["infl"], 2), fmt(st["tail"], 2)]
+            if w:
+                row += [fmt(w["T"], 1), fmt(w["min"], 1), fmt(w["max"], 1), fmt(w["E"] * 100, 0) + "\\%", fmt(w["iter_ratio"], 2), w["equiv"]]
+            else:
+                row += ["--"] * 6
+            lines.append(" & ".join(row) + " \\\\")
+        lines += ["\\bottomrule", "\\end{tabular}"]
+        with open(os.path.join(args.out, "tab_escala.tex"), "w") as f:
+            f.write("\n".join(lines) + "\n")
+
     tb.write_md(os.path.join(args.results, "resumo.md"))
     print(open(os.path.join(args.results, "resumo.md")).read())
 
@@ -359,91 +383,94 @@ def style(ax, xlabel, ylabel, logx=True):
     if logx:
         ax.set_xscale("log", base=2)
         ax.xaxis.set_major_formatter(__import__("matplotlib").ticker.FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.xaxis.set_minor_formatter(__import__("matplotlib").ticker.NullFormatter())
 
 
 def plots(plt, out, strong, weak, gran, balance, chosen, procs):
-    plt.rcParams.update({"font.size": 8, "font.family": "sans-serif", "pdf.fonttype": 42, "axes.titlesize": 8,
-                         "legend.fontsize": 7, "legend.frameon": False})
+    plt.rcParams.update({"font.size": 7, "font.family": "sans-serif", "pdf.fonttype": 42, "axes.titlesize": 7,
+                         "legend.fontsize": 6, "legend.frameon": False, "axes.labelsize": 7, "xtick.labelsize": 6.5,
+                         "ytick.labelsize": 6.5})
     base = {k: v for k, v in strong.items() if "polling" not in k}
+    fig, axes = plt.subplots(1, 4, figsize=(7.0, 1.65))
+    ax_s, ax_e, ax_t, ax_c = axes
+    # (a) speed-up da forte com a reta ideal
     if base:
         Ps = [v["P"] for v in base.values()]
         S = [v["S"] for v in base.values()]
         err = [[v["S"] - v["S_min"] for v in base.values()], [v["S_max"] - v["S"] for v in base.values()]]
-        fig, ax = plt.subplots(figsize=(3.3, 2.5))
         lim = max(Ps)
-        ax.plot([1, lim], [1, lim], color=MUTED, linewidth=1, linestyle="--", label="ideal $S=P$")
-        ax.plot([2, lim], [1, lim - 1], color=MUTED, linewidth=0.8, linestyle=":", label="$S=P-1$ (mestre sem calcular)")
-        ax.errorbar(Ps, S, yerr=err, color=BLUE, linewidth=1.5, marker="o", markersize=4, capsize=2, label="medido (mediana, min--max)")
-        for p, s in zip(Ps, S):
-            ax.annotate(f"{s:.1f}", (p, s), textcoords="offset points", xytext=(4, -9), fontsize=6.5, color=INK)
-        style(ax, "processos (P)", "speed-up", logx=False)
-        ax.set_xticks(Ps)
-        ax.set_xlim(0, lim + 3)
-        ax.set_ylim(0, lim + 3)
-        ax.legend(loc="upper left")
-        fig.tight_layout()
-        fig.savefig(os.path.join(out, "fig_speedup.pdf"))
-        plt.close(fig)
-
-        fig, ax = plt.subplots(figsize=(3.3, 2.5))
+        ax_s.plot([1, lim], [1, lim], color=MUTED, linewidth=1, linestyle="--", label="ideal $S=P$")
+        ax_s.plot([2, lim], [1, lim - 1], color=MUTED, linewidth=0.8, linestyle=":", label="$S=P-1$")
+        ax_s.errorbar(Ps, S, yerr=err, color=BLUE, linewidth=1.3, marker="o", markersize=3.5, capsize=2, label="medido")
+        for p_, s_ in zip(Ps, S):
+            ax_s.annotate(f"{s_:.1f}", (p_, s_), textcoords="offset points", xytext=(4, -8), fontsize=5.5, color=INK)
+        style(ax_s, "processos (P)", "speed-up (forte)", logx=False)
+        ax_s.set_xticks(Ps)
+        ax_s.set_xlim(0, lim + 4)
+        ax_s.set_ylim(0, lim + 4)
+        ax_s.legend(loc="upper left")
+        # (b) eficiencia forte e fraca
         E = [v["E"] * 100 for v in base.values()]
-        ax.plot([p for p in Ps], [(p - 1) / p * 100 for p in Ps], color=MUTED, linewidth=0.8, linestyle=":",
-                label="limite $(P-1)/P$")
-        ax.plot(Ps, E, color=BLUE, linewidth=1.5, marker="o", markersize=4, label="forte")
+        ax_e.plot(Ps, [(p_ - 1) / p_ * 100 for p_ in Ps], color=MUTED, linewidth=0.8, linestyle=":", label="limite $(P-1)/P$")
+        ax_e.plot(Ps, E, color=BLUE, linewidth=1.3, marker="o", markersize=3.5, label="forte")
         if weak:
             Pw = sorted(weak)
-            ax.plot(Pw, [weak[p]["E"] * 100 for p in Pw], color=ORANGE, linewidth=1.5, marker="s", markersize=4, label="fraca")
-        style(ax, "processos (P)", "eficiência (%)")
-        ax.set_xticks(Ps)
-        ax.set_ylim(0, 105)
-        ax.legend(loc="lower left")
-        fig.tight_layout()
-        fig.savefig(os.path.join(out, "fig_eficiencia.pdf"))
-        plt.close(fig)
-
+            ax_e.plot(Pw, [weak[p_]["E"] * 100 for p_ in Pw], color=ORANGE, linewidth=1.3, marker="s", markersize=3.5, label="fraca")
+        style(ax_e, "processos (P)", "eficiência (%)")
+        ax_e.set_xticks(Ps)
+        ax_e.set_ylim(0, 105)
+        ax_e.legend(loc="lower left")
+    # (c) tempo total e cauda por granularidade, (d) custo de uma tarefa vs ida e volta
     if gran:
         cs = sorted(gran)
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.6, 2.4))
         T = [gran[c]["T"] for c in cs]
-        ax1.fill_between(cs, [gran[c]["min"] for c in cs], [gran[c]["max"] for c in cs], color=BLUE, alpha=0.15, linewidth=0)
-        ax1.plot(cs, T, color=BLUE, linewidth=1.5, marker="o", markersize=4, label="tempo (mediana, min--max)")
-        ax1.plot(cs, [gran[c]["tail"] for c in cs], color=ORANGE, linewidth=1.2, marker="s", markersize=3.5,
-                 label="cauda (1º escravo liberado → fim)")
+        ax_t.fill_between(cs, [gran[c]["min"] for c in cs], [gran[c]["max"] for c in cs], color=BLUE, alpha=0.15, linewidth=0)
+        ax_t.plot(cs, T, color=BLUE, linewidth=1.3, marker="o", markersize=3.5, label="tempo total")
+        ax_t.plot(cs, [gran[c]["tail"] for c in cs], color=ORANGE, linewidth=1.1, marker="s", markersize=3, label="cauda")
         if chosen in gran:
-            ax1.axvline(chosen, color=MUTED, linewidth=0.8, linestyle="--")
-            ax1.annotate("escolhida", (chosen, max(T)), textcoords="offset points", xytext=(3, -2), fontsize=6.5, color=MUTED)
-        style(ax1, "linhas por tarefa", "segundos")
-        ax1.set_xticks(cs)
-        ax1.legend(loc="upper left")
-        ax2.plot(cs, [gran[c]["per_task"] * 1e3 for c in cs], color=BLUE, linewidth=1.5, marker="o", markersize=4, label="processar 1 tarefa")
+            ax_t.axvline(chosen, color=MUTED, linewidth=0.8, linestyle="--", label="escolhida")
+        style(ax_t, "linhas por tarefa (P=32)", "segundos")
+        ax_t.set_xticks([c for c in cs if c in (1, 4, 16, 64, 256)])
+        ax_t.set_xticks(cs, minor=True)
+        ax_t.legend(loc="upper left")
+        series = [("1 tarefa", [gran[c]["per_task"] * 1e3 for c in cs], BLUE, "o")]
         if any(gran[c]["inter"] for c in cs):
-            ax2.plot(cs, [gran[c]["inter"] * 1e3 if gran[c]["inter"] else float("nan") for c in cs], color=ORANGE, linewidth=1.5,
-                     marker="s", markersize=4, label="ida e volta entre nós")
-            ax2.plot(cs, [gran[c]["intra"] * 1e3 if gran[c]["intra"] else float("nan") for c in cs], color=AQUA, linewidth=1.5,
-                     marker="^", markersize=4, label="ida e volta no mesmo nó")
-        style(ax2, "linhas por tarefa", "milissegundos")
-        ax2.set_yscale("log")
-        ax2.set_xticks(cs)
-        ax2.legend(loc="upper left")
-        fig.tight_layout()
-        fig.savefig(os.path.join(out, "fig_gran.pdf"))
-        plt.close(fig)
+            series.append(("msg. inter-nó", [gran[c]["inter"] * 1e3 if gran[c]["inter"] else float("nan") for c in cs], ORANGE, "s"))
+            series.append(("msg. intra-nó", [gran[c]["intra"] * 1e3 if gran[c]["intra"] else float("nan") for c in cs], AQUA, "^"))
+        for name, ys, color, marker in series:
+            ax_c.plot(cs, ys, color=color, linewidth=1.3, marker=marker, markersize=3.5, label=name)
+            # rotulo direto no fim da linha (o painel e estreito demais para uma legenda interna)
+            ax_c.annotate(name, (cs[-1], ys[-1]), textcoords="offset points", xytext=(4, 0), fontsize=5.5, color=INK, va="center")
+        style(ax_c, "linhas por tarefa (P=32)", "milissegundos")
+        ax_c.set_yscale("log")
+        ax_c.set_ylim(0.003, 3e4)
+        ax_c.set_xlim(0.8, cs[-1] * 12)
+        ax_c.set_xticks([c for c in cs if c in (1, 4, 16, 64, 256)])
+        ax_c.set_xticks(cs, minor=True)
+    for ax, letter in zip(axes, "abcd"):
+        ax.set_title(f"({letter})", loc="left", fontsize=7, pad=2)
+    fig.tight_layout(w_pad=0.6)
+    fig.savefig(os.path.join(out, "fig_curvas.pdf"))
+    plt.close(fig)
 
     if balance:
         ranks = [b["rank"] for b in balance]
         hosts = sorted({b["host"] for b in balance})
         colors = {h: c for h, c in zip(hosts, [BLUE, ORANGE, AQUA, YELLOW])}
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6.6, 2.8), sharex=True)
-        ax1.bar(ranks, [b["tasks"] for b in balance], color=[colors[b["host"]] for b in balance], width=0.7)
-        style(ax1, "", "tarefas", logx=False)
-        ax2.bar(ranks, [b["busy"] for b in balance], color=[colors[b["host"]] for b in balance], width=0.7, label="ocupado")
-        ax2.plot(ranks, [b["done_at"] for b in balance], color=INK, linewidth=0, marker="_", markersize=7, label="liberado em")
-        style(ax2, "escravo (rank)", "segundos", logx=False)
-        ax2.set_xticks(ranks)
-        ax2.tick_params(axis="x", labelsize=6)
+        fig, ax = plt.subplots(figsize=(7.0, 1.3))
+        busy = [b["busy"] for b in balance]
+        ax.bar(ranks, busy, color=[colors[b["host"]] for b in balance], width=0.7)
+        ax.plot(ranks, [b["done_at"] for b in balance], color=INK, linewidth=0, marker="_", markersize=7)
+        for r, b in zip(ranks, balance):
+            ax.annotate(f"{b['tasks']:.0f}", (r, 0.03 * max(busy)), ha="center", va="bottom", fontsize=5.5, color="white")
+        style(ax, "escravo (rank); o número na barra é o total de tarefas que ele processou", "segundos", logx=False)
+        ax.set_xticks(ranks)
+        ax.tick_params(axis="x", labelsize=6)
+        ax.set_ylim(0, max(b["done_at"] for b in balance) * 1.12)
         handles = [plt.Rectangle((0, 0), 1, 1, color=colors[h]) for h in hosts] + [plt.Line2D([], [], color=INK, marker="_", linewidth=0)]
-        ax2.legend(handles, hosts + ["liberado em (fim do saco)"], loc="lower right", ncol=3)
-        fig.tight_layout()
+        fig.legend(handles, [f"tempo ocupado, escravos em {h}" for h in hosts] + ["instante em que foi liberado (saco vazio)"],
+                   loc="upper center", ncol=3, bbox_to_anchor=(0.5, 1.03))
+        fig.tight_layout(rect=[0, 0, 1, 0.88])
         fig.savefig(os.path.join(out, "fig_balance.pdf"))
         plt.close(fig)
     print("graficos em", out)

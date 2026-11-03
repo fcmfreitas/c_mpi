@@ -38,103 +38,107 @@ Repositório: \url{https://github.com/fcmfreitas/c_mpi}
 \vspace{2pt}
 }]
 
-\section{Modelagem}
-O problema é o do T1: cada pixel $z_0$ da imagem itera $z \leftarrow z^2 + c$ com $c$ fixo
-($c=-0{,}123+0{,}745i$, dentro do conjunto de Mandelbrot, de modo que o interior custa
-\code{max\_iter} iterações por pixel), e o trabalho de um pixel independe dos demais.
-\textbf{Tarefa:} um bloco de \code{chunk} linhas consecutivas, lido da linha de comando
-(\lref{julia\_common.c}{50}). \textbf{Saco:} o mestre (rank 0) guarda só o índice da próxima
-linha livre, \code{next\_row}; há $\lceil \text{linhas}/\code{chunk} \rceil$ tarefas e a última pode
-ser menor, então qualquer número de linhas e de processos ($P \ge 2$) funciona
-(\lref{julia\_mpi.c}{47--57}). \textbf{Tags} (\lref{julia\_mpi.c}{21}): \code{TAG\_REQUEST}
-(escravo $\to$ mestre, vazia: primeiro pedido, linha 89), \code{TAG\_PIXELS} (escravo $\to$ mestre,
-\{primeira linha, pixels\}: resultado que vale como pedido da próxima tarefa, linha 103),
-\code{TAG\_WORK} (mestre $\to$ escravo, \{primeira linha, número de linhas\}, linha 54) e
-\code{TAG\_DONE} (mestre $\to$ escravo, vazia: saco vazio, linha 49). O mestre recebe com
-\code{MPI\_ANY\_SOURCE}/\code{MPI\_ANY\_TAG} (linha 71), atende por ordem de chegada e não calcula.
-\textbf{Ordem:} o resultado traz a sua primeira linha em \code{block[0]} e é copiado direto para
-essa posição da imagem (linha 77), então a ordem original do saco é preservada seja qual for a
-ordem de chegada. \textbf{Término:} ao esvaziar o saco, cada pedido é respondido com
-\code{TAG\_DONE} (linha 49), o escravo sai do laço ao ver essa tag (linha 94) e o mestre encerra
-quando todos os $P-1$ escravos foram liberados (linhas 79--83). Um \code{MPI\_Bcast} no início de
-cada quadro informa $c$ (linha 193).
-
-\section{Ambiente e metodologia}
-Todas as medições rodaram no cluster Atlântica do LAD, sempre nos nós \code{atlantica07} e
-\code{atlantica08}, alocados com \code{--exclusive} por jobs \code{sbatch}
-(\code{scripts/t2\_*.sbatch}; saídas brutas em \code{results/}). O \code{lscpu} registrado no
-cabeçalho de cada saída mostra que cada nó tem \textbf{2 Xeon E5520 de 4 núcleos com HT: 8 núcleos
-físicos e 16 threads de hardware por nó} (e não 16/32 como supõe o enunciado), 16\,GB e rede
-Gigabit Ethernet. Por isso a série foi $P = 2, 4, 8$ (um nó, 1 processo por núcleo físico,
-\code{--cpu-bind=cores}), $P=16$ (2 nós $\times$ 8, 1 por núcleo físico), $P=32$ (2 nós
-$\times$ 16, 1 por thread de hardware: o ponto ``HT'') e $P=64$ (2 por thread, \code{--overcommit},
-com \code{OMPI\_MCA\_mpi\_yield\_when\_idle=1}). O mestre (rank 0) e a sequencial ficam sempre no
-\code{atlantica07}; os ranks são preenchidos em bloco (\code{scripts/lib.sh}, \code{srun\_opts}).
-Compilador: \code{gcc 9.4.0} via \code{mpicc} do OpenMPI 4.1.1, flags \code{-O3 -march=native}
-(compilado no próprio nó de cômputo) para as duas versões. \textbf{Região medida:} no mestre, com
-\code{MPI\_Wtime} após um \code{MPI\_Barrier}, do início da distribuição até a chegada do último
-resultado (\lref{julia\_mpi.c}{202--208}); na sequencial, \code{clock\_gettime} em volta do laço
-de linhas (\lref{julia\_seq.c}{52--55}). Alocação, checksum e saída ficam fora nas duas.
-\textbf{Entrada de referência:} imagem $3840\times2160$ (2160 linhas) com \code{max\_iter}~$=6000$,
-calibrada para $T_1$ entre 30 e 60\,s (\code{results/t2\_calibra.*.out}). \textbf{Fraca:} a região
-do plano é fixa, então \code{--height} $=2160P$ só adensa a amostragem vertical: o número de linhas
-(tarefas) cresce com $P$ e o custo médio de uma linha não muda; as iterações totais confirmam a
-proporção (Tabela~\ref{tab:fraca}). Cada configuração foi executada 10 vezes em processos
-independentes; as tabelas trazem mediana, mínimo e máximo, e \textbf{toda execução imprimiu
-iterações e checksum (FNV-1a da imagem), idênticos aos da sequencial para a mesma entrada}
-(\code{results/resumo.md}).
-
-\section{Granularidade e balanceamento}
-\begin{table}[t]
+\begin{table*}[t]
 \centering\scriptsize
 \IfFileExists{tab_gran.tex}{\input{tab_gran.tex}}{(tab\_gran.tex)}
-\caption{Granularidade com $P=32$ (31 escravos), 10 execuções por linha: tempo total, tempo de
-processar uma tarefa e ida e volta das mensagens de uma tarefa (sem cálculo) com escravos do nó do
-mestre (intra) e do outro nó (inter); util.\ = fração do tempo em que os escravos calculam; cauda =
-intervalo entre o primeiro escravo liberado e o fim.}
+\caption{Granularidade com $P=32$ (31 escravos), 10 execuções por linha: tempo total; tempo médio de
+processar uma tarefa (tempo ocupado / tarefas); ida e volta das mensagens de uma tarefa, sem cálculo,
+entre o mestre e escravos do seu nó (intra) e do outro nó (inter, mediana dos escravos); util.\ =
+fração do tempo em que os escravos calculam; cauda = tempo entre o primeiro escravo liberado e o fim.}
 \label{tab:gran}
-\end{table}
-\begin{figure}[t]
+\end{table*}
+\section{Modelagem}
+O problema é o do T1: cada pixel $z_0$ itera $z \leftarrow z^2 + c$ com $c=-0{,}123+0{,}745i$
+(interior do conjunto de Mandelbrot, então os pixels do interior custam \code{max\_iter}
+iterações), e cada pixel independe dos demais. \textbf{Tarefa:} bloco de \code{chunk} linhas
+consecutivas, lido da linha de comando (\lref{julia\_common.c}{50}). \textbf{Saco:} o mestre
+(rank 0) guarda só o índice da próxima linha livre, \code{next\_row}; há $\lceil
+\text{linhas}/\code{chunk}\rceil$ tarefas, a última pode ser menor, e qualquer número de linhas e
+de processos ($P\ge2$) funciona (\lref{julia\_mpi.c}{47--57}). \textbf{Tags}
+(\lref{julia\_mpi.c}{21}): \code{TAG\_REQUEST} (escravo$\to$mestre, vazia: primeiro pedido, l.~89);
+\code{TAG\_PIXELS} (escravo$\to$mestre, \{primeira linha, pixels\}: resultado que vale como pedido
+da próxima tarefa, l.~103); \code{TAG\_WORK} (mestre$\to$escravo, \{primeira linha, linhas\},
+l.~54); \code{TAG\_DONE} (mestre$\to$escravo, vazia, l.~49). O mestre recebe com
+\code{MPI\_ANY\_SOURCE}/\code{MPI\_ANY\_TAG} (l.~71), atende por ordem de chegada e não calcula.
+\textbf{Ordem:} o resultado traz sua primeira linha em \code{block[0]} e é copiado direto para essa
+posição da imagem (l.~77), qualquer que seja a ordem de chegada. \textbf{Término:} com o saco vazio
+cada pedido é respondido com \code{TAG\_DONE}; o escravo sai do laço ao vê-la (l.~94) e o mestre
+encerra quando liberou os $P-1$ escravos (l.~79--83).
+\section{Ambiente e metodologia}
+Tudo rodou no cluster Atlântica do LAD, sempre nos nós \code{atlantica07} e \code{atlantica08}
+com \code{--exclusive}, por jobs \code{sbatch} (\code{scripts/t2\_*.sbatch}; saídas brutas e
+\code{lscpu} em \code{results/}). \textbf{Cada nó tem 2 Xeon E5520 de 4 núcleos com HT: 8 núcleos
+físicos e 16 threads por nó} (não 16/32 como supõe o enunciado), 16\,GB e Gigabit Ethernet. Logo:
+$P=2,4,8$ em um nó, 1 processo por núcleo físico (\code{--cpu-bind=cores}); $P=16$ em 2 nós
+$\times$ 8 núcleos; $P=32$ em 2 nós $\times$ 16 threads (o ponto ``HT''); $P=64$ com 2 processos
+por thread (\code{--overcommit} e \code{OMPI\_MCA\_mpi\_yield\_when\_idle=1}). Os ranks preenchem
+os nós em bloco e o mestre (rank 0) e a sequencial ficam sempre no \code{atlantica07}
+(\code{scripts/lib.sh}). Compilador \code{gcc 9.4.0} (\code{mpicc} do OpenMPI 4.1.1), flags
+\code{-O3 -march=native}, compilado no nó de cômputo, nas duas versões. \textbf{Região medida:}
+\code{MPI\_Wtime} no mestre após um \code{MPI\_Barrier}, do início da distribuição à chegada do
+último resultado (\lref{julia\_mpi.c}{202--208}); na sequencial, \code{clock\_gettime} em volta do
+laço de linhas (\lref{julia\_seq.c}{52--55}); alocação, checksum e saída ficam fora.
+\textbf{Entrada de referência:} $3840\times2160$ (2160 linhas), \code{max\_iter}~$=6000$,
+calibrada para $T_1\in[30,60]$\,s. \textbf{Fraca:} a região do plano é fixa, então
+\code{--height}~$=2160P$ só adensa a amostragem vertical: as tarefas crescem com $P$ e o custo
+médio de uma linha não muda (as iterações totais confirmam a proporção, Tabela~\ref{tab:escala}).
+Cada configuração rodou 10 vezes em processos independentes (mediana, mínimo e máximo nas tabelas)
+e \textbf{toda execução imprimiu iterações e checksum FNV-1a da imagem, iguais aos da sequencial
+com a mesma entrada} (\code{results/resumo.md}).
+\section{Granularidade e balanceamento}
+\begin{figure*}[t]
 \centering
-\IfFileExists{fig_gran.pdf}{\includegraphics[width=\linewidth]{fig_gran.pdf}}{(fig\_gran.pdf)}
-\caption{$P=32$: tempo total e cauda por granularidade (esq.) e custo de uma tarefa contra a ida e
-volta das mensagens intra e inter-nó (dir., escala log).}
-\label{fig:gran}
-\end{figure}
-\begin{figure}[t]
+\IfFileExists{fig_curvas.pdf}{\includegraphics[width=\textwidth]{fig_curvas.pdf}}{(fig\_curvas.pdf)}
+\caption{(a) Speed-up da forte com a reta ideal e a reta $S=P-1$ (o mestre não calcula);
+(b) eficiência da forte e da fraca, com o limite $(P-1)/P$; (c) $P=32$: tempo total (mediana,
+faixa min--max) e cauda (do primeiro escravo liberado ao fim) por granularidade; (d) custo de
+processar uma tarefa contra a ida e volta das suas mensagens, intra e inter-nó (escala log).}
+\label{fig:curvas}
+\end{figure*}
+\begin{figure*}[t]
 \centering
-\IfFileExists{fig_balance.pdf}{\includegraphics[width=\linewidth]{fig_balance.pdf}}{(fig\_balance.pdf)}
-\caption{Balanceamento com $P=32$ e a granularidade escolhida: tarefas e tempo ocupado por escravo
-(mediana das 10 execuções), cor por nó, e instante em que cada escravo foi liberado.}
+\IfFileExists{fig_balance.pdf}{\includegraphics[width=\textwidth]{fig_balance.pdf}}{(fig\_balance.pdf)}
+\caption{Balanceamento com $P=32$ e 4 linhas por tarefa (mediana das 10 execuções): tempo ocupado
+e tarefas processadas por escravo, cor por nó, e instante em que cada escravo recebeu \code{TAG\_DONE}.}
 \label{fig:balance}
-\end{figure}
-GRANTEXT
+\end{figure*}
+A Tabela~\ref{tab:gran} e a Figura~\ref{fig:gran} comparam, com $P=32$, a granularidade escolhida
+(\textbf{4 linhas por tarefa}, 540 tarefas) com granularidades bem menores (1 linha, 2160 tarefas)
+e bem maiores (até 512 linhas, 5 tarefas). \textbf{Computação vs.\ comunicação:} uma tarefa de 4
+linhas custa em média 94\,ms de cálculo, enquanto a ida e volta das suas mensagens (61\,KB de
+pixels mais 8 bytes de tarefa, sem cálculo) custa 19\,$\mu$s entre processos do mesmo nó e
+653\,$\mu$s entre nós: razões de cerca de 5000 e 140. A rede Gigabit domina a comunicação
+inter-nó (0,25\,ms de latência mais $\approx$0,13\,ms por linha de 15\,KB), e a memória
+compartilhada é 30 a 35 vezes mais rápida. Como cada escravo só espera uma ida e volta por tarefa,
+a comunicação custa a ele no máximo 0,7\% do tempo, e o mestre, que gasta poucas dezenas de
+microssegundos por mensagem, fica ocioso quase sempre: por isso \textbf{1, 2, 4 e 8 linhas dão o
+mesmo tempo (1,66--1,67\,s)}, e a escolha de 4 linhas só reduz o número de mensagens (de 2160 para
+540) sem custo medido. \textbf{Granularidades maiores} perdem por desbalanceamento no fim do saco,
+não por comunicação: as linhas têm custos muito diferentes (as que cruzam o interior do conjunto
+custam \code{max\_iter} por pixel; as da borda, quase nada), então quando o saco tem poucas tarefas
+a última tarefa cara de cada escravo termina em instantes distintos. Com 16 linhas (135 tarefas,
+$\approx$4 por escravo) a cauda já é de 0,27\,s; com 32 linhas (68 tarefas) ela é de 1,0\,s dos
+2,27\,s totais e a utilização cai a 71\%; com 128 linhas (17 tarefas) 14 escravos nunca recebem
+trabalho e o tempo é o custo da tarefa mais cara (4,7\,s). \textbf{Balanceamento com 4 linhas}
+(Figura~\ref{fig:balance}): os 31 escravos ficam ocupados de 1,63 a 1,65\,s (99\% do tempo) e são
+liberados no mesmo instante ($\pm$2\,ms), com 16 a 20 tarefas cada; o número de tarefas varia
+porque elas têm custos diferentes e porque os escravos do segundo nó, que esperam 0,65\,ms a mais
+por tarefa, pegam uma ou duas tarefas a menos. O fim do saco custa nada aqui: a última tarefa
+cara chega bem antes do fim e as últimas linhas da imagem (borda inferior) são baratas.
 
 \section{Resultados}
-\begin{table}[t]
+\begin{table*}[t]
 \centering\scriptsize
-\IfFileExists{tab_forte.tex}{\input{tab_forte.tex}}{(tab\_forte.tex)}
-\caption{Escalabilidade forte (entrada de referência, $T_1 = $ T1VAL\,s): $S=T_1/T_P$ e $E=S/P$ pela
-mediana; CPU/$T_1$ = soma do tempo ocupado dos escravos sobre $T_1$ (quanto o cálculo por núcleo
-ficou mais lento); util.\ e cauda como na Tabela~\ref{tab:gran}. ``64 (polling)'': sem yield.}
-\label{tab:forte}
-\end{table}
-\begin{table}[t]
-\centering\scriptsize
-\IfFileExists{tab_fraca.tex}{\input{tab_fraca.tex}}{(tab\_fraca.tex)}
-\caption{Escalabilidade fraca (\code{height}~$=2160P$): $E_\text{fraca}=T_1/T_P$; iter./iter.$_1$ =
-iterações totais sobre as da entrada de referência (medida de trabalho); equiv.\ = checksum igual
-ao da sequencial com a mesma entrada (\code{t2\_valida}).}
-\label{tab:fraca}
-\end{table}
-\begin{figure}[t]
-\centering
-\IfFileExists{fig_speedup.pdf}{\includegraphics[width=0.49\linewidth]{fig_speedup.pdf}}{(fig\_speedup.pdf)}\hfill
-\IfFileExists{fig_eficiencia.pdf}{\includegraphics[width=0.49\linewidth]{fig_eficiencia.pdf}}{(fig\_eficiencia.pdf)}
-\caption{Speed-up da forte com a reta ideal (esq.) e eficiência da forte e da fraca (dir.); a linha
-pontilhada é o limite $(P-1)/P$ imposto pelo mestre, que não calcula.}
-\label{fig:curvas}
-\end{figure}
+\IfFileExists{tab_escala.tex}{\input{tab_escala.tex}}{(tab\_escala.tex)}
+\caption{Escalabilidade forte (entrada de referência; $T_1=$ T1VAL\,s, mín.\ T1MIN, máx.\ T1MAX) e
+fraca (\code{height}~$=2160P$), 10 execuções por linha: mediana, mínimo e máximo de $T_P$;
+$S=T_1/T_P$, $E=S/P$ e $E_\text{fraca}=T_1/T_P$ pela mediana; CPU/$T_1$ = soma do tempo ocupado dos
+escravos sobre $T_1$ (quanto o cálculo por núcleo ficou mais lento que na sequencial); cauda = tempo
+entre o primeiro escravo liberado e o fim; iter./iter.$_1$ = iterações totais sobre as da entrada de
+referência (medida de trabalho); equiv.\ = checksum e iterações iguais aos da sequencial com a mesma
+entrada (\code{t2\_valida}). ``64 (polling)'': $P=64$ sem \code{yield\_when\_idle}.}
+\label{tab:escala}
+\end{table*}
 RESTEXT
 
 \section{Uso de ferramentas de IA}
