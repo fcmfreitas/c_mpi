@@ -1,0 +1,41 @@
+===== job 42001 (t2_valida) iniciado em Mon Nov  2 23:22:38 -03 2026 =====
+nodelist=atlantica09 submit_dir=/home/cp33015/c_mpi git=0d2a846
+----- lscpu de cada no -----
+[atlantica09]
+CPU(s):                          16
+Thread(s) per core:              2
+Core(s) per socket:              4
+Socket(s):                       2
+NUMA node(s):                    2
+Model name:                      Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz
+CPU MHz:                         2007.659
+  rede eno1: 1000 Mb/s
+  rede eno2: 1000 Mb/s
+  rede eno3: 1000 Mb/s
+  rede eno4: 1000 Mb/s
+  rede lo:  Mb/s
+----- compilador -----
+gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+mpicc chama: gcc
+gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
+----- parametros -----
+FIRST_NODE=atlantica09 WIDTH=3840 HEIGHT=2160 MAX_ITER=6000 CHUNK=4 REPS=10 PROCS="2 4 8 16 32 64" CHUNKS="1 2 4 8 16 32 64 128 256 512"
+### exp=valida P=1 chunk=0 height=4320 rep=1
++ srun -N 1 -w atlantica09 -n 1 --cpu-bind=cores ./julia_seq --width 3840 --max-iter 6000 --height 4320
+frame=0 c=-0.123000+0.745000i mode=seq procs=1 width=3840 height=4320 max_iter=6000 chunk=0 time=80.770598 s iterations=14493044937 checksum=d22ed37fc9357d13
+### exp=valida P=1 chunk=0 height=8640 rep=1
++ srun -N 1 -w atlantica09 -n 1 --cpu-bind=cores ./julia_seq --width 3840 --max-iter 6000 --height 8640
+frame=0 c=-0.123000+0.745000i mode=seq procs=1 width=3840 height=8640 max_iter=6000 chunk=0 time=161.566221 s iterations=28984369757 checksum=3e4ce54d20d6e5bb
+### exp=valida P=1 chunk=0 height=17280 rep=1
++ srun -N 1 -w atlantica09 -n 1 --cpu-bind=cores ./julia_seq --width 3840 --max-iter 6000 --height 17280
+frame=0 c=-0.123000+0.745000i mode=seq procs=1 width=3840 height=17280 max_iter=6000 chunk=0 time=323.491434 s iterations=57968933303 checksum=3e3f51fe3b735c7b
+### exp=valida P=1 chunk=0 height=34560 rep=1
++ srun -N 1 -w atlantica09 -n 1 --cpu-bind=cores ./julia_seq --width 3840 --max-iter 6000 --height 34560
+frame=0 c=-0.123000+0.745000i mode=seq procs=1 width=3840 height=34560 max_iter=6000 chunk=0 time=648.926107 s iterations=115938550891 checksum=4cd8e0bce6035263
+### exp=valida P=1 chunk=0 height=69120 rep=1
++ srun -N 1 -w atlantica09 -n 1 --cpu-bind=cores ./julia_seq --width 3840 --max-iter 6000 --height 69120
+frame=0 c=-0.123000+0.745000i mode=seq procs=1 width=3840 height=69120 max_iter=6000 chunk=0 time=1301.617891 s iterations=231877858395 checksum=102bc85b442dbbc3
+### exp=valida P=1 chunk=0 height=138240 rep=1
++ srun -N 1 -w atlantica09 -n 1 --cpu-bind=cores ./julia_seq --width 3840 --max-iter 6000 --height 138240
+frame=0 c=-0.123000+0.745000i mode=seq procs=1 width=3840 height=138240 max_iter=6000 chunk=0 time=2658.256303 s iterations=463753253563 checksum=c247c4f4ed86b753
+===== fim em Tue Nov  3 00:48:58 -03 2026 =====
