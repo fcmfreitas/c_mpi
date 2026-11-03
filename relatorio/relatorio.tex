@@ -1,0 +1,146 @@
+% Relatorio do T2 (mestre/escravo com MPI). Compilar: cd relatorio && pdflatex relatorio.tex
+% As tabelas (tab_*.tex) e figuras (fig_*.pdf) sao geradas por: python3 scripts/analyze.py
+\documentclass[10pt,twocolumn,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=1.5cm,columnsep=0.6cm]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\titlespacing*{\section}{0pt}{5pt}{2pt}
+\titleformat{\section}{\normalsize\bfseries}{\thesection.}{0.4em}{}
+\captionsetup{font=small,labelfont=bf,skip=2pt}
+\setlength{\parskip}{1pt}
+\setlength{\parindent}{0.8em}
+\setlength{\textfloatsep}{6pt}
+\setlength{\intextsep}{4pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{0pt}
+\setlength{\tabcolsep}{3pt}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\lref}[2]{\code{#1}:#2}
+\pagestyle{empty}
+\AtBeginDocument{\renewcommand{\figurename}{Figura}\renewcommand{\tablename}{Tabela}}
+
+\begin{document}
+\twocolumn[{%
+\begin{center}
+{\large\bfseries T2 -- Conjunto de Julia com MPI no modelo mestre/escravo}\\[2pt]
+Francisco Freitas e Pedro Haggstram \quad$\cdot$\quad
+Repositório: \url{https://github.com/fcmfreitas/c_mpi}
+\end{center}
+\vspace{2pt}
+}]
+
+\section{Modelagem}
+O problema é o do T1: cada pixel $z_0$ da imagem itera $z \leftarrow z^2 + c$ com $c$ fixo
+($c=-0{,}123+0{,}745i$, dentro do conjunto de Mandelbrot, de modo que o interior custa
+\code{max\_iter} iterações por pixel), e o trabalho de um pixel independe dos demais.
+\textbf{Tarefa:} um bloco de \code{chunk} linhas consecutivas, lido da linha de comando
+(\lref{julia\_common.c}{50}). \textbf{Saco:} o mestre (rank 0) guarda só o índice da próxima
+linha livre, \code{next\_row}; há $\lceil \text{linhas}/\code{chunk} \rceil$ tarefas e a última pode
+ser menor, então qualquer número de linhas e de processos ($P \ge 2$) funciona
+(\lref{julia\_mpi.c}{47--57}). \textbf{Tags} (\lref{julia\_mpi.c}{21}): \code{TAG\_REQUEST}
+(escravo $\to$ mestre, vazia: primeiro pedido, linha 89), \code{TAG\_PIXELS} (escravo $\to$ mestre,
+\{primeira linha, pixels\}: resultado que vale como pedido da próxima tarefa, linha 103),
+\code{TAG\_WORK} (mestre $\to$ escravo, \{primeira linha, número de linhas\}, linha 54) e
+\code{TAG\_DONE} (mestre $\to$ escravo, vazia: saco vazio, linha 49). O mestre recebe com
+\code{MPI\_ANY\_SOURCE}/\code{MPI\_ANY\_TAG} (linha 71), atende por ordem de chegada e não calcula.
+\textbf{Ordem:} o resultado traz a sua primeira linha em \code{block[0]} e é copiado direto para
+essa posição da imagem (linha 77), então a ordem original do saco é preservada seja qual for a
+ordem de chegada. \textbf{Término:} ao esvaziar o saco, cada pedido é respondido com
+\code{TAG\_DONE} (linha 49), o escravo sai do laço ao ver essa tag (linha 94) e o mestre encerra
+quando todos os $P-1$ escravos foram liberados (linhas 79--83). Um \code{MPI\_Bcast} no início de
+cada quadro informa $c$ (linha 193).
+
+\section{Ambiente e metodologia}
+Todas as medições rodaram no cluster Atlântica do LAD, sempre nos nós \code{atlantica07} e
+\code{atlantica08}, alocados com \code{--exclusive} por jobs \code{sbatch}
+(\code{scripts/t2\_*.sbatch}; saídas brutas em \code{results/}). O \code{lscpu} registrado no
+cabeçalho de cada saída mostra que cada nó tem \textbf{2 Xeon E5520 de 4 núcleos com HT: 8 núcleos
+físicos e 16 threads de hardware por nó} (e não 16/32 como supõe o enunciado), 16\,GB e rede
+Gigabit Ethernet. Por isso a série foi $P = 2, 4, 8$ (um nó, 1 processo por núcleo físico,
+\code{--cpu-bind=cores}), $P=16$ (2 nós $\times$ 8, 1 por núcleo físico), $P=32$ (2 nós
+$\times$ 16, 1 por thread de hardware: o ponto ``HT'') e $P=64$ (2 por thread, \code{--overcommit},
+com \code{OMPI\_MCA\_mpi\_yield\_when\_idle=1}). O mestre (rank 0) e a sequencial ficam sempre no
+\code{atlantica07}; os ranks são preenchidos em bloco (\code{scripts/lib.sh}, \code{srun\_opts}).
+Compilador: \code{gcc 9.4.0} via \code{mpicc} do OpenMPI 4.1.1, flags \code{-O3 -march=native}
+(compilado no próprio nó de cômputo) para as duas versões. \textbf{Região medida:} no mestre, com
+\code{MPI\_Wtime} após um \code{MPI\_Barrier}, do início da distribuição até a chegada do último
+resultado (\lref{julia\_mpi.c}{202--208}); na sequencial, \code{clock\_gettime} em volta do laço
+de linhas (\lref{julia\_seq.c}{52--55}). Alocação, checksum e saída ficam fora nas duas.
+\textbf{Entrada de referência:} imagem $3840\times2160$ (2160 linhas) com \code{max\_iter}~$=6000$,
+calibrada para $T_1$ entre 30 e 60\,s (\code{results/t2\_calibra.*.out}). \textbf{Fraca:} a região
+do plano é fixa, então \code{--height} $=2160P$ só adensa a amostragem vertical: o número de linhas
+(tarefas) cresce com $P$ e o custo médio de uma linha não muda; as iterações totais confirmam a
+proporção (Tabela~\ref{tab:fraca}). Cada configuração foi executada 10 vezes em processos
+independentes; as tabelas trazem mediana, mínimo e máximo, e \textbf{toda execução imprimiu
+iterações e checksum (FNV-1a da imagem), idênticos aos da sequencial para a mesma entrada}
+(\code{results/resumo.md}).
+
+\section{Granularidade e balanceamento}
+\begin{table}[t]
+\centering\scriptsize
+\IfFileExists{tab_gran.tex}{\input{tab_gran.tex}}{(tab\_gran.tex)}
+\caption{Granularidade com $P=32$ (31 escravos), 10 execuções por linha: tempo total, tempo de
+processar uma tarefa e ida e volta das mensagens de uma tarefa (sem cálculo) com escravos do nó do
+mestre (intra) e do outro nó (inter); util.\ = fração do tempo em que os escravos calculam; cauda =
+intervalo entre o primeiro escravo liberado e o fim.}
+\label{tab:gran}
+\end{table}
+\begin{figure}[t]
+\centering
+\IfFileExists{fig_gran.pdf}{\includegraphics[width=\linewidth]{fig_gran.pdf}}{(fig\_gran.pdf)}
+\caption{$P=32$: tempo total e cauda por granularidade (esq.) e custo de uma tarefa contra a ida e
+volta das mensagens intra e inter-nó (dir., escala log).}
+\label{fig:gran}
+\end{figure}
+\begin{figure}[t]
+\centering
+\IfFileExists{fig_balance.pdf}{\includegraphics[width=\linewidth]{fig_balance.pdf}}{(fig\_balance.pdf)}
+\caption{Balanceamento com $P=32$ e a granularidade escolhida: tarefas e tempo ocupado por escravo
+(mediana das 10 execuções), cor por nó, e instante em que cada escravo foi liberado.}
+\label{fig:balance}
+\end{figure}
+GRANTEXT
+
+\section{Resultados}
+\begin{table}[t]
+\centering\scriptsize
+\IfFileExists{tab_forte.tex}{\input{tab_forte.tex}}{(tab\_forte.tex)}
+\caption{Escalabilidade forte (entrada de referência, $T_1 = $ T1VAL\,s): $S=T_1/T_P$ e $E=S/P$ pela
+mediana; CPU/$T_1$ = soma do tempo ocupado dos escravos sobre $T_1$ (quanto o cálculo por núcleo
+ficou mais lento); util.\ e cauda como na Tabela~\ref{tab:gran}. ``64 (polling)'': sem yield.}
+\label{tab:forte}
+\end{table}
+\begin{table}[t]
+\centering\scriptsize
+\IfFileExists{tab_fraca.tex}{\input{tab_fraca.tex}}{(tab\_fraca.tex)}
+\caption{Escalabilidade fraca (\code{height}~$=2160P$): $E_\text{fraca}=T_1/T_P$; iter./iter.$_1$ =
+iterações totais sobre as da entrada de referência (medida de trabalho); equiv.\ = checksum igual
+ao da sequencial com a mesma entrada (\code{t2\_valida}).}
+\label{tab:fraca}
+\end{table}
+\begin{figure}[t]
+\centering
+\IfFileExists{fig_speedup.pdf}{\includegraphics[width=0.49\linewidth]{fig_speedup.pdf}}{(fig\_speedup.pdf)}\hfill
+\IfFileExists{fig_eficiencia.pdf}{\includegraphics[width=0.49\linewidth]{fig_eficiencia.pdf}}{(fig\_eficiencia.pdf)}
+\caption{Speed-up da forte com a reta ideal (esq.) e eficiência da forte e da fraca (dir.); a linha
+pontilhada é o limite $(P-1)/P$ imposto pelo mestre, que não calcula.}
+\label{fig:curvas}
+\end{figure}
+RESTEXT
+
+\section{Uso de ferramentas de IA}
+Claude (Anthropic) foi usado para escrever os scripts \code{sbatch} e o \code{analyze.py},
+executar os experimentos no cluster e redigir a primeira versão deste relatório a partir das
+saídas; o código MPI, as tabelas e a análise foram revisados pelo grupo, que responde por cada
+chamada e cada número.
+
+\end{document}
