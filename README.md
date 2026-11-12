@@ -1,153 +1,163 @@
-# Conjunto de Julia em C com MPI (mestre/escravo)
+# Ordenacao por divisao e conquista com MPI (T3)
 
-Trabalho 2: o fractal do T1 (`c_openmp`), agora o conjunto de Julia,
-paralelizado com MPI no modelo mestre/escravo. Cada pixel `z0` itera
-`z = z^2 + c` com `c` constante.
+Trabalho 3: ordenar um vetor em ordem decrescente (pior caso do Bubble Sort) com
+uma arvore de processos MPI. Quem recebe um pedaco grande divide; quem recebe um
+pedaco pequeno conquista com o Bubble Sort, e os pais intercalam na volta.
+Enunciado: `t3-mpi-divisao-conquista-v2.pdf`.
 
 ## Arquivos
 
 | Arquivo | Conteudo |
-|---|---|
-| `julia_common.c/.h` | opcoes, calculo de uma linha (`render_row`), checksum e relatorio; usado pelas duas versoes |
-| `julia_seq.c` | versao sequencial de referencia (T1), **sem MPI** |
-| `julia_mpi.c` | versao mestre/escravo e ping-pong |
-| `julia_viewer.c/.h` | janela X11 opcional (`--window`), fora da regiao medida |
+| --- | --- |
+| `sort_common.c/.h` | Bubble Sort, intercalacao, vetor inicial, verificacao e checksum (sem MPI) |
+| `sort_seq.c` | referencias sequenciais: T1 e T1^delta das duas arvores |
+| `sort_mpi.c` | versao original (Figura 1): arvore em heap, so as folhas ordenam |
+| `sort_mpi_bal.c` | versao balanceada (ideia de Radenski): o pai fica com uma metade |
+| `sort_mpi_common.c/.h` | tags, estatisticas por processo (`--rank-stats`) e saida da raiz |
+| `scripts/` | `sbatch` das medicoes, `config.sh`, `lib.sh` e `analyze.py` |
+| `results/` | saidas brutas do Slurm (`t3_*.<job>.out`) e `resumo.md` |
 
-## Constante c
+## Do programa sequencial para o MPI
 
-Padrao `-0.123 + 0.745i` ("coelho de Douady"), que fica **dentro** do conjunto
-de Mandelbrot: a imagem tem interior, cujos pixels custam `max_iter` cada, e o
-tempo cresce com `max_iter`, o que serve para calibrar a entrada. Com `c` fora
-do conjunto (ex.: `-0.8 + 0.156i`) nao ha interior e o custo para de crescer
-com `max_iter`.
+No sequencial, a divisao e conquista e uma recursao: `ordena(v)` chama
+`ordena(metade1)` e `ordena(metade2)` e intercala. No MPI, cada chamada recursiva
+vira um **processo**, e a pilha de chamadas vira uma **arvore de processos**:
 
-## Modelo mestre/escravo
+| Sequencial | MPI |
+| --- | --- |
+| chamar `ordena(metade)` | `MPI_Send(metade, filho)` |
+| receber o parametro `v, n` | `MPI_Probe` + `MPI_Get_count` + `MPI_Recv` do pai |
+| `return` com a metade ordenada | `MPI_Send(pedaco, pai)` |
+| usar o valor de retorno | `MPI_Recv(&v[meio], filho)` |
+| as chamadas rodam uma depois da outra | os filhos rodam ao mesmo tempo |
 
-- **Tarefa:** um bloco de `--chunk` linhas consecutivas. O saco e o indice da
-  proxima linha livre no mestre; ha `ceil(height / chunk)` tarefas e a ultima
-  pode ser menor.
-- **Tags:** `TAG_REQUEST` (escravo pede o primeiro trabalho), `TAG_PIXELS`
-  (resultado `{primeira linha, pixels...}`, que vale como novo pedido),
-  `TAG_WORK` (tarefa `{primeira linha, linhas}`) e `TAG_DONE` (saco vazio).
-- O escravo toma a iniciativa: comeca com `TAG_REQUEST`.
-- O mestre recebe com `MPI_ANY_SOURCE`/`MPI_ANY_TAG`, copia o bloco para a
-  linha `block[0]` (ordem original) e responde ao mesmo escravo com a proxima
-  tarefa ou com `TAG_DONE`. O mestre nao calcula, por isso e preciso P >= 2.
-- Um `MPI_Bcast` no inicio de cada quadro informa `c` ou manda encerrar.
+Pontos que mudam a forma de pensar:
 
-## Medicao de tempo
+- **SPMD:** um unico executavel, iniciado P vezes (`srun -n P` / `mpirun -n P`).
+  Todos rodam o mesmo `main`; o que cada um faz sai do `rank` (0..P-1). Ninguem
+  "chama" outro processo: todos ja existem desde o inicio, e os que nao sao a
+  raiz comecam parados em `MPI_Probe`, esperando o pai mandar trabalho.
+- **Memoria distribuida:** cada processo tem a sua propria memoria, mesmo que
+  estejam no mesmo no. Um ponteiro do pai nao vale nada no filho. Por isso nao da
+  para passar "uma view" (`v + meio`) como no sequencial: os elementos precisam ser
+  **copiados** por mensagem. O que da para evitar e copia *extra*: o envio parte
+  direto de `&vetor[meio]` (sem buffer intermediario) e a resposta volta direto
+  para `&vetor[meio]`.
+- **O tamanho vem na mensagem:** o filho nao sabe quanto vai receber.
+  `MPI_Probe` espera a mensagem chegar sem recebe-la, `MPI_Get_count` diz quantos
+  `MPI_INT` ela tem, o filho aloca exatamente isso e so entao faz o `MPI_Recv`.
+- **Tags** separam o sentido: `TAG_DOWN` (pai -> filho) e `TAG_UP` (filho -> pai).
 
-- MPI: `MPI_Wtime` no mestre, depois de um `MPI_Barrier`, do inicio da
-  distribuicao ate a chegada do ultimo resultado.
-- Sequencial: `clock_gettime(CLOCK_MONOTONIC)` em volta do calculo das linhas.
-- Nas duas, ficam de fora a alocacao, o checksum, as estatisticas e a saida.
+### Quanto dado trafega entre os nos?
 
-## Compilacao
+Sim, o MPI copia os dados, inclusive entre os nos. Mas o volume e pequeno:
+
+- Com N ~ 150 mil inteiros (o vetor inteiro ocupa ~600 KB), a raiz manda ~300 KB
+  para cada filho. Em cada nivel da arvore desce o vetor inteiro (somado entre os
+  processos daquele nivel) e sobe o vetor inteiro: o total e 2 x 600 KB por nivel.
+- Entre nos a rede e Gigabit Ethernet (~117 MB/s): 300 KB levam ~3 ms. Dentro do
+  no, a memoria compartilhada (BTL `vader`) copia a GB/s.
+- O calculo cai com o **quadrado** do pedaco (Bubble Sort), e a comunicacao so
+  **linearmente**: com P=31 cada folha leva T1/256 (~0,2 s se T1 = 45 s), e o
+  caminho da raiz ate uma folha e de volta move ~2 x 600 KB (~10 ms). Com poucos
+  processos a comunicacao some; com centenas de processos o calculo fica tao
+  pequeno que ela passa a pesar. Isso e parte da analise.
+
+### Envio bloqueante x nao bloqueante (por que a balanceada usa MPI_Send)
+
+`MPI_Send` so retorna quando o buffer pode ser reaproveitado; para mensagens
+grandes, o Open MPI espera o receptor estar pronto (rendezvous) e transfere.
+`MPI_Isend` so *inicia* o envio e retorna na hora. Mas, sem uma thread de
+progresso, o Open MPI so move os dados quando o processo que envia esta dentro de
+alguma chamada MPI. Teste local (rank 0 faz `MPI_Isend` de 500 KB e calcula 2 s):
+
+| transporte | o receptor recebeu em |
+| --- | --- |
+| TCP (como entre os nos) | 2,0 s (so quando o emissor voltou ao MPI) |
+| memoria compartilhada (`vader`) | 0,002 s |
+
+No codigo de Radenski o pai faz `MPI_Isend` da metade e logo comeca a ordenar a
+sua. Entre nos, o ajudante so receberia a metade quando o pai terminasse. Por isso
+`sort_mpi_bal` usa `MPI_Send` por padrao (o ajudante ja esta parado em
+`MPI_Probe`, entao custa so a transferencia), e `--isend` reproduz o esquema de
+Radenski (`MPI_Isend` + `MPI_Request_free`) para medir a diferenca
+(`scripts/t3_bal.sbatch` roda os dois).
+
+## As duas versoes
+
+**Original (`sort_mpi n delta`).** Arvore em heap: pai `(r-1)/2`, filhos `2r+1`
+e `2r+2`. Quem recebe mais que `delta` elementos manda as duas metades aos filhos
+(as duas antes de esperar qualquer resposta), espera e intercala. So as
+`(P+1)/2` folhas ordenam; os processos internos ficam parados. Com P = 2^k - 1 e
+`delta = ceil(2n/(P+1))` a arvore ocupa exatamente os P processos; antes de
+comecar, todos os processos conferem isso e encerram com mensagem se nao bater
+(em vez de alguem ficar esperando para sempre).
+
+**Balanceada (`sort_mpi_bal n`).** Ao dividir no nivel l, o processo r manda a
+metade direita para o ajudante `r + 2^l` e continua com a esquerda, dividindo de
+novo no nivel seguinte enquanto houver ajudante (`r + 2^l < P`). Todos os
+processos ordenam uma folha. Com P potencia de 2 as folhas tem n/P elementos; com
+P = 31, o rank 15 nao tem ajudante no ultimo nivel e fica com o dobro (n/16).
+
+## Decisoes de medicao
+
+- **`-O2`, nao `-O3`.** Em `-O3` (e em `-O2` no gcc >= 12) o gcc vetoriza a troca
+  do Bubble Sort com load/store de 8 bytes que se sobrepoem entre iteracoes, e o
+  processador para a cada iteracao (*store forwarding*). No gcc 12 local, `-O3`
+  ficou 7x mais lento que sem essa vetorizacao. O cluster usa gcc 9.4, que nao
+  vetoriza em `-O2`, o nivel citado na errata do enunciado.
+- **Distribuicao cyclic** dos ranks entre os 2 nos (`DIST` em `config.sh`): as
+  folhas da arvore original sao os ultimos ranks, e com distribuicao em bloco
+  quase todas cairiam no segundo no.
+- **Ate 8 processos em um no**, 1 por nucleo fisico; 9-16 em 2 nos, 1 por nucleo
+  fisico; 17-32 em 2 nos, 1 por thread (HT); acima de 32, `--overcommit` e
+  `--cpu-bind=none`, para o escalonador do Linux poder mover os processos.
+- **`OMPI_MCA_mpi_yield_when_idle` sempre explicito** (errata): 0 nas series
+  1-31 e na balanceada; 0 e 1 na serie de 63 a 1023. Cada linha `result` imprime
+  o valor em vigor.
+- **Regiao medida:** `MPI_Wtime` na raiz, depois de um `MPI_Barrier`, do inicio da
+  distribuicao ate a raiz ter o vetor inteiro ordenado. A inicializacao do vetor
+  fica de fora. Na sequencial, `clock_gettime` em volta da ordenacao.
+- **Equivalencia:** toda execucao confere que o resultado e 1, 2, ..., n (o vetor
+  inicial e n, ..., 1, entao este e o resultado da sequencial) e imprime
+  `check=OK` e um checksum FNV-1a, que deve ser o mesmo em todas as versoes.
+
+## Compilacao e teste local
 
 ```sh
-make                  # julia_mpi (com X11) e julia_seq
-make X11=0            # sem X11 (cluster)
-make run NP=4         # MPI com janela: c gira em torno da origem
-make run-seq          # sequencial com janela
+make                 # sort_seq (gcc), sort_mpi e sort_mpi_bal (mpicc)
+make test N=40000 NP=7   # as 5 versoes com a mesma entrada: check=OK e mesmo checksum
 ```
 
-A sequencial usa `gcc` com as mesmas flags da paralela (`-O3 -march=native`).
-No cluster, confira se `mpicc --version` e `gcc --version` mostram o mesmo
-compilador; se nao, use `make SEQ_CC=<compilador do mpicc>`.
-
-## Execucao e experimentos
-
-Cada execucao imprime uma linha `frame=... time=... iterations=... checksum=...`.
-`--frames N` repete o calculo N vezes no mesmo processo, e `--csv ARQ` grava
-os tempos brutos.
-
-### No cluster Atlantica (LAD)
-
-Todas as medicoes do relatorio vem dos scripts em `scripts/`, submetidos com
-`sbatch` a partir da raiz do repositorio (as saidas brutas do Slurm ficam em
-`results/<job>.<id>.out`, que estao commitadas):
+Execucao manual:
 
 ```sh
-git clone https://github.com/fcmfreitas/c_mpi.git && cd c_mpi
-sbatch scripts/t2_calibra.sbatch   # hardware, mapeamento dos ranks, calibracao de max_iter, checksums (minutos)
-sbatch scripts/t2_gran.sbatch      # P=32: ping-pong por granularidade e varredura de chunk com --rank-stats
-sbatch scripts/t2_forte.sbatch     # T1 (10x) e escalabilidade forte, P = 2..64, 10x cada
-sbatch scripts/t2_fraca.sbatch     # escalabilidade fraca (height = 2160*P), 10x cada
-sbatch scripts/t2_valida.sbatch    # sequencial com as entradas da fraca: checksums de referencia
+./sort_seq 150000                      # T1
+./sort_seq 150000 18750                # T1^delta da arvore original com P=15
+./sort_seq 150000 --balanced 31        # T1^delta da arvore balanceada com P=31
+mpirun -n 15 ./sort_mpi 150000 18750 --rank-stats
+mpirun -n 31 ./sort_mpi_bal 150000 --rank-stats
 ```
 
-- `scripts/config.sh`: parametros (entrada de referencia `3840x2160`, `MAX_ITER`,
-  granularidade escolhida `CHUNK`, serie de `PROCS`, `REPS=10`). Podem ser
-  sobrescritos pelo ambiente: `CHUNK=1 sbatch scripts/t2_forte.sbatch`.
-- `scripts/lib.sh`: distribuicao dos processos (`srun_opts`): ate P=8 em um no
-  (1 processo por nucleo fisico, `--cpu-bind=cores`); P=16 em 2 nos x 8;
-  P=32 em 2 nos x 16 (1 por thread de hardware, HT); P=64 com `--overcommit`
-  (2 por thread) e `OMPI_MCA_mpi_yield_when_idle=1`. O mestre (rank 0) e a
-  sequencial ficam sempre no primeiro no. Os nos sao fixos
-  (`#SBATCH -w atlantica07,atlantica08`, `--exclusive`) e a compilacao acontece
-  dentro do job, no no de computo (`-march=native` do no certo).
+## No cluster Atlantica (LAD)
 
-### Analise e relatorio
+Nos fixos `atlantica07,atlantica08` (`--exclusive`), compilacao dentro do job
+(`-march=native` do no de computo). Submeter a partir da raiz do repositorio;
+cada saida vai para `results/<job>.<id>.out`. O limite e de 2 jobs na fila por
+usuario, e os jobs recompilam no mesmo diretorio, entao encadeie com
+`--dependency`:
 
 ```sh
-python3 scripts/analyze.py          # results/*.out -> results/resumo.md, relatorio/tab_*.tex, relatorio/fig_*.pdf
-cd relatorio && pdflatex relatorio.tex
+sbatch scripts/t3_calibra.sbatch   # 1o: testes de todos os P com n pequeno e T1 para cada N candidato
+# escolher N (T1 entre 30 e 60 s) e gravar em scripts/config.sh
+j=$(sbatch --parsable scripts/t3_seq.sbatch)                          # T1 e T1^delta, 10x cada
+sbatch --dependency=afterany:$j scripts/t3_orig.sbatch                # P = 1, 3, 7, 15, 31
+# quando um terminar:
+j=$(sbatch --parsable scripts/t3_bal.sbatch)                          # P = 2, 4, 8, 16, 31, 32 (+ --isend)
+sbatch --dependency=afterany:$j scripts/t3_over.sbatch                # P = 63..1023, yield 0 e 1
 ```
 
-`analyze.py` usa, para cada experimento, o job mais recente em `results/`;
-reporta mediana, minimo e maximo das 10 repeticoes e confere que todas as
-execucoes com a mesma entrada tem as mesmas `iterations` e `checksum`.
-
-### Execucao manual
-
-```sh
-# T1 sequencial (entrada de referencia: T1 entre 30 e 60 s no no do cluster)
-./julia_seq --width 3840 --height 2160 --max-iter 6000
-
-# Escalabilidade forte
-mpirun -n 8 ./julia_mpi --width 3840 --height 2160 --max-iter 6000 --chunk 4
-
-# Escalabilidade fraca: height = 2160 * P, mesma largura e max_iter
-mpirun -n 8 ./julia_mpi --width 3840 --height 17280 --max-iter 6000 --chunk 4
-./julia_seq --width 3840 --height 17280 --max-iter 6000     # confere iterations/checksum
-
-# Granularidade e balanceamento (por escravo: host, tarefas, iteracoes,
-# tempo ocupado, tempo medio por tarefa e instante em que foi liberado)
-mpirun -n 32 ./julia_mpi --width 3840 --height 2160 --max-iter 6000 --chunk 4 --rank-stats
-
-# Ida e volta das mensagens de uma tarefa, sem calculo, com cada escravo
-mpirun -n 32 ./julia_mpi --width 3840 --chunk 4 --pingpong 1000
-```
-
-### Regra de crescimento da escalabilidade fraca
-
-A regiao visivel do plano e fixa (`[-2, 2] x [-1.125, 1.125]`). Aumentar
-`--height` so torna a amostragem vertical mais densa, entao o numero de
-tarefas cresce na proporcao de `height` e o custo medio de uma linha fica o
-mesmo. Medido com `--width 1280 --max-iter 1000`:
-
-| height | iteracoes | razao |
-|---|---|---|
-| 720 | 136180205 | 1,00 |
-| 1440 | 272233905 | 2,00 |
-| 2880 | 544621529 | 4,00 |
-| 5760 | 1089182411 | 8,00 |
-
-### Granularidade
-
-O custo de uma tarefa e `per_task` (de `--rank-stats`). O custo da comunicacao
-e `round_trip` (de `--pingpong`, com o mesmo `--chunk`). Os escravos no mesmo
-no do mestre medem a comunicacao intra-no; os do outro no, a inter-no.
-
-## Validacao
-
-`iterations` e `checksum` devem coincidir entre `julia_seq` e `julia_mpi` para
-qualquer P, `--chunk` e `--height`. Exemplos:
-
-- `--max-iter 500`: `iterations=69261705`, `checksum=982001c4f55f08af`.
-- `--max-iter 4000`: `iterations=537691205`, `checksum=f8b746cef3e07759`.
-- Entrada de referencia do T2 (`--width 3840 --height 2160 --max-iter 6000`):
-  `iterations=7246708295`, `checksum=afc642cca152dc8b` (sequencial e MPI, todo P e chunk;
-  as entradas da fraca estao em `results/resumo.md`).
-
-O CSV traz `frame,c_re,c_im,mode,procs,width,height,max_iter,chunk,seconds,iterations,checksum`.
+Analise: `python3 scripts/analyze.py` le o job mais recente de cada experimento e
+gera `results/resumo.md`: mediana, minimo e maximo, S = T1/TP, S^delta =
+T1^delta/TP, E = S^delta/P (S^delta/32 acima de 32 processos), T1/T1^delta e a
+carga por nivel da arvore (das execucoes com `--rank-stats`).

@@ -1,5 +1,6 @@
-julia_mpi
-julia_seq
+sort_seq
+sort_mpi
+sort_mpi_bal
 .env
 relatorio/*.aux
 relatorio/*.log
